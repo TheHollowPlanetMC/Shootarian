@@ -1,0 +1,7 @@
+display-name:
+  ja_JP: 'SCAR-H'
+  en_US: 'SCAR-H'
+material: IRON_HOE
+custom-model-data: 0
+passive:
+  - 'NONE, 0.0'
