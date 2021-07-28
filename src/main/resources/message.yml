@@ -65,6 +65,7 @@ ja_JP:
   match-result-draw: '引き分け！'
   match-result-win: '&aYou win!'
   match-result-lose: '&cYou lose...'
+  gun-reload: '&c&lリロード中...'
 en_US:
   none: ''
   none-s: '%s'
@@ -132,3 +133,4 @@ en_US:
   match-result-draw: 'Draw!'
   match-result-win: '&aYou win!'
   match-result-lose: '&cYou lose...'
+  gun-reload: '&c&lReloading...'

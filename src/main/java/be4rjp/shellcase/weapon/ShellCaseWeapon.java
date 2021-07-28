@@ -87,16 +87,15 @@ public abstract class ShellCaseWeapon {
     
     /**
      * この武器を持って右クリックしたときの処理
-     * @param ShellCasePlayer
+     * @param shellCasePlayer
      */
-    public abstract void onRightClick(ShellCasePlayer ShellCasePlayer);
+    public abstract void onRightClick(ShellCasePlayer shellCasePlayer);
     
     /**
      * この武器を持って左クリックしたときの処理
-     * @param ShellCasePlayer
+     * @param shellCasePlayer
      */
-    public void onLeftClick(ShellCasePlayer ShellCasePlayer){
-    }
+    public abstract void onLeftClick(ShellCasePlayer shellCasePlayer);
     
     
     

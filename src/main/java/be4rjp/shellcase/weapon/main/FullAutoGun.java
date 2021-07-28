@@ -16,8 +16,10 @@ public class FullAutoGun extends GunWeapon {
     private double shootSpeed = 0.1;
     //ADS時のリコイル
     private Recoil adsRecoil = null;
+    //腰撃ち時のリコイル
+    private Recoil normalRecoil = null;
     //リコイル
-    private ShooterRecoil recoil = new ShooterRecoil();
+    private HipShootingRecoil hipShootingRecoil = new HipShootingRecoil();
     
     
     public FullAutoGun(String id) {
@@ -30,10 +32,12 @@ public class FullAutoGun extends GunWeapon {
     
     public int getShootTick() {return shootTick;}
     
-    public ShooterRecoil getRecoil() {return recoil;}
+    public HipShootingRecoil getHipShootingRecoil() {return hipShootingRecoil;}
 
     public Recoil getADSRecoil(){return adsRecoil;}
-
+    
+    public Recoil getNormalRecoil() {return normalRecoil;}
+    
     @Override
     public void onRightClick(ShellCasePlayer shellCasePlayer) {
         GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(this);
@@ -59,18 +63,19 @@ public class FullAutoGun extends GunWeapon {
         if(yml.contains("shoot-tick")) this.shootTick = yml.getInt("shoot-tick");
         if(yml.contains("shoot-speed")) this.shootSpeed = yml.getDouble("shoot-speed");
         if(yml.contains("ads-recoil")) this.adsRecoil = Recoil.getRecoil(yml.getString("ads-recoil"));
+        if(yml.contains("normal-recoil")) this.normalRecoil = Recoil.getRecoil(yml.getString("normal-recoil"));
         
-        if(yml.contains("recoil")){
-            if(yml.contains("recoil.shoot-random")) recoil.setShootRandom(yml.getDouble("recoil.shoot-random"));
-            if(yml.contains("recoil.shoot-max-random")) recoil.setShootMaxRandom(yml.getDouble("recoil.shoot-max-random"));
-            if(yml.contains("recoil.increase-min-tick")) recoil.setMinTick(yml.getInt("recoil.increase-min-tick"));
-            if(yml.contains("recoil.increase-max-tick")) recoil.setMaxTick(yml.getInt("recoil.increase-max-tick"));
-            if(yml.contains("recoil.increase-reset-tick")) recoil.setResetTick(yml.getInt("recoil.increase-reset-tick"));
+        if(yml.contains("hit-shooting-recoil")){
+            if(yml.contains("recoil.shoot-random")) hipShootingRecoil.setShootRandom(yml.getDouble("recoil.shoot-random"));
+            if(yml.contains("recoil.shoot-max-random")) hipShootingRecoil.setShootMaxRandom(yml.getDouble("recoil.shoot-max-random"));
+            if(yml.contains("recoil.increase-min-tick")) hipShootingRecoil.setMinTick(yml.getInt("recoil.increase-min-tick"));
+            if(yml.contains("recoil.increase-max-tick")) hipShootingRecoil.setMaxTick(yml.getInt("recoil.increase-max-tick"));
+            if(yml.contains("recoil.increase-reset-tick")) hipShootingRecoil.setResetTick(yml.getInt("recoil.increase-reset-tick"));
         }
     }
     
     
-    public class ShooterRecoil{
+    public class HipShootingRecoil {
         //撃った時の弾の散らばり
         private double shootRandom = 0.0;
         //撃った時の弾の散らばりの最大値

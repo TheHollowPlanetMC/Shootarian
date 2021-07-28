@@ -106,8 +106,13 @@ public abstract class GunWeapon extends ShellCaseWeapon {
 
     
     @Override
-    public abstract void onRightClick(ShellCasePlayer ShellCasePlayer);
+    public abstract void onRightClick(ShellCasePlayer shellCasePlayer);
     
+    
+    @Override
+    public void onLeftClick(ShellCasePlayer shellCasePlayer) {
+        shellCasePlayer.switchingADS();
+    }
     
     /**
      * 武器のタイプを取得する

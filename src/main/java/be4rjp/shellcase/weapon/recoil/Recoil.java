@@ -20,6 +20,7 @@ public class Recoil {
 
     public Recoil(String id){
         this.id = id;
+        recoilPatternMap.put(id, this);
     }
 
     /**

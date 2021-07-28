@@ -1,6 +1,7 @@
 package be4rjp.shellcase.weapon;
 
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.weapon.attachment.Sight;
@@ -54,7 +55,9 @@ public class GunStatusData {
     public void setMaxBullets(int maxBullets) {this.maxBullets = maxBullets;}
 
     public void reload(){
+        if(this.isReloading) return;
         if(shellCasePlayer == null) return;
+        this.isReloading = true;
         new ReloadRunnable(shellCasePlayer, this).start();
     }
     
@@ -75,7 +78,7 @@ public class GunStatusData {
         ItemMeta itemMeta = itemStack.getItemMeta();
         String displayName = itemMeta.getDisplayName();
         displayName = displayName + " < " + this.getBullets() + " >";
-        itemMeta.setDisplayName(displayName);
+        itemMeta.setDisplayName(this.isReloading ? MessageManager.getText(lang, "gun-reload") : displayName);
         itemStack.setItemMeta(itemMeta);
         
         return itemStack;

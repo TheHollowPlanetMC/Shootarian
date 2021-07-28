@@ -1,5 +1,6 @@
 package be4rjp.shellcase.weapon.main.runnable;
 
+import be4rjp.cinema4c.util.Vec2f;
 import be4rjp.shellcase.entity.BulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
@@ -9,17 +10,22 @@ import be4rjp.shellcase.weapon.main.FullAutoGun;
 import be4rjp.shellcase.weapon.recoil.Recoil;
 import be4rjp.shellcase.weapon.recoil.RecoilPattern;
 import be4rjp.shellcase.weapon.reload.ReloadRunnable;
+import net.minecraft.server.v1_15_R1.PacketPlayOutPosition;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class FullAutoGunRunnable extends GunWeaponRunnable {
     
     private static final ShellCaseSound NO_BULLET_SOUND = new ShellCaseSound(Sound.BLOCK_WOODEN_PRESSURE_PLATE_CLICK_OFF, 0.8F, 1.2F);
+    private static final Set<PacketPlayOutPosition.EnumPlayerTeleportFlags> teleportFlags;
+    
+    static {
+        teleportFlags = new HashSet<>(Arrays.asList(PacketPlayOutPosition.EnumPlayerTeleportFlags.values()));
+    }
     
     private final FullAutoGun fullAutoGun;
     private final GunStatusData gunStatusData;
@@ -27,6 +33,7 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
     private boolean setup = false;
 
     private RecoilPattern adsRecoilPattern;
+    private RecoilPattern normalRecoilPattern;
     
     
     public FullAutoGunRunnable(FullAutoGun fullAutoGun, GunStatusData gunStatusData, ShellCasePlayer shellCasePlayer){
@@ -34,8 +41,9 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
         this.fullAutoGun = fullAutoGun;
         this.gunStatusData = gunStatusData;
         this.timer = new Timer(true);
-
+        
         this.adsRecoilPattern = fullAutoGun.getADSRecoil().getRandomPattern();
+        
         
         soundTick = fullAutoGun.getShootTick() % 2 == 0 ? fullAutoGun.getShootTick() / 2 : fullAutoGun.getShootTick() / 2 + 1;
     }
@@ -44,10 +52,12 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
     private int clickTick = 0;
     private int noClickTick = 0;
     
+    private int shootIndex = 0;
+    
     private int soundTaskTick = 0;
     private boolean using = false;
     private boolean beforeUsing = false;
-    private boolean noInk = false;
+    private boolean noBullet = false;
     private final int soundTick;
     
     @Override
@@ -62,6 +72,8 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
 
                     if(beforeUsing != using){
                         adsRecoilPattern = fullAutoGun.getADSRecoil().getRandomPattern();
+                        normalRecoilPattern = fullAutoGun.getNormalRecoil().getRandomPattern();
+                        shootIndex = 0;
                     }
                     beforeUsing = using;
                     
@@ -71,10 +83,8 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                             if (player == null) return;
                             
                             if(gunStatusData.consumeBullets(1)) {
-                                ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
-                                if(shellCaseTeam != null){
-                                    shellCaseTeam.getMatch().playSound(fullAutoGun.getShootSound(), shellCasePlayer.getLocation());
-                                }
+                                noBullet = false;
+                                
                                 gunStatusData.updateGunDisplayName(shellCasePlayer);
                                 
                                 //射撃
@@ -82,14 +92,32 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                                 Location origin = player.getEyeLocation();
     
                                 BulletEntity bulletEntity = new BulletEntity(shellCasePlayer.getShellCaseTeam(), origin, fullAutoGun);
-                                double range = fullAutoGun.getRecoil().getShootRandomRange(clickTick);
-                                Vector randomVector = new Vector(Math.random() * range - range / 2, 0, Math.random() * range - range / 2);
-                                bulletEntity.shootInitialize(shellCasePlayer, direction.multiply(fullAutoGun.getShootSpeed()).add(randomVector), fullAutoGun.getFallTick());
+                                double range = fullAutoGun.getHipShootingRecoil().getShootRandomRange(clickTick);
+                                Vector randomVector = new Vector(Math.random() * range - range / 2, Math.random() * range - range / 2, Math.random() * range - range / 2);
+                                if(shellCasePlayer.isADS()) randomVector = new Vector(0.0, 0.0, 0.0);
+                                bulletEntity.shootInitialize(shellCasePlayer, direction.clone().add(randomVector).multiply(fullAutoGun.getShootSpeed()), fullAutoGun.getFallTick());
                                 bulletEntity.spawn();
+                                
+                                //反動
+                                if(shellCasePlayer.isADS()){
+                                    Vec2f vec2f = adsRecoilPattern.get(shootIndex);
+                                    PacketPlayOutPosition position = new PacketPlayOutPosition(0.0, 0.0, 0.0, vec2f.x, vec2f.y, teleportFlags, 0);
+                                    shellCasePlayer.sendPacket(position);
+                                }else{
+                                    Vec2f vec2f = normalRecoilPattern.get(shootIndex);
+                                    PacketPlayOutPosition position = new PacketPlayOutPosition(0.0, 0.0, 0.0, vec2f.x, vec2f.y, teleportFlags, 0);
+                                    shellCasePlayer.sendPacket(position);
+                                    
+                                    clickTick += fullAutoGun.getShootTick();
+                                }
+                                shootIndex++;
+                            }else{
+                                noBullet = true;
+                                gunStatusData.reload();
                             }
                         }else{
                             noClickTick += fullAutoGun.getShootTick();
-                            if(noClickTick >= fullAutoGun.getRecoil().getResetTick()) {
+                            if(noClickTick >= fullAutoGun.getHipShootingRecoil().getResetTick()) {
                                 noClickTick = 0;
                                 clickTick = 0;
                             }
@@ -106,11 +134,13 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
         
         if(soundTaskTick % soundTick == 0) {
             if (using) {
-                if(noInk && !gunStatusData.isReloading()){
-                    shellCasePlayer.playSound(NO_BULLET_SOUND);
-                    gunStatusData.reload();
+                if(noBullet){
+                    if(!gunStatusData.isReloading()) shellCasePlayer.playSound(NO_BULLET_SOUND);
                 }else{
-                    shellCasePlayer.playSound(fullAutoGun.getShootSound());
+                    ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
+                    if(shellCaseTeam != null && !gunStatusData.isReloading()){
+                        shellCaseTeam.getMatch().playSound(gunStatusData.getGunWeapon().getShootSound());
+                    }
                 }
             }
         }

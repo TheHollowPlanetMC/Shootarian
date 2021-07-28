@@ -35,6 +35,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PlayerJoinQuitListener implements Listener {
+    
+    private static final ConquestMatch match;
+    private static final ShellCaseTeam team0;
+    private static final ShellCaseTeam team1;
+    
+    private static int index = 0;
+    
+    static {
+        match = new ConquestMatch(ShellCaseMap.getRandomMap());
+        team0 = new ShellCaseTeam(match, ShellCaseColor.BLUE);
+        team1 = new ShellCaseTeam(match, ShellCaseColor.ORANGE);
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
@@ -78,13 +90,22 @@ public class PlayerJoinQuitListener implements Listener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Match match = new ConquestMatch(ShellCaseMap.getRandomMap());
-                        ShellCaseTeam shellCaseTeam = new ShellCaseTeam(match, ShellCaseColor.BLUE);
-                        shellCaseTeam.join(shellCasePlayer);
+                        if(index == 0){
+                            match.initialize();
+                            match.start();
+                        }
+                        
+                        if(index % 2 == 0){
+                            team0.join(shellCasePlayer);
+                        }else{
+                            team1.join(shellCasePlayer);
+                        }
     
                         GunStatusData gunStatusData = new GunStatusData(GunWeapon.getMainWeapon("scar-h"), shellCasePlayer);
                         shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
                         shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
+                        
+                        index++;
                     }
                 }.runTask(ShellCase.getPlugin());
                 

@@ -138,14 +138,12 @@ public class ShellCasePlayer {
     private boolean isDeath = false;
     //透明かどうか
     private boolean isInvisible = false;
-    //ボムラッシュを使用しているかどうか
-    private boolean isUsingBombRush = false;
+    //ADS中かどうか
+    private boolean isADS = false;
     //ギアのリスト
     private final List<Gear> gearList = new CopyOnWriteArrayList<>();
     //パッシブ効果
     private final PassiveInfluence passiveInfluence = new PassiveInfluence();
-    //スペシャルウエポンを使用できるようになる時刻
-    private long spWeaponTime = System.currentTimeMillis();
     //装備しているヘッドギア
     private HeadGearData headGearData = null;
     //装備しているヘッドギアの番号
@@ -169,10 +167,10 @@ public class ShellCasePlayer {
     private final Object FLY_LOCK = new Object();
     //死亡系の動作の同期用インスタンス
     private final Object DEATH_LOCK = new Object();
-    //スペシャルウエポンの動作の同期用インスタンス
-    private final Object SPECIAL_WEAPON_LOCK = new Object();
     //ランク系の動作の同期用インスタンス
     private final Object RANK_LOCK = new Object();
+    //ADS系の動作の同期用インスタンス
+    private final Object ADS_LOCK = new Object();
     
     
     /**
@@ -235,10 +233,6 @@ public class ShellCasePlayer {
 
     public void setDeath(boolean death) {synchronized (DEATH_LOCK){isDeath = death;}}
 
-    public boolean isUsingBombRush() {return isUsingBombRush;}
-
-    public void setUsingBombRush(boolean usingBombRush) {isUsingBombRush = usingBombRush;}
-
     public ShellCaseScoreboard getScoreBoard() {return scoreBoard;}
     
     public String[] getSkin() {return skin;}
@@ -248,10 +242,6 @@ public class ShellCasePlayer {
     public List<Gear> getGearList() {return gearList;}
     
     public PassiveInfluence getPassiveInfluence() {return passiveInfluence;}
-    
-    public long getCanUseSPWeaponTime() {synchronized (SPECIAL_WEAPON_LOCK){return spWeaponTime;}}
-    
-    public void setCanUseSPWeaponTime(int afterSecond) {synchronized (SPECIAL_WEAPON_LOCK){this.spWeaponTime = System.currentTimeMillis() + (afterSecond * 1000L);}}
     
     public HeadGearData getHeadGearData() {return headGearData;}
     
@@ -265,6 +255,12 @@ public class ShellCasePlayer {
     public int getRank() {synchronized (RANK_LOCK){return rank;}}
     
     public void addRank(int rank){synchronized (RANK_LOCK){this.rank += rank;}}
+    
+    public boolean isADS() {synchronized (ADS_LOCK){return isADS;}}
+    
+    public void setADS(boolean ADS) {synchronized (ADS_LOCK){isADS = ADS;}}
+    
+    public void switchingADS(){synchronized (ADS_LOCK){setADS(!isADS);}}
     
     public AchievementData getAchievementData() {return achievementData;}
 
@@ -297,7 +293,7 @@ public class ShellCasePlayer {
         this.armor = 0.0F;
         this.observableOption = ObservableOption.ALL_PLAYER;
         this.isDeath = false;
-        this.isUsingBombRush = false;
+        this.isADS = false;
         this.headGearData = null;
         this.gearList.clear();
         this.setFOV(0.1F);

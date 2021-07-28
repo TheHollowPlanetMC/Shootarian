@@ -9,6 +9,7 @@ import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.weapon.WeaponManager;
+import be4rjp.shellcase.weapon.reload.ReloadActions;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,6 +42,7 @@ public final class ShellCase extends JavaPlugin {
 
         WeaponManager.loadAllAttachment();
         WeaponManager.loadAllRecoils();
+        ReloadActions.loadAllReloadActions();
         WeaponManager.loadAllWeapon();
         HeadGear.loadAllHeadGear();
         MatchManager.load();
