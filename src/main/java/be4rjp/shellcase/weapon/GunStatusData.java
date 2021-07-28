@@ -5,6 +5,7 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.reload.ReloadRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class GunStatusData {
     
     private final GunWeapon gunWeapon;
+    private final ShellCasePlayer shellCasePlayer;
     
     private Sight sight;
     
@@ -24,8 +26,9 @@ public class GunStatusData {
     //弾数系の動作の同期用インスタンス
     private final Object BULLETS_LOCK = new Object();
     
-    public GunStatusData(GunWeapon gunWeapon){
+    public GunStatusData(GunWeapon gunWeapon, ShellCasePlayer shellCasePlayer){
         this.gunWeapon = gunWeapon;
+        this.shellCasePlayer = shellCasePlayer;
         
         sight = gunWeapon.getDefaultSight();
     }
@@ -49,6 +52,11 @@ public class GunStatusData {
     public void setBullets(int bullets) {synchronized (BULLETS_LOCK){this.bullets = bullets;}}
     
     public void setMaxBullets(int maxBullets) {this.maxBullets = maxBullets;}
+
+    public void reload(){
+        if(shellCasePlayer == null) return;
+        new ReloadRunnable(shellCasePlayer, this).start();
+    }
     
     public boolean consumeBullets(int bullets){
         synchronized (BULLETS_LOCK){

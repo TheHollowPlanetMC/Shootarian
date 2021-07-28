@@ -38,7 +38,9 @@ public final class ShellCase extends JavaPlugin {
         pluginManager.registerEvents(new PlayerClickInventoryListener(), this);
         pluginManager.registerEvents(new PlayerItemClickListener(), this);
         pluginManager.registerEvents(new PlayerJoinQuitListener(), this);
-        
+
+        WeaponManager.loadAllAttachment();
+        WeaponManager.loadAllRecoils();
         WeaponManager.loadAllWeapon();
         HeadGear.loadAllHeadGear();
         MatchManager.load();

@@ -19,8 +19,8 @@ public class MessageManager {
      */
     public static void loadAllMessage(){
         languageMap.clear();
-        ShellCase.getPlugin().saveResource("message.yml", false);
-        File file = new File("plugins/shellcase/message.yml");
+        File file = new File("plugins/ShellCase/message.yml");
+        if(!file.exists()) ShellCase.getPlugin().saveResource("message.yml", false);
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         
         for(String languageName : yml.getKeys(false)){

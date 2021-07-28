@@ -349,8 +349,7 @@ public class ShellCasePlayer {
     /**
      * BukkitのPlayerをアップデートする（参加時用）
      */
-    public void updateBukkitPlayer(){
-        Player bukkitPlayer = Bukkit.getPlayer(UUID.fromString(uuid));
+    public void updateBukkitPlayer(Player bukkitPlayer){
         if(bukkitPlayer != null) this.player = bukkitPlayer;
     }
     

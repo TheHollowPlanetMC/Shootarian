@@ -21,7 +21,7 @@ public class ShellCaseConfig {
     public static Location getLobbyLocation() {return lobbyLocation;}
     
     public static void load(){
-        File file = new File("plugins/shellcase", "config.yml");
+        File file = new File("plugins/ShellCase", "config.yml");
         file.getParentFile().mkdirs();
         
         if(!file.exists()){

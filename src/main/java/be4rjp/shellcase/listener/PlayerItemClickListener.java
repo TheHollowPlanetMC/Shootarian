@@ -4,8 +4,11 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.weapon.GunStatusData;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.WeaponManager;
+import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.reload.ReloadRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,7 +35,7 @@ public class PlayerItemClickListener implements Listener {
                 ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
                 if(ShellCaseTeam == null) return;
                 Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
-                if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
+                //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
     
                 Action action = event.getAction();
                 if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)
@@ -52,7 +55,19 @@ public class PlayerItemClickListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-            
+                GunWeapon gunWeapon = WeaponManager.getGunWeaponByItem(event.getItemDrop().getItemStack());
+                if(gunWeapon == null) return;
+
+                ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
+                ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
+                if(ShellCaseTeam == null) return;
+                Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
+                //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
+
+                GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(gunWeapon);
+                if(gunStatusData == null) return;
+
+                gunStatusData.reload();
             }
         }.runTaskAsynchronously(ShellCase.getPlugin());
     }

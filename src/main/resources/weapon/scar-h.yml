@@ -9,6 +9,7 @@ damage: 2.0
 shoot-tick: 3
 fall-tick: 2
 shoot-speed: 2.8
+ads-recoil: 'scar-h-recoil'
 recoil:
   shoot-random: 0.2
   shoot-max-random: 0.5

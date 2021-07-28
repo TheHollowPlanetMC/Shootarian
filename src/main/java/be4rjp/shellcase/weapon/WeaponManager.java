@@ -3,6 +3,7 @@ package be4rjp.shellcase.weapon;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.recoil.Recoil;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -85,6 +86,32 @@ public class WeaponManager {
                     Attachment.AttachmentType type = Attachment.AttachmentType.valueOf(yml.getString("type"));
                     Attachment attachment = type.createAttachmentInstance(id);
                     attachment.loadData(yml);
+                }catch (Exception e){e.printStackTrace();}
+            }
+        }
+    }
+
+
+    public static void loadAllRecoils() {
+        ShellCase.getPlugin().getLogger().info("Loading recoils...");
+        File dir = new File("plugins/ShellCase/recoil");
+
+        dir.getParentFile().mkdir();
+        dir.mkdir();
+        File[] files = dir.listFiles();
+        if (files.length == 0) {
+            ShellCase.getPlugin().saveResource("recoil/scar-h-recoil.yml", false);
+            files = dir.listFiles();
+        }
+
+        if (files != null) {
+            for (File file : files) {
+                ShellCase.getPlugin().getLogger().info(file.getName());
+                String id = file.getName().replace(".yml", "");
+                try {
+                    YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+                    Recoil recoil = new Recoil(id);
+                    recoil.loadData(yml);
                 }catch (Exception e){e.printStackTrace();}
             }
         }

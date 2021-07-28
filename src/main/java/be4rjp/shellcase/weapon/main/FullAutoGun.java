@@ -4,6 +4,7 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.GunStatusData;
 import be4rjp.shellcase.weapon.main.runnable.FullAutoGunRunnable;
+import be4rjp.shellcase.weapon.recoil.Recoil;
 
 public class FullAutoGun extends GunWeapon {
     
@@ -13,6 +14,8 @@ public class FullAutoGun extends GunWeapon {
     private int shootTick = 1;
     //射撃する弾の速度
     private double shootSpeed = 0.1;
+    //ADS時のリコイル
+    private Recoil adsRecoil = null;
     //リコイル
     private ShooterRecoil recoil = new ShooterRecoil();
     
@@ -28,7 +31,9 @@ public class FullAutoGun extends GunWeapon {
     public int getShootTick() {return shootTick;}
     
     public ShooterRecoil getRecoil() {return recoil;}
-    
+
+    public Recoil getADSRecoil(){return adsRecoil;}
+
     @Override
     public void onRightClick(ShellCasePlayer shellCasePlayer) {
         GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(this);
@@ -53,6 +58,7 @@ public class FullAutoGun extends GunWeapon {
         if(yml.contains("fall-tick")) this.fallTick = yml.getInt("fall-tick");
         if(yml.contains("shoot-tick")) this.shootTick = yml.getInt("shoot-tick");
         if(yml.contains("shoot-speed")) this.shootSpeed = yml.getDouble("shoot-speed");
+        if(yml.contains("ads-recoil")) this.adsRecoil = Recoil.getRecoil(yml.getString("ads-recoil"));
         
         if(yml.contains("recoil")){
             if(yml.contains("recoil.shoot-random")) recoil.setShootRandom(yml.getDouble("recoil.shoot-random"));

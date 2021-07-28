@@ -20,11 +20,11 @@ public abstract class Attachment {
     public static Attachment getAttachment(String id){return attachmentMap.get(id);}
     
     
-    //アタッチメントの表示名
+    //アタッチメントの識別名
     protected final String id;
     //設定ファイル
     protected YamlConfiguration yml;
-    //武器の表示名
+    //アタッチメントの表示名
     protected Map<Lang, String> displayName = new HashMap<>();
     //マテリアル
     protected Material material = Material.BARRIER;

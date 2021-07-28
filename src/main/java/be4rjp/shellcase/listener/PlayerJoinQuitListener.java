@@ -49,7 +49,7 @@ public class PlayerJoinQuitListener implements Listener {
                 player.getInventory().clear();
     
                 ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
-                shellCasePlayer.updateBukkitPlayer();
+                shellCasePlayer.updateBukkitPlayer(player);
                 shellCasePlayer.sendSkinRequest();
     
                 try {
@@ -82,7 +82,7 @@ public class PlayerJoinQuitListener implements Listener {
                         ShellCaseTeam shellCaseTeam = new ShellCaseTeam(match, ShellCaseColor.BLUE);
                         shellCaseTeam.join(shellCasePlayer);
     
-                        GunStatusData gunStatusData = new GunStatusData(GunWeapon.getMainWeapon("scar-h"));
+                        GunStatusData gunStatusData = new GunStatusData(GunWeapon.getMainWeapon("scar-h"), shellCasePlayer);
                         shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
                         shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
                     }
