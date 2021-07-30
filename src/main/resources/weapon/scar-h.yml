@@ -5,13 +5,16 @@ display-name:
 material: IRON_HOE
 custom-model-data: 0
 damage: 2.0
+default-bullets: 20
+default-sight: 'rds'
+ads-walk-speed: 0.15
 
 shoot-tick: 3
 fall-tick: 2
 shoot-speed: 2.8
 ads-recoil: 'scar-h-recoil'
 normal-recoil: 'scar-h-recoil'
-recoil:
+hit-shooting-recoil:
   shoot-random: 0.2
   shoot-max-random: 0.5
   increase-min-tick: 10

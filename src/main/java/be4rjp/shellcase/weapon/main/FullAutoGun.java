@@ -66,11 +66,11 @@ public class FullAutoGun extends GunWeapon {
         if(yml.contains("normal-recoil")) this.normalRecoil = Recoil.getRecoil(yml.getString("normal-recoil"));
         
         if(yml.contains("hit-shooting-recoil")){
-            if(yml.contains("recoil.shoot-random")) hipShootingRecoil.setShootRandom(yml.getDouble("recoil.shoot-random"));
-            if(yml.contains("recoil.shoot-max-random")) hipShootingRecoil.setShootMaxRandom(yml.getDouble("recoil.shoot-max-random"));
-            if(yml.contains("recoil.increase-min-tick")) hipShootingRecoil.setMinTick(yml.getInt("recoil.increase-min-tick"));
-            if(yml.contains("recoil.increase-max-tick")) hipShootingRecoil.setMaxTick(yml.getInt("recoil.increase-max-tick"));
-            if(yml.contains("recoil.increase-reset-tick")) hipShootingRecoil.setResetTick(yml.getInt("recoil.increase-reset-tick"));
+            if(yml.contains("hit-shooting-recoil.shoot-random")) hipShootingRecoil.setShootRandom(yml.getDouble("hit-shooting-recoil.shoot-random"));
+            if(yml.contains("hit-shooting-recoil.shoot-max-random")) hipShootingRecoil.setShootMaxRandom(yml.getDouble("hit-shooting-recoil.shoot-max-random"));
+            if(yml.contains("hit-shooting-recoil.increase-min-tick")) hipShootingRecoil.setMinTick(yml.getInt("hit-shooting-recoil.increase-min-tick"));
+            if(yml.contains("hit-shooting-recoil.increase-max-tick")) hipShootingRecoil.setMaxTick(yml.getInt("hit-shooting-recoil.increase-max-tick"));
+            if(yml.contains("hit-shooting-recoil.increase-reset-tick")) hipShootingRecoil.setResetTick(yml.getInt("hit-shooting-recoil.increase-reset-tick"));
         }
     }
     

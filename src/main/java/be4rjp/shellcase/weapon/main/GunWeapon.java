@@ -4,6 +4,7 @@ import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.Passive;
 import be4rjp.shellcase.util.ShellCaseSound;
+import be4rjp.shellcase.weapon.GunStatusData;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.attachment.Attachment;
@@ -54,6 +55,10 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     protected List<Passive> passiveList = new ArrayList<>();
     //弾の大きさ
     protected double bulletSize = 0.1;
+    //デフォルトの最大弾数
+    protected int defaultBullets = 20;
+    //ADS中の移動速度
+    protected float adsWalkSpeed = 0.1F;
     //デフォルトサイト
     protected Sight defaultSight = (Sight) Attachment.getAttachment("rds");
     //リロードアクション
@@ -111,7 +116,10 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     @Override
     public void onLeftClick(ShellCasePlayer shellCasePlayer) {
-        shellCasePlayer.switchingADS();
+        GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(this);
+        if(gunStatusData == null) return;
+    
+        shellCasePlayer.switchADS(gunStatusData);
     }
     
     /**
@@ -138,6 +146,10 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public ReloadActions getCombatReloadActions() {return combatReloadActions;}
     
+    public int getDefaultBullets() {return defaultBullets;}
+    
+    public float getADSWalkSpeed() {return adsWalkSpeed;}
+    
     /**
      * ymlファイルからロードする
      * @param yml
@@ -158,9 +170,11 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         if(yml.contains("sound")) this.shootSound = ShellCaseSound.getSoundByString(Objects.requireNonNull(yml.getString("sound")));
         if(yml.contains("passive")) yml.getStringList("passive").forEach(passiveString -> passiveList.add(Passive.valueOf(passiveString)));
         if(yml.contains("bullet-size")) this.bulletSize = yml.getDouble("bullet-size");
+        if(yml.contains("default-bullets")) this.defaultBullets = yml.getInt("default-bullets");
         if(yml.contains("default-sight")) this.defaultSight = (Sight) Attachment.getAttachment(yml.getString("default-sight"));
         if(yml.contains("reload")) this.reloadActions = ReloadActions.getReloadAction(yml.getString("reload"));
         if(yml.contains("reload-combat")) this.combatReloadActions = ReloadActions.getReloadAction(yml.getString("reload-combat"));
+        if(yml.contains("ads-walk-speed")) this.adsWalkSpeed = (float) yml.getDouble("ads-walk-speed");
         
         loadDetailsData();
     }

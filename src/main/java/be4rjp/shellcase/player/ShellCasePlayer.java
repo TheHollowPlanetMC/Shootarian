@@ -21,7 +21,9 @@ import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import be4rjp.shellcase.util.ShellCaseSound;
+import be4rjp.shellcase.weapon.GunStatusData;
 import be4rjp.shellcase.weapon.WeaponClass;
+import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.main.GunWeapon;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.main.runnable.GunWeaponRunnable;
@@ -260,7 +262,10 @@ public class ShellCasePlayer {
     
     public void setADS(boolean ADS) {synchronized (ADS_LOCK){isADS = ADS;}}
     
-    public void switchingADS(){synchronized (ADS_LOCK){setADS(!isADS);}}
+    public void switchADS(GunStatusData gunStatusData){synchronized (ADS_LOCK){
+        setADS(!isADS);
+        WeaponManager.switchADS(this, gunStatusData, this.isADS);
+    }}
     
     public AchievementData getAchievementData() {return achievementData;}
 

@@ -105,7 +105,7 @@ public class BulletEntity implements ShellCaseEntity {
                 if (shellCasePlayer.isDeath()) continue;
         
                 BoundingBox boundingBox = new BoundingBox(player, bulletSize);
-                if (!rayTrace.intersects(boundingBox, oldDirection.length(), 0.1)) continue;
+                if (!rayTrace.intersects(boundingBox, oldDirection.length(), 0.01)) continue;
                 if (this.team == shellCasePlayer.getShellCaseTeam()) continue;
         
         

@@ -1,7 +1,9 @@
 package be4rjp.shellcase.weapon;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.attachment.Attachment;
+import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.main.GunWeapon;
 import be4rjp.shellcase.weapon.recoil.Recoil;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -122,6 +124,25 @@ public class WeaponManager {
         net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
         Objects.requireNonNull(nmsItemStack.getTag()).setString("swid", ShellCaseWeapon.getId());
         return CraftItemStack.asBukkitCopy(nmsItemStack);
+    }
+    
+    
+    public static void switchADS(ShellCasePlayer shellCasePlayer, GunStatusData gunStatusData, boolean isADS){
+        if(isADS){
+            if(gunStatusData != null) {
+                shellCasePlayer.setWalkSpeed(gunStatusData.getGunWeapon().getADSWalkSpeed());
+    
+                Sight sight = gunStatusData.getSight();
+                if(sight != null) {
+                    shellCasePlayer.sendIconTitle(sight.getUnicode(), "", 0, Integer.MAX_VALUE, 0);
+                    shellCasePlayer.setFOV(sight.getFOV());
+                }
+            }
+        }else{
+            shellCasePlayer.setWalkSpeed(0.2F);
+            shellCasePlayer.setFOV(0.1F);
+            shellCasePlayer.resetTitle();
+        }
     }
     
 }

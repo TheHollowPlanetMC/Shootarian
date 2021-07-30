@@ -31,6 +31,9 @@ public class GunStatusData {
         this.gunWeapon = gunWeapon;
         this.shellCasePlayer = shellCasePlayer;
         
+        this.maxBullets = gunWeapon.getDefaultBullets();
+        this.bullets = gunWeapon.getDefaultBullets();
+        
         sight = gunWeapon.getDefaultSight();
     }
     
