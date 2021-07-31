@@ -66,14 +66,14 @@ public class RayTrace {
         return null;
     }
     
-    public boolean intersects(BoundingBox boundingBox, double blocksAway, double accuracy) {
+    public Vector intersects(BoundingBox boundingBox, double blocksAway, double accuracy) {
         ArrayList<Vector> positions = traverse(blocksAway, accuracy);
         for (Vector position : positions) {
             if (intersects(position, boundingBox.min, boundingBox.max)) {
-                return true;
+                return position;
             }
         }
-        return false;
+        return null;
     }
     
     public static boolean intersects(Vector position, Vector min, Vector max) {

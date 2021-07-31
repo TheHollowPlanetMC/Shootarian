@@ -2,7 +2,7 @@ package be4rjp.shellcase.data.settings;
 
 public enum Settings {
 
-    INK_ORBIT_PARTICLE(0x1, true),
+    BULLET_ORBIT_PARTICLE(0x1, true),
     CHARGE_LASER_PARTICLE(0x2, true);
 
     private final int bitMask;

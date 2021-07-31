@@ -6,17 +6,11 @@ import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.*;
 import be4rjp.shellcase.util.RayTrace;
-import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
-import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.weapon.main.GunWeapon;
-import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -94,9 +88,13 @@ public class BulletEntity implements ShellCaseEntity {
         
         Location oldLocation = location.clone();
         Vector oldDirection = direction.clone();
-    
         
+        Location hitLocation = null;
         if(!remove) {
+            
+            Location playerHitLocation = null;
+            ShellCasePlayer target = null;
+            
             RayTrace rayTrace = new RayTrace(oldLocation.toVector(), oldDirection);
             for (ShellCasePlayer shellCasePlayer : match.getPlayers()) {
                 Player player = shellCasePlayer.getBukkitPlayer();
@@ -105,21 +103,26 @@ public class BulletEntity implements ShellCaseEntity {
                 if (shellCasePlayer.isDeath()) continue;
         
                 BoundingBox boundingBox = new BoundingBox(player, bulletSize);
-                if (!rayTrace.intersects(boundingBox, oldDirection.length(), 0.01)) continue;
+                Vector position = rayTrace.intersects(boundingBox, oldDirection.length(), 0.01);
+                if (position == null) continue;
                 if (this.team == shellCasePlayer.getShellCaseTeam()) continue;
         
-        
+                playerHitLocation = position.toLocation(location.getWorld());
+                target = shellCasePlayer;
+                
                 //プレイヤーへのヒット
-                shellCasePlayer.giveDamage(gunWeapon.getDamage(), shooter, direction, gunWeapon);
+                //shellCasePlayer.giveDamage(gunWeapon.getDamage(), shooter, direction, gunWeapon);
                 //match.spawnParticle(INK_HIT_PARTICLE, shellCasePlayer.getLocation().add(0.0, 1.0, 0.0));
         
                 remove = true;
             }
             
+            Location blockHitLocation = null;
+            
             try {
                 RayTraceResult rayTraceResult = oldLocation.getWorld().rayTraceBlocks(oldLocation, oldDirection, oldDirection.length());
                 if (rayTraceResult != null) {
-                    Location hitLocation = rayTraceResult.getHitPosition().toLocation(oldLocation.getWorld());
+                    blockHitLocation = rayTraceResult.getHitPosition().toLocation(oldLocation.getWorld());
                     
             
                     //ブロックへのヒット
@@ -131,16 +134,47 @@ public class BulletEntity implements ShellCaseEntity {
             } catch (Exception e) {
                 remove();
             }
+            
+            
+            boolean playerHit = false;
+            boolean blockHit = false;
+            if(playerHitLocation != null && blockHitLocation == null) {
+                playerHit = true;
+            }
+            if(playerHitLocation == null && blockHitLocation != null){
+                blockHit = true;
+            }
+            if(playerHitLocation != null && blockHitLocation != null){
+                if(LocationUtil.distanceSquaredSafeDifferentWorld(playerHitLocation, location) < LocationUtil.distanceSquaredSafeDifferentWorld(blockHitLocation, location)){
+                    playerHit = true;
+                }else{
+                    blockHit = true;
+                }
+            }
+            
+            if(playerHit){
+                target.giveDamage(gunWeapon.getDamage(), shooter, direction, gunWeapon);
+                hitLocation = playerHitLocation;
+            }
+            if(blockHit){
+                //ブロックへのヒット
+                hitLocation = blockHitLocation;
+            }
         }
         
         if(tick >= fallTick) {
-            //direction.normalize().multiply(0.9);
-            //direction.add(new Vector(0, -0.21, 0));
-            direction = originalDirection.clone().add(new Vector(0.0, ((double) tick * tick) * -0.045, 0.0));
+            double t = ((double) tick / 20.0);
+            direction = originalDirection.clone().add(new Vector(0.0, t * t * -4.9, 0.0));
         }
         location.add(direction);
         
-        if(!remove && particle) match.spawnParticle(new NormalParticle(Particle.CRIT, 0, direction.getX(), direction.getY(), direction.getZ(), 1), oldLocation, Settings.INK_ORBIT_PARTICLE);
+        if(particle){
+            if(hitLocation == null) {
+                match.spawnParticle(new NormalParticle(Particle.CRIT, 0, direction.getX(), direction.getY(), direction.getZ(), 1), oldLocation, Settings.BULLET_ORBIT_PARTICLE);
+            }else{
+                match.spawnParticle(new NormalParticle(Particle.CRIT, 0, hitLocation.getX() - oldLocation.getX(), hitLocation.getY() - oldLocation.getY(), hitLocation.getZ() - oldLocation.getZ(),  1), oldLocation, Settings.BULLET_ORBIT_PARTICLE);
+            }
+        }
         
         tick++;
     }
