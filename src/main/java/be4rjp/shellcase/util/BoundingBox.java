@@ -31,4 +31,15 @@ public class BoundingBox {
         return max.clone().add(min).multiply(0.5);
     }
     
+    public boolean isInBox(Vector position){
+        if(min.getX() > position.getX()) return false;
+        if(min.getY() > position.getY()) return false;
+        if(min.getZ() > position.getZ()) return false;
+        if(position.getX() > max.getX()) return false;
+        if(position.getY() > max.getY()) return false;
+        if(position.getZ() > max.getZ()) return false;
+        
+        return true;
+    }
+    
 }

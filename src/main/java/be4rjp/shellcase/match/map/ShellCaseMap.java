@@ -39,7 +39,7 @@ public abstract class ShellCaseMap {
     
     
     
-    public static void loadAllShellCaseMap(){
+    public static void loadAllMap(){
         initialize();
         
         ShellCase.getPlugin().getLogger().info("Loading maps...");

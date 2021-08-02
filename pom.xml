@@ -112,7 +112,7 @@
         <dependency>
             <groupId>com.github.Be4rJP</groupId>
             <artifactId>Parallel</artifactId>
-            <version>2905da853a</version>
+            <version>926c61e8e1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -31,7 +31,7 @@ public final class ShellCase extends JavaPlugin {
     
         ShellCaseConfig.load();
         MessageManager.loadAllMessage();
-        ShellCaseMap.loadAllShellCaseMap();
+        ShellCaseMap.loadAllMap();
         
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new CancelListener(), this);

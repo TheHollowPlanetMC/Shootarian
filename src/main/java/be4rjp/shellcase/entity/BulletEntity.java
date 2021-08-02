@@ -6,10 +6,12 @@ import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.*;
 import be4rjp.shellcase.util.RayTrace;
+import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
 import be4rjp.shellcase.weapon.main.GunWeapon;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -118,16 +120,13 @@ public class BulletEntity implements ShellCaseEntity {
             }
             
             Location blockHitLocation = null;
+            Block hitBlock = null;
             
             try {
                 RayTraceResult rayTraceResult = oldLocation.getWorld().rayTraceBlocks(oldLocation, oldDirection, oldDirection.length());
                 if (rayTraceResult != null) {
                     blockHitLocation = rayTraceResult.getHitPosition().toLocation(oldLocation.getWorld());
-                    
-            
-                    //ブロックへのヒット
-                    //match.playSound(INK_HIT_SOUND, hitLocation);
-                    //match.spawnParticle(INK_HIT_PARTICLE, hitLocation);
+                    hitBlock = rayTraceResult.getHitBlock();
             
                     remove = true;
                 }
@@ -158,6 +157,10 @@ public class BulletEntity implements ShellCaseEntity {
             }
             if(blockHit){
                 //ブロックへのヒット
+                if(hitBlock != null) {
+                    match.spawnParticle(new BlockParticle(Particle.BLOCK_CRACK, 3, 0, 0, 0, 1, hitBlock.getBlockData()), blockHitLocation);
+                    match.playSound(new ShellCaseSound(hitBlock.getSoundGroup().getBreakSound(), 1.0F, 1.0F), blockHitLocation);
+                }
                 hitLocation = blockHitLocation;
             }
         }

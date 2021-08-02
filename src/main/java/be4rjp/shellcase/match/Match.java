@@ -1,6 +1,7 @@
 package be4rjp.shellcase.match;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.block.BlockUpdater;
 import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.entity.ShellCaseEntity;
 import be4rjp.shellcase.entity.ShellCaseEntityTickRunnable;
@@ -34,6 +35,8 @@ public abstract class Match {
     protected MatchRunnable matchRunnable;
     //この試合のチーム
     protected List<ShellCaseTeam> ShellCaseTeams = new ArrayList<>();
+    //この試合のブロックアップデーター
+    protected BlockUpdater blockUpdater = new BlockUpdater(this);
     //ShellCaseTeamとスコアボードのチームのマップ
     protected Map<ShellCaseTeam, Team> teamMap = new HashMap<>();
     //試合中に動作するスケジューラー
@@ -61,6 +64,7 @@ public abstract class Match {
     public void start(){
         this.matchRunnable.start();
         this.matchStatus = MatchStatus.IN_PROGRESS;
+        this.blockUpdater.start();
         
         this.getPlayers().forEach(this::initializePlayer);
         this.entityTickRunnable.start();
