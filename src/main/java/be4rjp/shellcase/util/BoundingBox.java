@@ -42,4 +42,7 @@ public class BoundingBox {
         return true;
     }
     
+    public Vector getMax() {return max;}
+    
+    public Vector getMin() {return min;}
 }

@@ -1,17 +1,21 @@
 package be4rjp.shellcase.weapon;
 
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.match.map.structure.MapStructureData;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.LocationUtil;
 import be4rjp.shellcase.util.ShellCaseSound;
+import be4rjp.shellcase.util.SphereBlocks;
 import be4rjp.shellcase.util.math.Sphere;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
@@ -104,13 +108,13 @@ public abstract class ShellCaseWeapon {
     
     /**
      * 爆発を作成する
-     * @param ShellCasePlayer 爆発を起こしたプレイヤー
+     * @param shellCasePlayer 爆発を起こしたプレイヤー
      * @param ShellCaseWeapon 爆発を起こした武器
      * @param center 爆発の中心
      * @param radius 爆発の半径
      */
-    public static void createExplosion(ShellCasePlayer ShellCasePlayer, ShellCaseWeapon ShellCaseWeapon, Location center, double radius){
-        ShellCaseTeam shellCaseTeam = ShellCasePlayer.getShellCaseTeam();
+    public static void createExplosion(ShellCasePlayer shellCasePlayer, ShellCaseWeapon ShellCaseWeapon, Location center, double radius){
+        ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
         if(shellCaseTeam == null) return;
     
         //エフェクト
@@ -129,7 +133,23 @@ public abstract class ShellCaseWeapon {
             Location loc = otherTeamPlayer.getLocation();
             Vector velocity = new Vector(loc.getX() - center.getX(), loc.getY() - center.getY(), loc.getZ() - center.getZ());
             double damage = ((radius - distance) / radius) * ShellCaseWeapon.getDamage();
-            otherTeamPlayer.giveDamage((float) damage, ShellCasePlayer, velocity, ShellCaseWeapon);
+            otherTeamPlayer.giveDamage((float) damage, shellCasePlayer, velocity, ShellCaseWeapon);
+        }
+        
+        //破壊
+        SphereBlocks sphereBlocks = new SphereBlocks(radius, center);
+        for(Block block : sphereBlocks.getBlocks()){
+            double distance = Math.sqrt(LocationUtil.distanceSquaredSafeDifferentWorld(center, block.getLocation()));
+            if(distance * Math.random() > radius / 1.5) continue;
+            
+            for(MapStructureData mapStructureData : shellCaseTeam.getMatch().getMapStructureData()){
+                
+                if(!mapStructureData.getBoundingBox().isInBox(block.getLocation().toVector())) continue;
+                mapStructureData.giveDamage(1);
+                
+                if(mapStructureData.isDead()) continue;
+                shellCaseTeam.getMatch().getBlockUpdater().remove(block);
+            }
         }
     }
 }

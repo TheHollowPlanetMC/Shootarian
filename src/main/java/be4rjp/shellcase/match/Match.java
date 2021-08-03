@@ -7,6 +7,8 @@ import be4rjp.shellcase.entity.ShellCaseEntity;
 import be4rjp.shellcase.entity.ShellCaseEntityTickRunnable;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.match.map.ShellCaseMap;
+import be4rjp.shellcase.match.map.structure.MapStructure;
+import be4rjp.shellcase.match.map.structure.MapStructureData;
 import be4rjp.shellcase.match.runnable.MatchRunnable;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ObservableOption;
@@ -28,7 +30,7 @@ import java.util.*;
 public abstract class Match {
     
     //この試合のマップ
-    protected final ShellCaseMap ShellCaseMap;
+    protected final ShellCaseMap shellCaseMap;
     //状態
     protected MatchStatus matchStatus = MatchStatus.WAITING;
     //試合のスケジューラー
@@ -45,15 +47,17 @@ public abstract class Match {
     protected Set<ShellCaseEntity> ShellCaseEntities = new ConcurrentSet<>();
     //エンティティの実行用tickRunnable
     protected ShellCaseEntityTickRunnable entityTickRunnable = new ShellCaseEntityTickRunnable(this);
+    //建造物のデータ
+    protected Set<MapStructureData> mapStructureData = new HashSet<>();
     
     //試合のスコアボード
     protected final ShellCaseScoreboard scoreboard;
     
 
     public Match(ShellCaseMap ShellCaseMap){
-        this.ShellCaseMap = ShellCaseMap;
+        this.shellCaseMap = ShellCaseMap;
 
-        this.scoreboard = new ShellCaseScoreboard("§6§lshellcase§r " + ShellCase.VERSION, 10);
+        this.scoreboard = new ShellCaseScoreboard("§6§lShellCase§r " + ShellCase.VERSION, 10);
     }
 
     public abstract MatchType getType();
@@ -68,6 +72,17 @@ public abstract class Match {
         
         this.getPlayers().forEach(this::initializePlayer);
         this.entityTickRunnable.start();
+    }
+    
+    /**
+     * 建造物のデータの準備
+     */
+    public void initializeStructure(){
+        for(MapStructure mapStructure : getShellCaseMap().getMapStructures()){
+            MapStructureData mapStructureData = new MapStructureData(this, mapStructure);
+            mapStructureData.initialize();
+            this.mapStructureData.add(mapStructureData);
+        }
     }
     
     /**
@@ -123,7 +138,7 @@ public abstract class Match {
      * この試合のゲームマップを取得する
      * @return ShellCaseMap
      */
-    public ShellCaseMap getShellCaseMap() {return ShellCaseMap;}
+    public ShellCaseMap getShellCaseMap() {return shellCaseMap;}
     
     /**
      * この試合のスコアボードを取得する
@@ -137,6 +152,11 @@ public abstract class Match {
      */
     public MatchStatus getMatchStatus() {return matchStatus;}
     
+    /**
+     * 建造物のデータを取得する
+     * @return
+     */
+    public Set<MapStructureData> getMapStructureData() {return mapStructureData;}
     
     /**
      * ランダムにチームを取得する
@@ -200,6 +220,14 @@ public abstract class Match {
     
     
     /**
+     * ブロックのアップデーターを取得する
+     * @return
+     */
+    public BlockUpdater getBlockUpdater() {
+        return blockUpdater;
+    }
+    
+    /**
      * プレイヤーをチームのスポーン場所にテレポートさせます
      * @param ShellCasePlayer
      */
@@ -208,7 +236,7 @@ public abstract class Match {
         if(ShellCaseTeam == null) return;
     
         int index = this.getShellCaseTeams().indexOf(ShellCaseTeam);
-        ShellCasePlayer.teleport(ShellCaseMap.getTeamLocation(index));
+        ShellCasePlayer.teleport(shellCaseMap.getTeamLocation(index));
     }
 
 

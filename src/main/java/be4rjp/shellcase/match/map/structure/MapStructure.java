@@ -57,7 +57,7 @@ public class MapStructure {
     
     private ParallelStructure structure = null;
     
-    private Vector boundingBoxSize = new Vector(0.0, 0.0, 0.0);
+    private Vector boundingBoxSize = new Vector(10.0, 10.0, 10.0);
     
     private StructureData defaultData = null;
     

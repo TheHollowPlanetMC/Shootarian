@@ -92,6 +92,7 @@ public class PlayerJoinQuitListener implements Listener {
                     public void run() {
                         if(index == 0){
                             match.initialize();
+                            match.initializeStructure();
                             match.start();
                         }
                         

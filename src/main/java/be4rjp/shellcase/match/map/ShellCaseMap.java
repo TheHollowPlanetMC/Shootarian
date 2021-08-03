@@ -4,6 +4,7 @@ import be4rjp.cinema4c.data.play.MovieData;
 import be4rjp.cinema4c.player.PlayManager;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.match.map.structure.MapStructure;
 import be4rjp.shellcase.util.ConfigUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -91,6 +92,8 @@ public abstract class ShellCaseMap {
     protected MovieData introMovie = null;
     //リザルト用ムービー
     protected MovieData resultMovie = null;
+    //建造物
+    protected Set<MapStructure> mapStructures = new HashSet<>();
     
     
     /**
@@ -167,6 +170,12 @@ public abstract class ShellCaseMap {
             if(resultMovie == null) throw new IllegalArgumentException("No movie data with the name '" + movieName + "' was found.");
         }
         
+        if(yml.contains("structures")){
+            for(String line : yml.getStringList("structures")){
+                mapStructures.add(MapStructure.getMapStructure(line));
+            }
+        }
+        
         loadDetailsData();
     }
     
@@ -187,8 +196,8 @@ public abstract class ShellCaseMap {
      * @return MovieData
      */
     public MovieData getResultMovie() {return resultMovie;}
-
-
+    
+    public Set<MapStructure> getMapStructures() {return mapStructures;}
     
     public enum MapType{
         NORMAL_PVP(ConquestMap.class);

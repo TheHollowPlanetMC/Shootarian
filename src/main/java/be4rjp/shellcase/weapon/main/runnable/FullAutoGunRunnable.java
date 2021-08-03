@@ -6,6 +6,7 @@ import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.ShellCaseSound;
 import be4rjp.shellcase.weapon.GunStatusData;
+import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.main.FullAutoGun;
 import be4rjp.shellcase.weapon.recoil.Recoil;
 import be4rjp.shellcase.weapon.recoil.RecoilPattern;
@@ -111,6 +112,11 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                                     clickTick += fullAutoGun.getShootTick();
                                 }
                                 shootIndex++;
+                                
+                                if(taskTick % 30 == 0){
+                                    ShellCaseWeapon.createExplosion(shellCasePlayer, gunWeapon, shellCasePlayer.getLocation(), 5);
+                                }
+                                
                             }else{
                                 noBullet = true;
                                 gunStatusData.reload();

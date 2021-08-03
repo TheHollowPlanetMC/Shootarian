@@ -5,6 +5,7 @@ import be4rjp.shellcase.listener.*;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.PlayerLobbyMatch;
 import be4rjp.shellcase.match.map.ShellCaseMap;
+import be4rjp.shellcase.match.map.structure.MapStructure;
 import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
@@ -31,6 +32,7 @@ public final class ShellCase extends JavaPlugin {
     
         ShellCaseConfig.load();
         MessageManager.loadAllMessage();
+        MapStructure.loadAllMapStructure();
         ShellCaseMap.loadAllMap();
         
         PluginManager pluginManager = Bukkit.getPluginManager();

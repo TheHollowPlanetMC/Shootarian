@@ -10,3 +10,6 @@ team-spawn-locations:
 
 intro-movie: 'intro-shionome'
 result-movie: 'result-shionome'
+
+structures:
+  - 'structure-1'

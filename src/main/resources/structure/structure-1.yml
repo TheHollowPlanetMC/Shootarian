@@ -1,0 +1,5 @@
+base-location: 'world, -28, 64, 71'
+bounding-box-size: '10, 8, 13'
+default-data: 'tst-01'
+collapse-data: 'tst-02'
+max-health: 100
