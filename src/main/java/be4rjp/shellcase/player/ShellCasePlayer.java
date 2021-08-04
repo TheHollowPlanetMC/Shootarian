@@ -21,12 +21,13 @@ import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import be4rjp.shellcase.util.ShellCaseSound;
-import be4rjp.shellcase.weapon.GunStatusData;
+import be4rjp.shellcase.weapon.WeaponStatusData;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.WeaponClass;
 import be4rjp.shellcase.weapon.WeaponManager;
-import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
-import be4rjp.shellcase.weapon.main.runnable.GunWeaponRunnable;
+import be4rjp.shellcase.weapon.gun.runnable.GunWeaponRunnable;
 import io.papermc.lib.PaperLib;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Bukkit;
@@ -83,9 +84,8 @@ public class ShellCasePlayer {
     public synchronized static boolean isCreated(String uuid){
         return playerMap.containsKey(uuid);
     }
-    
-    //アーマーがインクをはじく音
-    private static final ShellCaseSound REPEL_SOUND = new ShellCaseSound(Sound.ENTITY_SPLASH_POTION_BREAK, 1F, 1.5F);
+
+
     //プレイヤーが攻撃をヒットさせた時に鳴らす通知音
     private static final ShellCaseSound HIT_SOUND_FOR_ATTACKER = new ShellCaseSound(Sound.ENTITY_PLAYER_HURT, 0.5F, 1F);
     //プレイヤーが攻撃を受けた時に鳴らす音
@@ -118,6 +118,8 @@ public class ShellCasePlayer {
     private int rank = 0;
     //銃のスケジューラーのマップ
     private final Map<GunWeapon, GunWeaponRunnable> mainWeaponTaskMap = new ConcurrentHashMap<>();
+    //武器とそのステータスのマップ
+    private final Map<ShellCaseWeapon, WeaponStatusData> weaponStatusDataMap = new ConcurrentHashMap<>();
     //装備しているクラス
     private final WeaponClass weaponClass = new WeaponClass();
     //プレイヤーの体力
@@ -305,6 +307,8 @@ public class ShellCasePlayer {
         this.setFly(false);
         this.setWalkSpeed(0.2F);
         this.setFoodLevel(20);
+        this.clearGunWeaponTasks();
+        this.weaponStatusDataMap.clear();
     }
     
     /**
@@ -504,7 +508,27 @@ public class ShellCasePlayer {
         PacketPlayOutAbilities abilitiesPacket = new PacketPlayOutAbilities(abilities);
         this.sendPacket(abilitiesPacket);
     }
-    
+
+    /**
+     * 武器とそのステータスのマップを取得します。
+     * @return Map<ShellCaseWeapon, WeaponStatusData>
+     */
+    public Map<ShellCaseWeapon, WeaponStatusData> getWeaponStatusDataMap() {return weaponStatusDataMap;}
+
+    /**
+     * 武器のステータスを取得する
+     * @return
+     */
+    public WeaponStatusData getWeaponStatusData(ShellCaseWeapon shellCaseWeapon){
+        WeaponStatusData weaponStatusData = this.weaponClass.getWeaponStatusData(shellCaseWeapon);
+        if(weaponStatusData != null) return weaponStatusData;
+
+        weaponStatusData = this.weaponStatusDataMap.get(shellCaseWeapon);
+        if(weaponStatusData != null) return weaponStatusData;
+
+        return WeaponStatusData.createWeaponStatusData(shellCaseWeapon, this);
+    }
+
     /**
      * プレイヤーの移動速度を取得する
      * @return float
@@ -852,13 +876,11 @@ public class ShellCasePlayer {
             Vector XZVec = new Vector(velocity.getX(), 0.0, velocity.getZ());
             if(XZVec.lengthSquared() > 0.0) XZVec.normalize();
             player.setVelocity(XZVec);
-            this.shellCaseTeam.getMatch().playSound(REPEL_SOUND);
         }
         
         if(this.getHealth() + this.getArmor() > damage){
             if(this.getArmor() > damage){
                 this.setArmor(this.getArmor() - damage);
-                this.shellCaseTeam.getMatch().playSound(REPEL_SOUND, player.getLocation());
             }else{
                 //give damage
                 float d = damage - this.getArmor();

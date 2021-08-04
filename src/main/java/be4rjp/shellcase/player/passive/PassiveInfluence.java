@@ -1,10 +1,7 @@
 package be4rjp.shellcase.player.passive;
 
-import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

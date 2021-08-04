@@ -16,6 +16,8 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
@@ -59,8 +61,14 @@ public abstract class ShellCaseWeapon {
     protected final String id;
     //武器の表示名
     protected Map<Lang, String> displayName = new HashMap<>();
+    //武器のマテリアル
+    protected Material material = Material.BARRIER;
+    //CustomModelDataのID
+    protected int modelID = 0;
     //一発分のダメージ
-    protected float damage = 0.0F;
+    protected float damage = 1.0F;
+    //デフォルトの最大弾数
+    protected int defaultBullets = 20;
     
     public ShellCaseWeapon(String id){
         this.id = id;
@@ -80,14 +88,50 @@ public abstract class ShellCaseWeapon {
         }
     }
 
-    
-    public String getId(){return id;}
+
+    /**
+     * ItemStackを取得する
+     * @return ItemStack
+     */
+    public ItemStack getItemStack(Lang lang){
+        ItemStack itemStack = new ItemStack(material);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(this.getDisplayName(lang));
+        itemMeta.setCustomModelData(modelID);
+        itemStack.setItemMeta(itemMeta);
+
+        return WeaponManager.writeNBTTag(this, itemStack);
+    }
+
+    /**
+     * 識別名を取得する
+     * @return String
+     */
+    public String getID() {return id;}
+
+    /**
+     * マテリアルを取得する
+     * @return Material
+     */
+    public Material getMaterial() {return material;}
+
+    /**
+     * CustomModelDataのIDを取得する
+     * @return int
+     */
+    public int getModelID() {return modelID;}
     
     /**
      * 一発分のダメージを取得する
      * @return double
      */
     public float getDamage() {return damage;}
+
+    /**
+     * デフォルトの最大弾数を取得する
+     * @return
+     */
+    public int getDefaultBullets() {return defaultBullets;}
     
     /**
      * この武器を持って右クリックしたときの処理

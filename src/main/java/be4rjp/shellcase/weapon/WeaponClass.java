@@ -1,7 +1,8 @@
 package be4rjp.shellcase.weapon;
 
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.entity.Player;
 
 public class WeaponClass {
@@ -13,10 +14,17 @@ public class WeaponClass {
     
     public GunStatusData getMainWeapon() {return mainWeapon;}
     
-    public GunStatusData getGunStatusData(GunWeapon gunWeapon){
+    private GunStatusData getGunStatusData(GunWeapon gunWeapon){
         if(mainWeapon == null) return null;
         if(mainWeapon.getGunWeapon() == gunWeapon) return mainWeapon;
         
+        return null;
+    }
+
+    public WeaponStatusData getWeaponStatusData(ShellCaseWeapon shellCaseWeapon){
+        if(mainWeapon == null) return null;
+        if(mainWeapon.getGunWeapon() == shellCaseWeapon) return mainWeapon;
+
         return null;
     }
     

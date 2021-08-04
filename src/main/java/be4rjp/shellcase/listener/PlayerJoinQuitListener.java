@@ -2,22 +2,14 @@ package be4rjp.shellcase.listener;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.ShellCaseConfig;
-import be4rjp.shellcase.data.HeadGearPossessionData;
-import be4rjp.shellcase.data.WeaponPossessionData;
 import be4rjp.shellcase.match.ConquestMatch;
-import be4rjp.shellcase.match.Match;
-import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.map.ShellCaseMap;
 import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.packet.PacketHandler;
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.player.costume.HeadGear;
-import be4rjp.shellcase.player.costume.HeadGearData;
-import be4rjp.shellcase.player.passive.Gear;
-import be4rjp.shellcase.weapon.GunStatusData;
-import be4rjp.shellcase.weapon.WeaponManager;
-import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.papermc.lib.PaperLib;
@@ -102,7 +94,7 @@ public class PlayerJoinQuitListener implements Listener {
                             team1.join(shellCasePlayer);
                         }
     
-                        GunStatusData gunStatusData = new GunStatusData(GunWeapon.getMainWeapon("scar-h"), shellCasePlayer);
+                        GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
                         shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
                         shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
                         

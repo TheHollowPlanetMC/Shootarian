@@ -1,7 +1,7 @@
-package be4rjp.shellcase.weapon.main.runnable;
+package be4rjp.shellcase.weapon.gun.runnable;
 
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class GunWeaponRunnable extends BukkitRunnable {

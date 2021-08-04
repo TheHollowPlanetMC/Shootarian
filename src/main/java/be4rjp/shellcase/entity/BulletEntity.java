@@ -8,7 +8,7 @@ import be4rjp.shellcase.util.*;
 import be4rjp.shellcase.util.RayTrace;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
-import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;

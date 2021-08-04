@@ -1,12 +1,11 @@
-package be4rjp.shellcase.weapon.main;
+package be4rjp.shellcase.weapon.gun;
 
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.Passive;
 import be4rjp.shellcase.util.ShellCaseSound;
-import be4rjp.shellcase.weapon.GunStatusData;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
-import be4rjp.shellcase.weapon.WeaponManager;
+import be4rjp.shellcase.weapon.WeaponStatusData;
 import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.reload.ReloadActions;
@@ -14,8 +13,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +31,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
      * @param id 識別ID
      * @return MainWeapon
      */
-    public static GunWeapon getMainWeapon(String id){return gunWeaponMap.get(id);}
+    public static GunWeapon getGunWeapon(String id){return gunWeaponMap.get(id);}
     
     /**
      * メインウエポンのリストを取得します
@@ -45,18 +42,12 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     //設定ファイル
     protected YamlConfiguration yml;
-    //武器のマテリアル
-    protected Material material = Material.BARRIER;
-    //CustomModelDataのID
-    protected int modelID = 0;
     //射撃時に鳴らすサウンド
     protected ShellCaseSound shootSound = new ShellCaseSound(Sound.ENTITY_PIG_STEP, 0.3F, 1F);
     //武器のパッシブ効果
     protected List<Passive> passiveList = new ArrayList<>();
     //弾の大きさ
     protected double bulletSize = 0.1;
-    //デフォルトの最大弾数
-    protected int defaultBullets = 20;
     //ADS中の移動速度
     protected float adsWalkSpeed = 0.1F;
     //デフォルトサイト
@@ -72,38 +63,6 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     }
     
     /**
-     * ItemStackを取得する
-     * @return ItemStack
-     */
-    public ItemStack getItemStack(Lang lang){
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(this.getDisplayName(lang));
-        itemMeta.setCustomModelData(modelID);
-        itemStack.setItemMeta(itemMeta);
-
-        return WeaponManager.writeNBTTag(this, itemStack);
-    }
-    
-    /**
-     * 識別名を取得する
-     * @return String
-     */
-    public String getID() {return id;}
-    
-    /**
-     * マテリアルを取得する
-     * @return Material
-     */
-    public Material getMaterial() {return material;}
-    
-    /**
-     * CustomModelDataのIDを取得する
-     * @return int
-     */
-    public int getModelID() {return modelID;}
-    
-    /**
      * 射撃時に鳴らすサウンドを取得する
      * @return ShellCaseSound
      */
@@ -116,10 +75,10 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     @Override
     public void onLeftClick(ShellCasePlayer shellCasePlayer) {
-        GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(this);
+        WeaponStatusData gunStatusData = shellCasePlayer.getWeaponStatusData(this);
         if(gunStatusData == null) return;
     
-        shellCasePlayer.switchADS(gunStatusData);
+        shellCasePlayer.switchADS((GunStatusData) gunStatusData);
     }
     
     /**
@@ -145,8 +104,6 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     public ReloadActions getReloadActions() {return reloadActions;}
     
     public ReloadActions getCombatReloadActions() {return combatReloadActions;}
-    
-    public int getDefaultBullets() {return defaultBullets;}
     
     public float getADSWalkSpeed() {return adsWalkSpeed;}
     

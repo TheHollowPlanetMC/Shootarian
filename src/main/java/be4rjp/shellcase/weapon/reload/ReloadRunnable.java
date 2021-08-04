@@ -2,7 +2,7 @@ package be4rjp.shellcase.weapon.reload;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ReloadRunnable extends BukkitRunnable {
@@ -29,7 +29,7 @@ public class ReloadRunnable extends BukkitRunnable {
         if(tick == 0){
             gunStatusData.setReloading(true);
             gunStatusData.setBullets(0);
-            gunStatusData.updateGunDisplayName(shellCasePlayer);
+            gunStatusData.updateDisplayName(shellCasePlayer);
         }
         
         reloadActions.play(shellCasePlayer, tick);
@@ -37,7 +37,7 @@ public class ReloadRunnable extends BukkitRunnable {
         if(tick == gunStatusData.getGunWeapon().getReloadActions().getFinalTick()){
             gunStatusData.setBullets(gunStatusData.getMaxBullets());
             gunStatusData.setReloading(false);
-            gunStatusData.updateGunDisplayName(shellCasePlayer);
+            gunStatusData.updateDisplayName(shellCasePlayer);
             this.cancel();
         }
         

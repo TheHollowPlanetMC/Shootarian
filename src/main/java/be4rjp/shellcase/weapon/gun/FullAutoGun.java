@@ -1,9 +1,9 @@
-package be4rjp.shellcase.weapon.main;
+package be4rjp.shellcase.weapon.gun;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.GunStatusData;
-import be4rjp.shellcase.weapon.main.runnable.FullAutoGunRunnable;
+import be4rjp.shellcase.weapon.WeaponStatusData;
+import be4rjp.shellcase.weapon.gun.runnable.FullAutoGunRunnable;
 import be4rjp.shellcase.weapon.recoil.Recoil;
 
 public class FullAutoGun extends GunWeapon {
@@ -40,13 +40,13 @@ public class FullAutoGun extends GunWeapon {
     
     @Override
     public void onRightClick(ShellCasePlayer shellCasePlayer) {
-        GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(this);
+        WeaponStatusData gunStatusData = shellCasePlayer.getWeaponStatusData(this);
         if(gunStatusData == null) return;
         
         FullAutoGunRunnable runnable = (FullAutoGunRunnable) shellCasePlayer.getGunWeaponTaskMap().get(this);
         if(runnable == null){
             shellCasePlayer.clearGunWeaponTasks();
-            runnable = new FullAutoGunRunnable(this, gunStatusData, shellCasePlayer);
+            runnable = new FullAutoGunRunnable(this, (GunStatusData) gunStatusData, shellCasePlayer);
             runnable.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 1);
             shellCasePlayer.getGunWeaponTaskMap().put(this, runnable);
         }

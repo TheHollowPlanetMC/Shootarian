@@ -1,16 +1,14 @@
-package be4rjp.shellcase.weapon.main.runnable;
+package be4rjp.shellcase.weapon.gun.runnable;
 
 import be4rjp.cinema4c.util.Vec2f;
 import be4rjp.shellcase.entity.BulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.ShellCaseSound;
-import be4rjp.shellcase.weapon.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
-import be4rjp.shellcase.weapon.main.FullAutoGun;
-import be4rjp.shellcase.weapon.recoil.Recoil;
+import be4rjp.shellcase.weapon.gun.FullAutoGun;
 import be4rjp.shellcase.weapon.recoil.RecoilPattern;
-import be4rjp.shellcase.weapon.reload.ReloadRunnable;
 import net.minecraft.server.v1_15_R1.PacketPlayOutPosition;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -86,7 +84,7 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                             if(gunStatusData.consumeBullets(1)) {
                                 noBullet = false;
                                 
-                                gunStatusData.updateGunDisplayName(shellCasePlayer);
+                                gunStatusData.updateDisplayName(shellCasePlayer);
                                 
                                 //射撃
                                 Vector direction = player.getEyeLocation().getDirection();

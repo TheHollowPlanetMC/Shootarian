@@ -1,4 +1,4 @@
-package be4rjp.shellcase.weapon.main.ui;
+package be4rjp.shellcase.weapon.gun.ui;
 
 import be4rjp.shellcase.ShellCase;
 import org.bukkit.configuration.file.YamlConfiguration;

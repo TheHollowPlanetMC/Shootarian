@@ -66,6 +66,7 @@ ja_JP:
   match-result-win: '&aYou win!'
   match-result-lose: '&cYou lose...'
   gun-reload: '&c&lリロード中...'
+  gadget-flag-grenade: 'フラググレネード'
 en_US:
   none: ''
   none-s: '%s'
@@ -134,3 +135,4 @@ en_US:
   match-result-win: '&aYou win!'
   match-result-lose: '&cYou lose...'
   gun-reload: '&c&lReloading...'
+  gadget-flag-grenade: 'Flag grenade'

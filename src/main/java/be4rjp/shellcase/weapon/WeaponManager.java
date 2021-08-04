@@ -4,7 +4,9 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.attachment.Sight;
-import be4rjp.shellcase.weapon.main.GunWeapon;
+import be4rjp.shellcase.weapon.gadget.GadgetWeapon;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.recoil.Recoil;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
@@ -34,7 +36,18 @@ public class WeaponManager {
         String id = nmsItemStack.getTag().getString("swid");
         if(id == null) return null;
         
-        return GunWeapon.getMainWeapon(id);
+        return GunWeapon.getGunWeapon(id);
+    }
+
+    public static GadgetWeapon getGadgetWeaponByItem(ItemStack itemStack){
+        if(itemStack == null) return null;
+        net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        if(nmsItemStack.getTag() == null) return null;
+
+        String id = nmsItemStack.getTag().getString("swid");
+        if(id == null) return null;
+
+        return GadgetWeapon.getGadgetWeapon(id);
     }
     
     
@@ -122,7 +135,7 @@ public class WeaponManager {
 
     public static ItemStack writeNBTTag(ShellCaseWeapon ShellCaseWeapon, ItemStack itemStack){
         net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        Objects.requireNonNull(nmsItemStack.getTag()).setString("swid", ShellCaseWeapon.getId());
+        Objects.requireNonNull(nmsItemStack.getTag()).setString("swid", ShellCaseWeapon.getID());
         return CraftItemStack.asBukkitCopy(nmsItemStack);
     }
     

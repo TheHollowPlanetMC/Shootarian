@@ -4,11 +4,11 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.GunStatusData;
+import be4rjp.shellcase.weapon.WeaponStatusData;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.WeaponManager;
-import be4rjp.shellcase.weapon.main.GunWeapon;
-import be4rjp.shellcase.weapon.reload.ReloadRunnable;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -64,7 +64,7 @@ public class PlayerItemClickListener implements Listener {
                 Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
                 //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
 
-                GunStatusData gunStatusData = shellCasePlayer.getWeaponClass().getGunStatusData(gunWeapon);
+                GunStatusData gunStatusData = (GunStatusData) shellCasePlayer.getWeaponStatusData(gunWeapon);
                 if(gunStatusData == null) return;
 
                 gunStatusData.reload();
