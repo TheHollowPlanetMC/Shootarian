@@ -111,10 +111,6 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                                 }
                                 shootIndex++;
                                 
-                                if(taskTick % 30 == 0){
-                                    ShellCaseWeapon.createExplosion(shellCasePlayer, gunWeapon, shellCasePlayer.getLocation(), 5);
-                                }
-                                
                             }else{
                                 noBullet = true;
                                 gunStatusData.reload();

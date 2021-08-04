@@ -20,9 +20,6 @@ public class GunStatusData extends WeaponStatusData {
     
     private int maxBullets = 20;
     
-    //弾数系の動作の同期用インスタンス
-    private final Object BULLETS_LOCK = new Object();
-    
     public GunStatusData(GunWeapon gunWeapon, ShellCasePlayer shellCasePlayer){
         super(gunWeapon, shellCasePlayer);
         this.gunWeapon = gunWeapon;

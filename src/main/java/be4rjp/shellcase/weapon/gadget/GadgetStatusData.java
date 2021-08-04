@@ -14,15 +14,14 @@ public class GadgetStatusData extends WeaponStatusData {
     private int bullets = 5;
     private boolean isReloading = false;
 
-    //弾数の動作の同期用インスタンス
-    private final Object BULLETS_LOCK = new Object();
-
     public GadgetStatusData(GadgetWeapon gadgetWeapon, ShellCasePlayer shellCasePlayer){
         super(gadgetWeapon, shellCasePlayer);
         this.gadgetWeapon = gadgetWeapon;
         this.shellCasePlayer = shellCasePlayer;
     }
-
+    
+    public GadgetWeapon getGadgetWeapon() {return gadgetWeapon;}
+    
     @Override
     public void updateDisplayName(ShellCasePlayer shellCasePlayer){
         Player player = shellCasePlayer.getBukkitPlayer();

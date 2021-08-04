@@ -8,8 +8,8 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import org.bukkit.Material;
 
 public class FlagGrenade extends GadgetWeapon{
-    public FlagGrenade() {
-        super(Gadget.FLAG_GRENADE);
+    public FlagGrenade(Gadget gadget) {
+        super(gadget);
 
         this.material = Material.TNT;
         this.damage = 25.0F;

@@ -5,8 +5,12 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.LocationUtil;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
@@ -21,10 +25,11 @@ public class AsyncDropItem implements ShellCaseEntity{
     protected int tick = 0;
     protected boolean isDead = false;
 
-    public AsyncDropItem(Match match, Location location){
+    public AsyncDropItem(Match match, Location location, ItemStack itemStack){
         this.match = match;
 
         this.entityItem = new EntityItem(((CraftWorld) location.getWorld()).getHandle(), location.getX(), location.getY(), location.getZ());
+        this.setItemStack(itemStack);
     }
 
     public Location getLocation(){return new Location(entityItem.getWorld().getWorld(), entityItem.locX(), entityItem.locY(), entityItem.locZ());}
@@ -45,6 +50,7 @@ public class AsyncDropItem implements ShellCaseEntity{
                 }
             }
         }
+        
 
         //アイテムの移動通知パケット
         showPlayer.forEach(this::sendVelocityPacket);
@@ -58,6 +64,8 @@ public class AsyncDropItem implements ShellCaseEntity{
         }catch (Exception e){
             this.remove();
         }
+        
+        tick++;
     }
 
     @Override
@@ -76,6 +84,9 @@ public class AsyncDropItem implements ShellCaseEntity{
     @Override
     public void remove() {
         this.isDead = true;
+        
+        this.showPlayer.forEach(this::sendDestroyPacket);
+        this.match.getShellCaseEntities().remove(this);
     }
 
     @Override
@@ -104,6 +115,10 @@ public class AsyncDropItem implements ShellCaseEntity{
     public void setVelocity(Vector velocity){
         Vec3D vec3D = new Vec3D(velocity.getX(), velocity.getY(), velocity.getZ());
         this.entityItem.setMot(vec3D);
+    }
+    
+    public void setItemStack(ItemStack itemStack){
+        this.entityItem.setItemStack(CraftItemStack.asNMSCopy(itemStack));
     }
 
     public void sendSpawnPacket(ShellCasePlayer shellCasePlayer){

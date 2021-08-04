@@ -28,21 +28,4 @@ public abstract class GadgetWeapon extends ShellCaseWeapon {
 
     @Override
     public abstract void onLeftClick(ShellCasePlayer shellCasePlayer);
-
-
-    public enum Gadget{
-        FLAG_GRENADE(FlagGrenade.class);
-
-        private final Class<? extends GadgetWeapon> clazz;
-
-        Gadget(Class<? extends GadgetWeapon> clazz){
-            this.clazz = clazz;
-        }
-
-        public void createInstance(){
-            try{
-                this.clazz.newInstance();
-            }catch (Exception e){e.printStackTrace();}
-        }
-    }
 }

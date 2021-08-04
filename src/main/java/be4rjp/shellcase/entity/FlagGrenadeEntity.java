@@ -4,6 +4,8 @@ import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class FlagGrenadeEntity extends AsyncDropItem{
 
@@ -13,7 +15,7 @@ public class FlagGrenadeEntity extends AsyncDropItem{
     private double explodeRadius = 5.0;
 
     public FlagGrenadeEntity(Match match, Location location, ShellCasePlayer shellCasePlayer, ShellCaseWeapon shellCaseWeapon) {
-        super(match, location);
+        super(match, location, new ItemStack(Material.TNT));
 
         this.shellCasePlayer = shellCasePlayer;
         this.shellCaseWeapon = shellCaseWeapon;

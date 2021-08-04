@@ -8,6 +8,8 @@ import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.packet.PacketHandler;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.weapon.gadget.Gadget;
+import be4rjp.shellcase.weapon.gadget.GadgetStatusData;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import io.netty.channel.Channel;
@@ -95,7 +97,9 @@ public class PlayerJoinQuitListener implements Listener {
                         }
     
                         GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
+                        GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
                         shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
+                        shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
                         shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
                         
                         index++;
