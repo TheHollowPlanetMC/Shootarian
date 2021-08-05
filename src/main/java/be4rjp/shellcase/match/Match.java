@@ -75,14 +75,24 @@ public abstract class Match {
     }
     
     /**
-     * 建造物のデータの準備
+     * マップのロード
      */
-    public void initializeStructure(){
+    public void loadGameMap(){
+        try {
+            this.shellCaseMap.getWaitSCLocation().loadSlimeWorld();
+        }catch (Exception e){e.printStackTrace();}
+        
         for(MapStructure mapStructure : getShellCaseMap().getMapStructures()){
             MapStructureData mapStructureData = new MapStructureData(this, mapStructure);
-            mapStructureData.initialize();
             this.mapStructureData.add(mapStructureData);
         }
+    }
+    
+    /**
+     * マップのロード
+     */
+    public void loadGameMapTaskAtMainThread(){
+        this.shellCaseMap.getWaitSCLocation().createWorldAtMainThread();
     }
     
     /**

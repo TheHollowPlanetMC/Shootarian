@@ -2,4 +2,4 @@ name: ShellCase
 version: ${project.version}
 main: be4rjp.shellcase.ShellCase
 api-version: 1.15
-depend: [Parallel, Cinema4C]
+depend: [Parallel, Cinema4C, SlimeWorldManager]

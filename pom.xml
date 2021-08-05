@@ -52,6 +52,18 @@
                                 <exclude>META-INF/*.MF</exclude>
                             </excludes>
                         </filter>
+                        <filter>
+                            <artifact>com.grinderwolf:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.MF</exclude>
+                            </excludes>
+                        </filter>
+                        <filter>
+                            <artifact>com.flowpowered:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.MF</exclude>
+                            </excludes>
+                        </filter>
                     </filters>
                 </configuration>
                 <executions>
@@ -87,6 +99,10 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>glaremasters</id>
+            <url>https://repo.glaremasters.me/repository/concuncan/</url>
         </repository>
     </repositories>
 
@@ -125,6 +141,11 @@
             <groupId>com.samjakob</groupId>
             <artifactId>SpiGUI</artifactId>
             <version>v1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.grinderwolf</groupId>
+            <artifactId>slimeworldmanager-api</artifactId>
+            <version>2.2.1</version>
         </dependency>
     </dependencies>
 </project>

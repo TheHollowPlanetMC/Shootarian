@@ -148,7 +148,8 @@ public abstract class ShellCaseWeapon {
     
     
     private static ShellCaseSound EXPLOSION_SOUND = new ShellCaseSound(Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
-    private static ShellCaseParticle EXPLOSION_PARTICLE1 = new NormalParticle(Particle.EXPLOSION_NORMAL, 5, 0, 0, 0, 0);
+    private static ShellCaseParticle EXPLOSION_PARTICLE1 = new NormalParticle(Particle.EXPLOSION_NORMAL, 1, 0, 0, 0, 0);
+    private static ShellCaseParticle EXPLOSION_PARTICLE2 = new NormalParticle(Particle.EXPLOSION_HUGE, 1, 0, 0, 0, 0);
     
     /**
      * 爆発を作成する
@@ -163,6 +164,7 @@ public abstract class ShellCaseWeapon {
     
         //エフェクト
         shellCaseTeam.getMatch().spawnParticle(EXPLOSION_PARTICLE1, center);
+        shellCaseTeam.getMatch().spawnParticle(EXPLOSION_PARTICLE2, center);
         
         //音
         shellCaseTeam.getMatch().playSound(EXPLOSION_SOUND, center);
@@ -189,6 +191,7 @@ public abstract class ShellCaseWeapon {
             for(MapStructureData mapStructureData : shellCaseTeam.getMatch().getMapStructureData()){
                 
                 if(!mapStructureData.getBoundingBox().isInBox(block.getLocation().toVector())) continue;
+                if(block.getType().toString().endsWith("AIR")) continue;
                 mapStructureData.giveDamage(1);
                 
                 if(mapStructureData.isDead()) continue;

@@ -4,6 +4,7 @@ import be4rjp.parallel.structure.ParallelStructure;
 import be4rjp.parallel.structure.StructureData;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.util.ConfigUtil;
+import be4rjp.shellcase.util.SCLocation;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
@@ -55,7 +56,7 @@ public class MapStructure {
     
     private YamlConfiguration yml;
     
-    private ParallelStructure structure = null;
+    private SCLocation baseLocation;
     
     private Vector boundingBoxSize = new Vector(10.0, 10.0, 10.0);
     
@@ -75,11 +76,7 @@ public class MapStructure {
     public void loadData(YamlConfiguration yml){
         this.yml = yml;
         
-        if(yml.contains("base-location")){
-            Location baseLocation = ConfigUtil.getLocationByString(yml.getString("base-location"));
-            this.structure = new ParallelStructure("SCStructure");
-            structure.setBaseLocation(baseLocation);
-        }
+        if(yml.contains("base-location")) this.baseLocation = ConfigUtil.getSCLocationByString(yml.getString("base-location"));
         
         if(yml.contains("bounding-box-size")){
             String line = yml.getString("bounding-box-size");
@@ -98,7 +95,7 @@ public class MapStructure {
     
     public String getID() {return id;}
     
-    public ParallelStructure getStructure() {return structure;}
+    public SCLocation getBaseLocation() {return baseLocation;}
     
     public Vector getBoundingBoxSize() {return boundingBoxSize;}
     

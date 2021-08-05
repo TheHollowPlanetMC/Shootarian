@@ -86,9 +86,12 @@ public class PlayerJoinQuitListener implements Listener {
                     public void run() {
                         if(index == 0){
                             match.initialize();
-                            match.initializeStructure();
+                            match.loadGameMap();
+                            match.loadGameMapTaskAtMainThread();
                             match.start();
                         }
+                        
+                        shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
                         
                         if(index % 2 == 0){
                             team0.join(shellCasePlayer);

@@ -9,6 +9,7 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.map.structure.MapStructureData;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.world.AsyncWorld;
 import io.netty.util.internal.ConcurrentSet;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -77,70 +78,48 @@ public class BlockUpdater extends BukkitRunnable {
     
     @Override
     public void run() {
-        //Parallelを使ってプレイヤーごとにブロックを設置
-        if(Config.getWorkType() == Config.WorkType.NORMAL) {
-            Map<Chunk, Set<Block>> blockChunkMap = new HashMap<>();
-            boolean isCollected = false;
-            for(ShellCasePlayer shellCasePlayer : match.getPlayers()){
-                if(!isCollected) {
-                    for (Block block : blockMap.keySet()) {
-                        Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
-                        blocks.add(block);
-                    }
-                }
-                shellCasePlayer.getParallelWorld().setBlocks(blockMap, UpdatePacketType.NO_UPDATE);
+        //AsyncWorldでブロックを設置する
+        Map<Chunk, Set<Block>> blockChunkMap = new HashMap<>();
+        for (Map.Entry<Block, BlockData> entry : blockMap.entrySet()) {
+            Block block = entry.getKey();
+            BlockData blockData = entry.getValue();
+    
+            AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, blockData);
+            Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
+            blocks.add(block);
+        }
+
+        for(Block block : removeBlocks){
+            AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, Material.AIR.createBlockData());
+            Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
+            blocks.add(block);
+            ParallelWorld.getParallelWorld("").removeBlock(block);
+        }
+
+        for(MapStructureData mapStructureData : this.mapStructureData){
+            for(Map.Entry<BlockPosition3i, BlockData> entry : mapStructureData.getMapStructure().getDefaultData().getBlockDataMap().entrySet()){
+                BlockPosition3i relative = entry.getKey();
+        
+                Block block = mapStructureData.getMapStructure().getBaseLocation().getBukkitLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
+                AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, Material.AIR.createBlockData());
+                Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
+                blocks.add(block);
+            }
+            for(Map.Entry<BlockPosition3i, BlockData> entry : mapStructureData.getMapStructure().getCollapseData().getBlockDataMap().entrySet()){
+                BlockPosition3i relative = entry.getKey();
+                BlockData blockData = entry.getValue();
                 
-                for(Block block : removeBlocks){
-                    if(!isCollected) {
-                        Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
-                        blocks.add(block);
-                    }
-                    shellCasePlayer.getParallelWorld().removeBlock(block);
-                }
-                isCollected = true;
-    
-                for(MapStructureData mapStructureData : this.mapStructureData){
-                    mapStructureData.setCollapseData();
-                    for(BlockPosition3i relative : mapStructureData.getMapStructure().getCollapseData().getBlockDataMap().keySet()){
-                        Block block = mapStructureData.getMapStructure().getStructure().getBaseLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
-                        Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
-                        blocks.add(block);
-                    }
-                }
-    
-                Player player = shellCasePlayer.getBukkitPlayer();
-                if(player != null) {
-                    shellCasePlayer.getParallelWorld().sendUpdatePacket(player, UpdatePacketType.MULTI_BLOCK_CHANGE, blockChunkMap);
-                }
-            }
-        }else{
-            Map<Chunk, Set<Block>> blockChunkMap = new HashMap<>();
-            for (Block block : blockMap.keySet()) {
+                Block block = mapStructureData.getMapStructure().getBaseLocation().getBukkitLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
+                AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, blockData);
                 Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
                 blocks.add(block);
             }
-            ParallelWorld.getParallelWorld("").setBlocks(blockMap, UpdatePacketType.NO_UPDATE);
-    
-            for(Block block : removeBlocks){
-                Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
-                blocks.add(block);
-                ParallelWorld.getParallelWorld("").removeBlock(block);
-            }
-    
-            for(MapStructureData mapStructureData : this.mapStructureData){
-                mapStructureData.setCollapseData();
-                for(BlockPosition3i relative : mapStructureData.getMapStructure().getCollapseData().getBlockDataMap().keySet()){
-                    Block block = mapStructureData.getMapStructure().getStructure().getBaseLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
-                    Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
-                    blocks.add(block);
-                }
-            }
-            
-            for(ShellCasePlayer shellCasePlayer : match.getPlayers()){
-                Player player = shellCasePlayer.getBukkitPlayer();
-                if(player != null) {
-                    shellCasePlayer.getParallelWorld().sendUpdatePacket(player, UpdatePacketType.MULTI_BLOCK_CHANGE, blockChunkMap);
-                }
+        }
+        
+        for(ShellCasePlayer shellCasePlayer : match.getPlayers()){
+            Player player = shellCasePlayer.getBukkitPlayer();
+            if(player != null) {
+                shellCasePlayer.getParallelWorld().sendUpdatePacket(player, UpdatePacketType.MULTI_BLOCK_CHANGE, blockChunkMap);
             }
         }
         

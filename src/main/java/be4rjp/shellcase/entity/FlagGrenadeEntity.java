@@ -6,6 +6,9 @@ import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.UUID;
 
 public class FlagGrenadeEntity extends AsyncDropItem{
 
@@ -19,6 +22,12 @@ public class FlagGrenadeEntity extends AsyncDropItem{
 
         this.shellCasePlayer = shellCasePlayer;
         this.shellCaseWeapon = shellCaseWeapon;
+        
+        ItemStack itemStack = new ItemStack(Material.TNT);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(UUID.randomUUID().toString());
+        itemStack.setItemMeta(itemMeta);
+        this.setItemStack(itemStack);
     }
 
     @Override

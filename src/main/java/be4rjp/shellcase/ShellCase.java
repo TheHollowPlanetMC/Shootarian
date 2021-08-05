@@ -11,15 +11,28 @@ import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.reload.ReloadActions;
+import com.grinderwolf.swm.api.SlimePlugin;
+import com.grinderwolf.swm.api.exceptions.WorldAlreadyExistsException;
+import com.grinderwolf.swm.api.loaders.SlimeLoader;
+import com.grinderwolf.swm.api.world.SlimeWorld;
+import com.grinderwolf.swm.api.world.properties.SlimeProperties;
+import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+
+import static net.minecraft.server.v1_15_R1.Items.ex;
+import static net.minecraft.server.v1_15_R1.Items.s;
 
 public final class ShellCase extends JavaPlugin {
     
     public static final String VERSION = "v0.0.1 - α";
     
     private static ShellCase shellCase;
+    private static SlimePlugin slimePlugin;
     
     private static PlayerLobbyMatch playerLobbyMatch;
     private static ShellCaseTeam lobbyTeam;
@@ -29,6 +42,12 @@ public final class ShellCase extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         shellCase = this;
+    
+        SlimePlugin slimePluginInstance = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+        if(slimePluginInstance == null){
+            throw new NullPointerException("SlimeWorldManager is not found.");
+        }
+        slimePlugin = slimePluginInstance;
     
         ShellCaseConfig.load();
         MessageManager.loadAllMessage();
@@ -60,6 +79,8 @@ public final class ShellCase extends JavaPlugin {
     }
     
     public static ShellCase getPlugin() {return shellCase;}
+    
+    public static SlimePlugin getSlimePlugin() {return slimePlugin;}
     
     public static PlayerLobbyMatch getLobbyMatch() {return playerLobbyMatch;}
     

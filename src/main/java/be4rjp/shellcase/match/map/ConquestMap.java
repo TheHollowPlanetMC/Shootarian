@@ -29,6 +29,6 @@ public class ConquestMap extends ShellCaseMap{
     
     @Override
     public void loadDetailsData() {
-
+        //None
     }
 }

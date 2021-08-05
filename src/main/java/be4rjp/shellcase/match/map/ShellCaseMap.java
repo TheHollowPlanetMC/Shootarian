@@ -6,6 +6,7 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.match.map.structure.MapStructure;
 import be4rjp.shellcase.util.ConfigUtil;
+import be4rjp.shellcase.util.SCLocation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -85,9 +86,9 @@ public abstract class ShellCaseMap {
     //表示名
     protected HashMap<Lang, String> displayName = new HashMap<>();
     //待機場所
-    protected Location waitLocation;
+    protected SCLocation waitLocation;
     //チームのスポーン場所
-    protected final List<Location> teamLocations = new ArrayList<>();
+    protected final List<SCLocation> teamLocations = new ArrayList<>();
     //マップ紹介ムービー
     protected MovieData introMovie = null;
     //リザルト用ムービー
@@ -111,16 +112,22 @@ public abstract class ShellCaseMap {
     
     /**
      * 試合の待機場所を取得する
+     * @return SCLocation
+     */
+    public SCLocation getWaitSCLocation(){return this.waitLocation;}
+    
+    /**
+     * 試合の待機場所を取得する
      * @return Location
      */
-    public Location getWaitLocation(){return this.waitLocation;}
+    public Location getWaitLocation(){return this.waitLocation.getBukkitLocation();}
     
     /**
      * チームのスポーン場所を取得する
      * @param teamNumber チームの番号
      * @return Location
      */
-    public Location getTeamLocation(int teamNumber){return this.teamLocations.get(teamNumber);}
+    public Location getTeamLocation(int teamNumber){return this.teamLocations.get(teamNumber).getBukkitLocation();}
     
     /**
      * 設定されているチームのスポーン場所の数を取得します
@@ -150,11 +157,11 @@ public abstract class ShellCaseMap {
             }
         }
         
-        if(yml.contains("wait-location")) this.waitLocation = ConfigUtil.getLocationByString(yml.getString("wait-location"));
+        if(yml.contains("wait-location")) this.waitLocation = ConfigUtil.getSCLocationByString(yml.getString("wait-location"));
         
         if(yml.contains("team-spawn-locations")){
             for(String locString : yml.getStringList("team-spawn-locations")){
-                this.teamLocations.add(ConfigUtil.getLocationByString(locString).add(0.5, 0.0, 0.5));
+                this.teamLocations.add(ConfigUtil.getSCLocationByString(locString).add(0.5, 0.0, 0.5));
             }
         }
 
