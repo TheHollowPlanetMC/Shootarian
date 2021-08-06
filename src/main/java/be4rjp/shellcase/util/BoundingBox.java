@@ -10,9 +10,9 @@ public class BoundingBox {
     Vector max;
     Vector min;
     
-    public BoundingBox(Vector min, Vector max) {
-        this.max = max;
-        this.min = min;
+    public BoundingBox(Vector firstPoint, Vector secondPoint) {
+        max = Vector.getMaximum(firstPoint, secondPoint);
+        min = Vector.getMinimum(firstPoint, secondPoint);
     }
     
     

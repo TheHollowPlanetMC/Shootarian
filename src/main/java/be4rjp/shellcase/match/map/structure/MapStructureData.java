@@ -1,9 +1,5 @@
 package be4rjp.shellcase.match.map.structure;
 
-import be4rjp.parallel.Config;
-import be4rjp.parallel.Parallel;
-import be4rjp.parallel.ParallelWorld;
-import be4rjp.parallel.enums.UpdatePacketType;
 import be4rjp.parallel.util.BlockPosition3i;
 import be4rjp.shellcase.entity.AsyncFallingBlock;
 import be4rjp.shellcase.match.Match;
@@ -11,7 +7,6 @@ import be4rjp.shellcase.util.BoundingBox;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -43,7 +38,7 @@ public class MapStructureData {
         
         if(health < 0){
             List<Block> blocks = new ArrayList<>();
-            for(BlockPosition3i relative : mapStructure.getCollapseData().getBlockDataMap().keySet()){
+            for(BlockPosition3i relative : mapStructure.getDefaultData().getBlockDataMap().keySet()){
                 Block block = mapStructure.getBaseLocation().getBukkitLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
                 if(!block.getType().toString().endsWith("AIR")) blocks.add(block);
             }

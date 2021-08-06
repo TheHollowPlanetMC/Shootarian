@@ -133,6 +133,6 @@ public class BlockUpdater extends BukkitRunnable {
      * 非同期更新タスクをスタートさせる
      */
     public void start(){
-        this.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 15);
+        this.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 5);
     }
 }
