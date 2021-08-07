@@ -3,6 +3,7 @@ package be4rjp.shellcase.listener;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.ShellCaseConfig;
 import be4rjp.shellcase.match.ConquestMatch;
+import be4rjp.shellcase.match.map.ConquestMap;
 import be4rjp.shellcase.match.map.ShellCaseMap;
 import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
@@ -37,7 +38,7 @@ public class PlayerJoinQuitListener implements Listener {
     private static int index = 0;
     
     static {
-        match = new ConquestMatch(ShellCaseMap.getRandomMap());
+        match = new ConquestMatch(ConquestMap.getRandomConquestMap());
         team0 = new ShellCaseTeam(match, ShellCaseColor.BLUE);
         team1 = new ShellCaseTeam(match, ShellCaseColor.ORANGE);
     }

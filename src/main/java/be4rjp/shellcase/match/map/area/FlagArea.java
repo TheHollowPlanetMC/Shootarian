@@ -14,5 +14,7 @@ public class FlagArea {
         this.boundingBox = new BoundingBox(first, second);
     }
     
+    public String getDisplayName() {return displayName;}
+    
     public BoundingBox getBoundingBox() {return boundingBox;}
 }

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.util.Vector;
 
 public class ConfigUtil {
     
@@ -67,5 +68,25 @@ public class ConfigUtil {
         }
         
         return new SCLocation(worldName, x, y, z, yaw, pitch);
+    }
+    
+    /**
+     * 文字列をVectorに変換する
+     * 'x, y, z'の形式である必要があります
+     * @param vecString
+     * @return Vector
+     */
+    public static Vector getVectorByString(String vecString){
+        String[] args = vecString.replace(" ", "").split(",");
+        
+        if(args.length != 3){
+            throw new IllegalArgumentException("Vector must be in the format 'x, y, z'.");
+        }
+        
+        double x = Double.parseDouble(args[0]);
+        double y = Double.parseDouble(args[1]);
+        double z = Double.parseDouble(args[2]);
+        
+        return new Vector(x, y, z);
     }
 }

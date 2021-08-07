@@ -52,8 +52,8 @@ public class ConquestResultRunnable extends BukkitRunnable {
                 }, 0, 40, 0));
             }else{
                 if(winTeam == match.getShellCaseTeams().get(0)){
-                    int winTeamPaint = winTeam.getPaints();
-                    int loseTeamPaint = match.getShellCaseTeams().get(1).getPaints();
+                    int winTeamPaint = winTeam.getPoints();
+                    int loseTeamPaint = match.getShellCaseTeams().get(1).getPoints();
                     
                     int maxPaint = winTeamPaint + loseTeamPaint;
                     double percent = (double) winTeamPaint / (double) maxPaint * 100.0;
@@ -63,8 +63,8 @@ public class ConquestResultRunnable extends BukkitRunnable {
                             (int)percent + "% " + new ProgressBar(100).setProgressPercent(percent).setEmptyColor(team1Color).toString(team0Color) + " " + (100 - (int)percent) + "%"
                     }, 0, 40, 0));
                 }else{
-                    int winTeamPaint = winTeam.getPaints();
-                    int loseTeamPaint = match.getShellCaseTeams().get(0).getPaints();
+                    int winTeamPaint = winTeam.getPoints();
+                    int loseTeamPaint = match.getShellCaseTeams().get(0).getPoints();
     
                     int maxPaint = winTeamPaint + loseTeamPaint;
                     double percent = (double) winTeamPaint / (double) maxPaint * 100.0;

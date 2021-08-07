@@ -12,6 +12,8 @@ public class ProgressBar {
     private boolean frame = true;
     //空の部分の色
     private String emptyColor = "§7";
+    //バー部分の文字
+    private String barCharacter = "|";
 
     /**
      * プログレスバーを作成する
@@ -57,7 +59,7 @@ public class ProgressBar {
     public String toString(String barColor){
         int value = getProgressValue();
 
-        String m = "|";
+        String m = barCharacter;
         StringBuilder ms = new StringBuilder();
         ms.append("§r§7");
         if(frame) ms.append("[");
@@ -110,4 +112,10 @@ public class ProgressBar {
         this.emptyColor = emptyColor;
         return this;
     }
+    
+    /**
+     * バー部分の文字を設定します
+     * @param barCharacter
+     */
+    public void setBarCharacter(String barCharacter) {this.barCharacter = barCharacter;}
 }

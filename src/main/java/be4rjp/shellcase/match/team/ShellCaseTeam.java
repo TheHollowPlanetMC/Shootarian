@@ -17,7 +17,7 @@ public class ShellCaseTeam {
     //試合のインスタンス
     private final Match match;
     //チームカラー
-    private final ShellCaseColor ShellCaseColor;
+    private final ShellCaseColor shellCaseColor;
     //チームの塗りポイント
     private int paints = 0;
     //チームのキルカウント
@@ -30,19 +30,19 @@ public class ShellCaseTeam {
     /**
      * チームのインスタンス作成
      * @param match
-     * @param ShellCaseColor
+     * @param shellCaseColor
      */
-    public ShellCaseTeam(Match match, ShellCaseColor ShellCaseColor){
+    public ShellCaseTeam(Match match, ShellCaseColor shellCaseColor){
         this.match = match;
-        this.ShellCaseColor = ShellCaseColor;
+        this.shellCaseColor = shellCaseColor;
         
-        this.team = match.getScoreboard().getBukkitScoreboard().registerNewTeam(ShellCaseColor.getDisplayName());
-        team.setColor(ShellCaseColor.getChatColor());
+        this.team = match.getScoreboard().getBukkitScoreboard().registerNewTeam(shellCaseColor.getDisplayName());
+        team.setColor(shellCaseColor.getChatColor());
         team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS);
         team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.setSuffix(ShellCaseColor.getChatColor().toString());
+        team.setSuffix(shellCaseColor.getChatColor().toString());
         team.setCanSeeFriendlyInvisibles(true);
-        team.setDisplayName(ShellCaseColor.getDisplayName());
+        team.setDisplayName(shellCaseColor.getDisplayName());
         
         this.match.addShellCaseTeam(this);
     }
@@ -50,15 +50,15 @@ public class ShellCaseTeam {
     
     public int getKills() {return kills;}
     
-    public int getPaints() {return paints;}
+    public int getPoints() {return paints;}
     
-    public synchronized void addPaints(int paints) {this.paints += paints;}
+    public synchronized void addPoints(int paints) {this.paints += paints;}
     
     public synchronized void addKills(int kills) {this.kills += kills;}
     
     public Match getMatch() {return match;}
     
-    public ShellCaseColor getShellCaseColor() {return ShellCaseColor;}
+    public ShellCaseColor getShellCaseColor() {return shellCaseColor;}
     
     public Team getScoreBoardTeam() {return team;}
     

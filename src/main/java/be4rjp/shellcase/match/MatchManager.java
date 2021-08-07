@@ -1,6 +1,7 @@
 package be4rjp.shellcase.match;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.match.map.ConquestMap;
 import be4rjp.shellcase.match.map.ShellCaseMap;
 import be4rjp.shellcase.match.runnable.MatchWaitRunnable;
 import be4rjp.shellcase.match.team.ShellCaseColor;
@@ -69,16 +70,16 @@ public class MatchManager {
     }
     
     
-    public void join(ShellCasePlayer ShellCasePlayer){
+    public void join(ShellCasePlayer shellCasePlayer){
         if(match == null) createMatch();
         if(match.getMatchStatus() == Match.MatchStatus.FINISHED) createMatch();
         
         if(joinedPlayers.size() == 8){
-            ShellCasePlayer.sendText("match-join-cannot-number");
+            shellCasePlayer.sendText("match-join-cannot-number");
             return;
         }
         
-        ShellCasePlayer.reset();
+        shellCasePlayer.reset();
     
         if(match.getMatchStatus() == Match.MatchStatus.IN_PROGRESS) {
             switch (type) {
@@ -90,38 +91,38 @@ public class MatchManager {
                     int team1PlayerCount = team1.getTeamMembers().size();
             
                     if(team0PlayerCount == 4 && team1PlayerCount == 4){
-                        ShellCasePlayer.sendText("match-join-cannot-number");
+                        shellCasePlayer.sendText("match-join-cannot-number");
                         return;
                     }
             
                     int teamNumber = 0;
                     if (team0PlayerCount >= team1PlayerCount) {
-                        team1.join(ShellCasePlayer);
+                        team1.join(shellCasePlayer);
                         teamNumber = 1;
                     }else{
-                        team0.join(ShellCasePlayer);
+                        team0.join(shellCasePlayer);
                     }
                     
-                    ShellCasePlayer.teleport(match.getShellCaseMap().getTeamLocation(teamNumber));
+                    shellCasePlayer.teleport(match.getShellCaseMap().getTeamLocation(teamNumber));
                     
-                    ShellCasePlayer.setScoreBoard(match.getScoreboard());
+                    shellCasePlayer.setScoreBoard(match.getScoreboard());
                     break;
                 }
             }
         }
     
     
-        ShellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-        joinedPlayers.add(ShellCasePlayer);
-        ShellCasePlayer.setMatchManager(this);
+        shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
+        joinedPlayers.add(shellCasePlayer);
+        shellCasePlayer.setMatchManager(this);
     
-        ShellCasePlayer.sendText("match-join");
+        shellCasePlayer.sendText("match-join");
     }
     
     private void createMatch(){
         switch (type){
             case CONQUEST:{
-                match = new ConquestMatch(ShellCaseMap.getRandomMap());
+                match = new ConquestMatch(ConquestMap.getRandomConquestMap());
                 ShellCaseColor[] colors = ShellCaseColor.getRandomColorPair();
                 new ShellCaseTeam(match, colors[0]);
                 new ShellCaseTeam(match, colors[1]);

@@ -57,7 +57,7 @@ public abstract class Match {
     public Match(ShellCaseMap ShellCaseMap){
         this.shellCaseMap = ShellCaseMap;
 
-        this.scoreboard = new ShellCaseScoreboard("§6§lShellCase§r " + ShellCase.VERSION, 10);
+        this.scoreboard = new ShellCaseScoreboard("§6§lShellCase§r " + ShellCase.VERSION, 15);
     }
 
     public abstract MatchType getType();

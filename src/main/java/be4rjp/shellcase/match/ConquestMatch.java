@@ -1,6 +1,8 @@
 package be4rjp.shellcase.match;
 
-import be4rjp.shellcase.match.map.ShellCaseMap;
+import be4rjp.shellcase.match.map.ConquestMap;
+import be4rjp.shellcase.match.map.area.FlagArea;
+import be4rjp.shellcase.match.map.area.FlagAreaData;
 import be4rjp.shellcase.match.runnable.ConquestMatchRunnable;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
@@ -10,8 +12,14 @@ import java.util.Set;
 
 public class ConquestMatch extends Match{
     
-    public ConquestMatch(ShellCaseMap ShellCaseMap) {
-        super(ShellCaseMap);
+    private final ConquestMap conquestMap;
+    
+    private final Set<FlagAreaData> flagAreaData = new HashSet<>();
+    
+    
+    public ConquestMatch(ConquestMap conquestMap) {
+        super(conquestMap);
+        this.conquestMap = conquestMap;
     }
     
     @Override
@@ -20,8 +28,8 @@ public class ConquestMatch extends Match{
     }
     
     @Override
-    public void initializePlayer(ShellCasePlayer ShellCasePlayer) {
-    
+    public void initializePlayer(ShellCasePlayer shellCasePlayer) {
+        //None
     }
     
     @Override
@@ -33,23 +41,27 @@ public class ConquestMatch extends Match{
     @Override
     public void initialize() {
         this.matchRunnable = new ConquestMatchRunnable(this, 180);
+        
+        for(FlagArea flagArea : conquestMap.getFlagAreas()){
+            flagAreaData.add(new FlagAreaData(this, flagArea));
+        }
     }
     
     @Override
     public boolean checkWin() {
-        return false;
+        return this.getShellCaseTeams().get(0).getPoints() >= this.conquestMap.getMaxTicket() || this.getShellCaseTeams().get(1).getPoints() >= this.conquestMap.getMaxTicket();
     }
     
     @Override
     public ShellCaseTeam getWinner() {
         int paint = 0;
         Set<ShellCaseTeam> winTeam = new HashSet<>();
-        for(ShellCaseTeam ShellCaseTeam : this.getShellCaseTeams()){
-            int teamPaint = ShellCaseTeam.getPaints();
-            if(paint <= teamPaint){
-                if(paint != teamPaint) winTeam.clear();
-                winTeam.add(ShellCaseTeam);
-                paint = teamPaint;
+        for(ShellCaseTeam shellCaseTeam : this.getShellCaseTeams()){
+            int teamPoints = shellCaseTeam.getPoints();
+            if(paint <= teamPoints){
+                if(paint != teamPoints) winTeam.clear();
+                winTeam.add(shellCaseTeam);
+                paint = teamPoints;
             }
         }
         
@@ -60,4 +72,6 @@ public class ConquestMatch extends Match{
         }
         return null;
     }
+    
+    public Set<FlagAreaData> getFlagAreaData() {return flagAreaData;}
 }

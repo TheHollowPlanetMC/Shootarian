@@ -1,8 +1,5 @@
 package be4rjp.shellcase.block;
 
-import be4rjp.parallel.Config;
-import be4rjp.parallel.Parallel;
-import be4rjp.parallel.ParallelWorld;
 import be4rjp.parallel.enums.UpdatePacketType;
 import be4rjp.parallel.util.BlockPosition3i;
 import be4rjp.shellcase.ShellCase;
@@ -93,7 +90,6 @@ public class BlockUpdater extends BukkitRunnable {
             AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, Material.AIR.createBlockData());
             Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
             blocks.add(block);
-            ParallelWorld.getParallelWorld("").removeBlock(block);
         }
 
         for(MapStructureData mapStructureData : this.mapStructureData){
