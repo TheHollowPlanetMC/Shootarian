@@ -8,7 +8,6 @@ import be4rjp.shellcase.match.map.area.FlagAreaData;
 import be4rjp.shellcase.match.result.ResultRunnable;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.util.ProgressBar;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import be4rjp.shellcase.util.ShellCaseSound;
 import org.bukkit.GameMode;
@@ -58,7 +57,7 @@ public class ConquestMatchRunnable extends MatchRunnable{
             flagAreaData.addTerritory(territory * 2);
             
             ShellCaseTeam shellCaseTeam = flagAreaData.getTeam();
-            if(shellCaseTeam != null && Math.abs(flagAreaData.getTerritory()) == 100){
+            if(shellCaseTeam != null/* && Math.abs(flagAreaData.getTerritory()) == 100*/){
                 shellCaseTeam.addPoints(1);
                 
                 if(Math.abs(beforeTerritory) < 100){
@@ -97,16 +96,11 @@ public class ConquestMatchRunnable extends MatchRunnable{
             lines.add("§6" + MessageManager.getText(lang, "match-flag") + " » ");
             
             for(FlagAreaData flagAreaData : conquestMatch.getFlagAreaData()){
-                ProgressBar progressBar = new ProgressBar(10);
-                progressBar.setBarCharacter("|");
-                progressBar.setEmptyColor(match.getShellCaseTeams().get(0).getShellCaseColor().getChatColor().toString());
-                progressBar.setProgressPercent((double)(flagAreaData.getTerritory() + 100) / 2.0);
-                String bar = progressBar.toString(match.getShellCaseTeams().get(1).getShellCaseColor().getChatColor().toString());
-                
-                if(flagAreaData.getTeam() == null)
-                    lines.add(" " + flagAreaData.getFlagArea().getDisplayName() + "§7 : " + progressBar.setEmptyColor("§7").toString("§7") + " 0%");
+                ShellCaseTeam team = flagAreaData.getTeam();
+                if(team == null)
+                    lines.add(" §7" + flagAreaData.getFlagArea().getDisplayName() + "§7 : " + " 0%");
                 else
-                    lines.add(" " + flagAreaData.getFlagArea().getDisplayName() + "§7 : " + bar + " " + Math.abs(flagAreaData.getTerritory()) + "%");
+                    lines.add(" " + team.getShellCaseColor() + flagAreaData.getFlagArea().getDisplayName() + "§7 : " + Math.abs(flagAreaData.getTerritory()) + "%");
             }
     
             lines.add("   ");

@@ -43,6 +43,11 @@ public enum ShellCaseColor {
 
     public Material getGlass() {return glass;}
 
+    @Override
+    public String toString() {
+        return this.chatColor.toString();
+    }
+
     /**
      * ランダムにShellCaseColorを取得します
      * @return ShellCaseColor
