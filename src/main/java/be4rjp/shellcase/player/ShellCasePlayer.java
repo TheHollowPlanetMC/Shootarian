@@ -727,7 +727,7 @@ public class ShellCasePlayer {
             public void run() {
                 if (player == null) return;
                 if (time != teleportTime) return;
-                PaperLib.teleportAsync(player, location);
+                player.teleport(location);
             }
         }.runTask(ShellCase.getPlugin());
     }
@@ -745,7 +745,7 @@ public class ShellCasePlayer {
             @Override
             public void run() {
                 if (player == null) return;
-                PaperLib.teleportAsync(player, location);
+                player.teleport(location);
                 player.setGameMode(GameMode.ADVENTURE);
                 setDeath(false);
             }

@@ -8,7 +8,7 @@ import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.WeaponStatusData;
 import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.attachment.Sight;
-import be4rjp.shellcase.weapon.reload.ReloadActions;
+import be4rjp.shellcase.weapon.reload.Actions;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -53,9 +53,9 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     //デフォルトサイト
     protected Sight defaultSight = (Sight) Attachment.getAttachment("rds");
     //リロードアクション
-    protected ReloadActions reloadActions = new ReloadActions("null");
+    protected Actions reloadActions = new Actions("null");
     //コンバットリロードアクション
-    protected ReloadActions combatReloadActions = new ReloadActions("null");
+    protected Actions combatReloadActions = new Actions("null");
     
     public GunWeapon(String id){
         super(id);
@@ -101,9 +101,9 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public Sight getDefaultSight() {return defaultSight;}
     
-    public ReloadActions getReloadActions() {return reloadActions;}
+    public Actions getReloadActions() {return reloadActions;}
     
-    public ReloadActions getCombatReloadActions() {return combatReloadActions;}
+    public Actions getCombatReloadActions() {return combatReloadActions;}
     
     public float getADSWalkSpeed() {return adsWalkSpeed;}
     
@@ -129,8 +129,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         if(yml.contains("bullet-size")) this.bulletSize = yml.getDouble("bullet-size");
         if(yml.contains("default-bullets")) this.defaultBullets = yml.getInt("default-bullets");
         if(yml.contains("default-sight")) this.defaultSight = (Sight) Attachment.getAttachment(yml.getString("default-sight"));
-        if(yml.contains("reload")) this.reloadActions = ReloadActions.getReloadAction(yml.getString("reload"));
-        if(yml.contains("reload-combat")) this.combatReloadActions = ReloadActions.getReloadAction(yml.getString("reload-combat"));
+        if(yml.contains("reload")) this.reloadActions = Actions.getReloadAction(yml.getString("reload"));
+        if(yml.contains("reload-combat")) this.combatReloadActions = Actions.getReloadAction(yml.getString("reload-combat"));
         if(yml.contains("ads-walk-speed")) this.adsWalkSpeed = (float) yml.getDouble("ads-walk-speed");
         
         loadDetailsData();

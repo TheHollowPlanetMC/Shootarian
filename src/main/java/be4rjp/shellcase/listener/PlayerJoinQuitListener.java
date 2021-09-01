@@ -25,6 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class PlayerJoinQuitListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
-        PaperLib.teleportAsync(player, ShellCaseConfig.getJoinLocation());
+        player.teleport(ShellCaseConfig.getJoinLocation());
     
     
         new BukkitRunnable() {
@@ -92,7 +93,14 @@ public class PlayerJoinQuitListener implements Listener {
                             match.start();
                         }
                         
-                        shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
+                        
+                        new WorldThreadRunnable(player.getWorld()){
+                            @Override
+                            public void run() {
+                                shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
+                            }
+                        }.runTaskLater(ShellCase.getPlugin(), 20);
+                        
                         
                         if(index % 2 == 0){
                             team0.join(shellCasePlayer);
@@ -198,6 +206,6 @@ public class PlayerJoinQuitListener implements Listener {
             e.printStackTrace();
         }
     
-        PaperLib.teleportAsync(player, ShellCaseConfig.getJoinLocation());
+        player.teleport(ShellCaseConfig.getJoinLocation());
     }
 }

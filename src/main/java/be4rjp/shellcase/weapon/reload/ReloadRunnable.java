@@ -9,7 +9,7 @@ public class ReloadRunnable extends BukkitRunnable {
     
     private final ShellCasePlayer shellCasePlayer;
     private final GunStatusData gunStatusData;
-    private final ReloadActions reloadActions;
+    private final Actions reloadActions;
     
     public ReloadRunnable(ShellCasePlayer shellCasePlayer, GunStatusData gunStatusData){
         this.shellCasePlayer = shellCasePlayer;

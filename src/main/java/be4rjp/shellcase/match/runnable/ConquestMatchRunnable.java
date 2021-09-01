@@ -57,7 +57,7 @@ public class ConquestMatchRunnable extends MatchRunnable{
             flagAreaData.addTerritory(territory * 2);
             
             ShellCaseTeam shellCaseTeam = flagAreaData.getTeam();
-            if(shellCaseTeam != null/* && Math.abs(flagAreaData.getTerritory()) == 100*/){
+            if(shellCaseTeam != null && Math.abs(flagAreaData.getTerritory()) == 100){
                 shellCaseTeam.addPoints(1);
                 
                 if(Math.abs(beforeTerritory) < 100){

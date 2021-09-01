@@ -132,12 +132,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.samjakob</groupId>
             <artifactId>SpiGUI</artifactId>
             <version>v1.2.2</version>

@@ -1,12 +1,14 @@
 package be4rjp.shellcase.util;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.world.AsyncWorld;
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import com.grinderwolf.swm.api.world.SlimeWorld;
 import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 public class SCLocation {
     
@@ -50,7 +52,11 @@ public class SCLocation {
     }
     
     public void createWorldAtMainThread(){
-        Bukkit.getServer().unloadWorld(worldName, false);
+        World world = Bukkit.getWorld(worldName);
+        if(world != null) {
+            AsyncWorld.remove(world);
+            Bukkit.getServer().unloadWorld(world, false);
+        }
         
         SlimePlugin slimePlugin = ShellCase.getSlimePlugin();
         slimePlugin.generateWorld(slimeWorld);

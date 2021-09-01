@@ -10,22 +10,22 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReloadActions {
+public class Actions {
     
-    private static Map<String, ReloadActions> reloadActionsMap = new HashMap<>();
+    private static Map<String, Actions> reloadActionsMap = new HashMap<>();
     
-    public static ReloadActions getReloadAction(String id){return reloadActionsMap.get(id);}
+    public static Actions getReloadAction(String id){return reloadActionsMap.get(id);}
     
     
     public static void loadAllReloadActions() {
         ShellCase.getPlugin().getLogger().info("Loading reload actions...");
-        File dir = new File("plugins/ShellCase/reload");
+        File dir = new File("plugins/ShellCase/action");
     
         dir.getParentFile().mkdir();
         dir.mkdir();
         File[] files = dir.listFiles();
         if (files.length == 0) {
-            ShellCase.getPlugin().saveResource("reload/scar-h-reload.yml", false);
+            ShellCase.getPlugin().saveResource("action/scar-h-reload.yml", false);
             files = dir.listFiles();
         }
     
@@ -35,8 +35,8 @@ public class ReloadActions {
                 String id = file.getName().replace(".yml", "");
                 try {
                     YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-                    ReloadActions reloadActions = new ReloadActions(id);
-                    reloadActions.loadData(yml);
+                    Actions actions = new Actions(id);
+                    actions.loadData(yml);
                 }catch (Exception e){e.printStackTrace();}
             }
         }
@@ -52,7 +52,7 @@ public class ReloadActions {
     //アクションの最終tick
     private int finalTick = 0;
     
-    public ReloadActions(String id){
+    public Actions(String id){
         this.id = id;
         reloadActionsMap.put(id, this);
     }

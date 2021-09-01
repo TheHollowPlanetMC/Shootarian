@@ -10,22 +10,11 @@ import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.weapon.WeaponManager;
-import be4rjp.shellcase.weapon.reload.ReloadActions;
+import be4rjp.shellcase.weapon.reload.Actions;
 import com.grinderwolf.swm.api.SlimePlugin;
-import com.grinderwolf.swm.api.exceptions.WorldAlreadyExistsException;
-import com.grinderwolf.swm.api.loaders.SlimeLoader;
-import com.grinderwolf.swm.api.world.SlimeWorld;
-import com.grinderwolf.swm.api.world.properties.SlimeProperties;
-import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-
-import static net.minecraft.server.v1_15_R1.Items.ex;
-import static net.minecraft.server.v1_15_R1.Items.s;
 
 public final class ShellCase extends JavaPlugin {
     
@@ -63,7 +52,7 @@ public final class ShellCase extends JavaPlugin {
 
         WeaponManager.loadAllAttachment();
         WeaponManager.loadAllRecoils();
-        ReloadActions.loadAllReloadActions();
+        Actions.loadAllReloadActions();
         WeaponManager.loadAllWeapon();
         HeadGear.loadAllHeadGear();
         MatchManager.load();

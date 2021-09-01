@@ -24,6 +24,8 @@ public class AsyncWorld {
     
     public synchronized static Collection<AsyncWorld> getWorlds(){return asyncWorldMap.values();}
     
+    public synchronized static void remove(World world){asyncWorldMap.remove(world);}
+    
     
     
     private final World world;
