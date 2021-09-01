@@ -38,6 +38,7 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -399,7 +400,7 @@ public class ShellCasePlayer {
                 if(this.player == null) break;
                 if(this.shellCaseTeam == null) break;
                 
-                new BukkitRunnable() {
+                new WorldThreadRunnable(player.getWorld()) {
                     @Override
                     public void run() {
                         for(Player op : Bukkit.getServer().getOnlinePlayers()) {
@@ -427,7 +428,7 @@ public class ShellCasePlayer {
                     }
                 }
     
-                new BukkitRunnable() {
+                new WorldThreadRunnable(player.getWorld()) {
                     @Override
                     public void run() {
                         for(Player op : hidePlayers) {
@@ -444,7 +445,7 @@ public class ShellCasePlayer {
             case ALL_PLAYER:{
                 if(this.player == null) break;
     
-                new BukkitRunnable() {
+                new WorldThreadRunnable(player.getWorld()) {
                     @Override
                     public void run() {
                         for(Player op : Bukkit.getServer().getOnlinePlayers()) {
@@ -720,7 +721,8 @@ public class ShellCasePlayer {
     public void teleport(Location location){
         long time = System.currentTimeMillis();
         this.teleportTime = time;
-        new BukkitRunnable() {
+        if(player == null) return;
+        new WorldThreadRunnable(player.getWorld()) {
             @Override
             public void run() {
                 if (player == null) return;
@@ -738,7 +740,8 @@ public class ShellCasePlayer {
         long time = System.currentTimeMillis();
         this.teleportTime = time;
         this.setHealth(20.0F);
-        new BukkitRunnable() {
+        if(player == null) return;
+        new WorldThreadRunnable(player.getWorld()) {
             @Override
             public void run() {
                 if (player == null) return;
@@ -754,7 +757,8 @@ public class ShellCasePlayer {
      * @param gameMode 設定するゲームモード
      */
     public void setGameMode(GameMode gameMode){
-        new BukkitRunnable() {
+        if(player == null) return;
+        new WorldThreadRunnable(player.getWorld()) {
             @Override
             public void run() {
                 if (player == null) return;
