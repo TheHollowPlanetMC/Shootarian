@@ -829,6 +829,18 @@ public class ShellCasePlayer {
     }
     
     /**
+     * 距離を無視してパーティクルを表示する
+     * @param particle ShellCaseParticle
+     * @param location パーティクルを表示する座標
+     * @param settings パーティクルを表示するかどうかの設置項目
+     */
+    public void spawnParticleIgnoreRange(ShellCaseParticle particle, Location location, Settings settings){
+        if(player == null) return;
+        if(!this.playerSettings.getSettings(settings)) return;
+        particle.spawnIgnoreRange(player, location);
+    }
+    
+    /**
      * プレイヤーを回復させる
      * @param plus
      */

@@ -3,7 +3,7 @@ package be4rjp.shellcase.data.settings;
 public enum Settings {
 
     BULLET_ORBIT_PARTICLE(0x1, true),
-    CHARGE_LASER_PARTICLE(0x2, true);
+    SNIPER_BULLET_ORBIT_PARTICLE(0x2, true);
 
     private final int bitMask;
     private final boolean defaultSetting;

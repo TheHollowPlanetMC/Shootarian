@@ -27,4 +27,6 @@ public abstract class ShellCaseParticle {
     
     
     public abstract void spawn(Player player, Location location);
+    
+    public abstract void spawnIgnoreRange(Player player, Location location);
 }

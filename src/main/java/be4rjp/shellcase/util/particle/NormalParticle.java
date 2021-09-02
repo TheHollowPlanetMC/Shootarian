@@ -15,4 +15,9 @@ public class NormalParticle extends ShellCaseParticle{
         if(LocationUtil.distanceSquaredSafeDifferentWorld(player.getLocation(), location) > PARTICLE_DRAW_DISTANCE_SQUARE) return;
         player.spawnParticle(particle, location, count, x_offset, y_offset, z_offset, extra);
     }
+    
+    @Override
+    public void spawnIgnoreRange(Player player, Location location) {
+        player.spawnParticle(particle, location, count, x_offset, y_offset, z_offset, extra);
+    }
 }

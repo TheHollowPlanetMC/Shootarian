@@ -8,6 +8,7 @@ import be4rjp.shellcase.util.*;
 import be4rjp.shellcase.util.RayTrace;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
+import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -33,6 +34,8 @@ public class BulletEntity implements ShellCaseEntity {
     private boolean hitParticle = false;
     private double bulletSize = 0.2;
     private boolean particle = true;
+    
+    private boolean isSniperBullet = false;
     
     private int tick = 0;
     private int fallTick = 0;
@@ -78,7 +81,11 @@ public class BulletEntity implements ShellCaseEntity {
     public void setBulletSize(double bulletSize) {this.bulletSize = bulletSize;}
 
     public void setParticle(boolean particle) {this.particle = particle;}
-
+    
+    public boolean isSniperBullet() {return isSniperBullet;}
+    
+    public void setSniperBullet(boolean sniperBullet) {isSniperBullet = sniperBullet;}
+    
     @Override
     public void tick() {
     
@@ -172,10 +179,23 @@ public class BulletEntity implements ShellCaseEntity {
         location.add(direction);
         
         if(particle){
+            ShellCaseParticle particle;
             if(hitLocation == null) {
-                match.spawnParticle(new NormalParticle(Particle.CRIT, 0, direction.getX(), direction.getY(), direction.getZ(), 1), oldLocation, Settings.BULLET_ORBIT_PARTICLE);
+                particle = new NormalParticle(Particle.CRIT, 0, direction.getX(), direction.getY(), direction.getZ(), 1);
             }else{
-                match.spawnParticle(new NormalParticle(Particle.CRIT, 0, hitLocation.getX() - oldLocation.getX(), hitLocation.getY() - oldLocation.getY(), hitLocation.getZ() - oldLocation.getZ(),  1), oldLocation, Settings.BULLET_ORBIT_PARTICLE);
+                particle = new NormalParticle(Particle.CRIT, 0, hitLocation.getX() - oldLocation.getX(), hitLocation.getY() - oldLocation.getY(), hitLocation.getZ() - oldLocation.getZ(), 1);
+            }
+            
+            if (isSniperBullet) {
+                for(ShellCasePlayer matchPlayer : match.getPlayers()){
+                    if(matchPlayer == shooter){
+                        matchPlayer.spawnParticleIgnoreRange(particle, oldLocation, Settings.SNIPER_BULLET_ORBIT_PARTICLE);
+                    }else{
+                        matchPlayer.spawnParticle(particle, oldLocation, Settings.BULLET_ORBIT_PARTICLE);
+                    }
+                }
+            } else {
+                match.spawnParticle(particle, oldLocation, Settings.BULLET_ORBIT_PARTICLE);
             }
         }
         
