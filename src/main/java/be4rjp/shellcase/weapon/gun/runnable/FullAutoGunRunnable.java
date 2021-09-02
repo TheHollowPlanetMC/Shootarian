@@ -70,8 +70,7 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                     using = playerTick <= 12;
 
                     if(beforeUsing != using){
-                        adsRecoilPattern = fullAutoGun.getADSRecoil().getRandomPattern();
-                        normalRecoilPattern = fullAutoGun.getNormalRecoil().getRandomPattern();
+                        gunStatusData.resetRecoil();
                         shootIndex = 0;
                     }
                     beforeUsing = using;
@@ -99,13 +98,9 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                                 
                                 //反動
                                 if(shellCasePlayer.isADS()){
-                                    Vec2f vec2f = adsRecoilPattern.get(shootIndex);
-                                    PacketPlayOutPosition position = new PacketPlayOutPosition(0.0, 0.0, 0.0, vec2f.x, vec2f.y, teleportFlags, 0);
-                                    shellCasePlayer.sendPacket(position);
+                                    gunStatusData.getAdsRecoil().sendRecoil(shellCasePlayer, shootIndex);
                                 }else{
-                                    Vec2f vec2f = normalRecoilPattern.get(shootIndex);
-                                    PacketPlayOutPosition position = new PacketPlayOutPosition(0.0, 0.0, 0.0, vec2f.x, vec2f.y, teleportFlags, 0);
-                                    shellCasePlayer.sendPacket(position);
+                                    gunStatusData.getNormalRecoil().sendRecoil(shellCasePlayer, shootIndex);
                                     
                                     clickTick += fullAutoGun.getShootTick();
                                 }

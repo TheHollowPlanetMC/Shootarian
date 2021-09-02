@@ -75,11 +75,11 @@ public class WeaponClass {
         }
     
         if(mainGadget != null){
-            player.getInventory().setItem(1, mainGadget.getItemStack(shellCasePlayer.getLang()));
+            player.getInventory().setItem(2, mainGadget.getItemStack(shellCasePlayer.getLang()));
         }
         
         if(subGadget != null){
-            player.getInventory().setItem(1, subGadget.getItemStack(shellCasePlayer.getLang()));
+            player.getInventory().setItem(3, subGadget.getItemStack(shellCasePlayer.getLang()));
         }
     }
 }

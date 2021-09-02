@@ -10,7 +10,7 @@ import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.weapon.WeaponManager;
-import be4rjp.shellcase.weapon.reload.Actions;
+import be4rjp.shellcase.weapon.actions.Actions;
 import com.grinderwolf.swm.api.SlimePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -52,7 +52,7 @@ public final class ShellCase extends JavaPlugin {
 
         WeaponManager.loadAllAttachment();
         WeaponManager.loadAllRecoils();
-        Actions.loadAllReloadActions();
+        Actions.loadAllActions();
         WeaponManager.loadAllWeapon();
         HeadGear.loadAllHeadGear();
         MatchManager.load();

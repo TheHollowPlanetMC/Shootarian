@@ -1,17 +1,17 @@
-package be4rjp.shellcase.weapon.reload;
+package be4rjp.shellcase.weapon.actions;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class ReloadRunnable extends BukkitRunnable {
+public class ReloadActionRunnable extends BukkitRunnable {
     
     private final ShellCasePlayer shellCasePlayer;
     private final GunStatusData gunStatusData;
     private final Actions reloadActions;
     
-    public ReloadRunnable(ShellCasePlayer shellCasePlayer, GunStatusData gunStatusData){
+    public ReloadActionRunnable(ShellCasePlayer shellCasePlayer, GunStatusData gunStatusData){
         this.shellCasePlayer = shellCasePlayer;
         this.gunStatusData = gunStatusData;
     

@@ -1,9 +1,9 @@
-package be4rjp.shellcase.weapon.reload;
+package be4rjp.shellcase.weapon.actions;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.player.ShellCasePlayer;
-import be4rjp.shellcase.weapon.reload.action.Action;
-import be4rjp.shellcase.weapon.reload.action.SoundAction;
+import be4rjp.shellcase.weapon.actions.action.Action;
+import be4rjp.shellcase.weapon.actions.action.SoundAction;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -14,10 +14,10 @@ public class Actions {
     
     private static Map<String, Actions> reloadActionsMap = new HashMap<>();
     
-    public static Actions getReloadAction(String id){return reloadActionsMap.get(id);}
+    public static Actions getAction(String id){return reloadActionsMap.get(id);}
     
     
-    public static void loadAllReloadActions() {
+    public static void loadAllActions() {
         ShellCase.getPlugin().getLogger().info("Loading reload actions...");
         File dir = new File("plugins/ShellCase/action");
     

@@ -1,4 +1,4 @@
-package be4rjp.shellcase.weapon.reload.action;
+package be4rjp.shellcase.weapon.actions.action;
 
 import be4rjp.shellcase.player.ShellCasePlayer;
 

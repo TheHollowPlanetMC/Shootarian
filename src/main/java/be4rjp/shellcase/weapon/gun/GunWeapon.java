@@ -8,7 +8,8 @@ import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.WeaponStatusData;
 import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.attachment.Sight;
-import be4rjp.shellcase.weapon.reload.Actions;
+import be4rjp.shellcase.weapon.recoil.Recoil;
+import be4rjp.shellcase.weapon.actions.Actions;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -56,6 +57,16 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     protected Actions reloadActions = new Actions("null");
     //コンバットリロードアクション
     protected Actions combatReloadActions = new Actions("null");
+    //撃ってから落ち始めるまでのtick
+    protected int fallTick = 0;
+    //射撃間隔
+    protected int shootTick = 1;
+    //射撃する弾の速度
+    protected double shootSpeed = 0.1;
+    //ADS時のリコイル
+    protected Recoil adsRecoil = null;
+    //腰撃ち時のリコイル
+    protected Recoil normalRecoil = null;
     
     public GunWeapon(String id){
         super(id);
@@ -107,6 +118,16 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public float getADSWalkSpeed() {return adsWalkSpeed;}
     
+    public double getShootSpeed() {return shootSpeed;}
+    
+    public int getFallTick() {return fallTick;}
+    
+    public int getShootTick() {return shootTick;}
+    
+    public Recoil getADSRecoil(){return adsRecoil;}
+    
+    public Recoil getNormalRecoil() {return normalRecoil;}
+    
     /**
      * ymlファイルからロードする
      * @param yml
@@ -129,9 +150,15 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         if(yml.contains("bullet-size")) this.bulletSize = yml.getDouble("bullet-size");
         if(yml.contains("default-bullets")) this.defaultBullets = yml.getInt("default-bullets");
         if(yml.contains("default-sight")) this.defaultSight = (Sight) Attachment.getAttachment(yml.getString("default-sight"));
-        if(yml.contains("reload")) this.reloadActions = Actions.getReloadAction(yml.getString("reload"));
-        if(yml.contains("reload-combat")) this.combatReloadActions = Actions.getReloadAction(yml.getString("reload-combat"));
+        if(yml.contains("reload")) this.reloadActions = Actions.getAction(yml.getString("reload"));
+        if(yml.contains("reload-combat")) this.combatReloadActions = Actions.getAction(yml.getString("reload-combat"));
         if(yml.contains("ads-walk-speed")) this.adsWalkSpeed = (float) yml.getDouble("ads-walk-speed");
+    
+        if(yml.contains("fall-tick")) this.fallTick = yml.getInt("fall-tick");
+        if(yml.contains("shoot-tick")) this.shootTick = yml.getInt("shoot-tick");
+        if(yml.contains("shoot-speed")) this.shootSpeed = yml.getDouble("shoot-speed");
+        if(yml.contains("ads-recoil")) this.adsRecoil = Recoil.getRecoil(yml.getString("ads-recoil"));
+        if(yml.contains("normal-recoil")) this.normalRecoil = Recoil.getRecoil(yml.getString("normal-recoil"));
         
         loadDetailsData();
     }
@@ -144,7 +171,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     
     public enum MainWeaponType{
-        FULL_AUTO_GUN(FullAutoGun.class);
+        FULL_AUTO_GUN(FullAutoGun.class),
+        SEMI_AUTO_GUN(SemiAutoGun.class);
         
         private final Class<? extends GunWeapon> weaponClass;
         
@@ -157,6 +185,70 @@ public abstract class GunWeapon extends ShellCaseWeapon {
                 return weaponClass.getConstructor(String.class).newInstance(id);
             }catch (Exception e){e.printStackTrace();}
             return null;
+        }
+    }
+    
+    
+    public class HipShootingRecoil {
+        //撃った時の弾の散らばり
+        private double shootRandom = 0.0;
+        //撃った時の弾の散らばりの最大値
+        private double shootMaxRandom = 1.0;
+        //散らばりが増加し始めるtick
+        private int minTick = 10;
+        //散らばりが最大値に達するtick
+        private int maxTick = 30;
+        //撃つのをやめてから散らばりがリセットされるtick
+        private int resetTick = 40;
+        
+        /**
+         * 散らばりが最大値に達するtick
+         * @param maxTick
+         */
+        public void setMaxTick(int maxTick) {this.maxTick = maxTick;}
+        
+        /**
+         * 散らばりが増加し始めるtick
+         * @param minTick
+         */
+        public void setMinTick(int minTick) {this.minTick = minTick;}
+        
+        /**
+         * 撃つのをやめてから散らばりがリセットされるtick
+         * @param resetTick
+         */
+        public void setResetTick(int resetTick) {this.resetTick = resetTick;}
+        
+        /**
+         * 撃った時の弾の散らばりの最大値
+         * @param shootMaxRandom
+         */
+        public void setShootMaxRandom(double shootMaxRandom) {this.shootMaxRandom = shootMaxRandom;}
+        
+        /**
+         * 撃った時の弾の散らばり
+         * @param shootRandom
+         */
+        public void setShootRandom(double shootRandom) {this.shootRandom = shootRandom;}
+        
+        /**
+         * 撃つのをやめてから散らばりがリセットされるtick
+         * @return int
+         */
+        public int getResetTick() {return resetTick;}
+        
+        public double getShootRandomRange(int clickTick){
+            if(clickTick <= minTick){
+                return shootRandom;
+            }else{
+                if(clickTick < maxTick){
+                    double rate = (double)(clickTick - minTick) / (double)(maxTick - minTick);
+                    double m = shootMaxRandom - shootRandom;
+                    return shootRandom + (m * rate);
+                }else{
+                    return shootMaxRandom;
+                }
+            }
         }
     }
 }

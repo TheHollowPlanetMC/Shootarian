@@ -5,7 +5,8 @@ import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.WeaponStatusData;
 import be4rjp.shellcase.weapon.attachment.Sight;
-import be4rjp.shellcase.weapon.reload.ReloadRunnable;
+import be4rjp.shellcase.weapon.recoil.RecoilPattern;
+import be4rjp.shellcase.weapon.actions.ReloadActionRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,6 +20,10 @@ public class GunStatusData extends WeaponStatusData {
     private PassiveInfluence passiveInfluence = new PassiveInfluence();
     
     private int maxBullets = 20;
+    private long coolTime = 0;
+    
+    private RecoilPattern adsRecoil;
+    private RecoilPattern normalRecoil;
     
     public GunStatusData(GunWeapon gunWeapon, ShellCasePlayer shellCasePlayer){
         super(gunWeapon, shellCasePlayer);
@@ -28,7 +33,10 @@ public class GunStatusData extends WeaponStatusData {
         this.maxBullets = gunWeapon.getDefaultBullets();
         this.bullets = gunWeapon.getDefaultBullets();
         
-        sight = gunWeapon.getDefaultSight();
+        this.sight = gunWeapon.getDefaultSight();
+        
+        this.adsRecoil = gunWeapon.getADSRecoil().getRandomPattern();
+        this.normalRecoil = gunWeapon.getNormalRecoil().getRandomPattern();
     }
 
     public void createPassiveInfluence(){this.passiveInfluence.createPassiveInfluence(this);}
@@ -42,12 +50,25 @@ public class GunStatusData extends WeaponStatusData {
     public int getMaxBullets() {return maxBullets;}
     
     public void setMaxBullets(int maxBullets) {this.maxBullets = maxBullets;}
-
+    
+    public boolean isCoolTime(){return System.currentTimeMillis() < coolTime;}
+    
+    public void setCoolTime(long tick){coolTime = System.currentTimeMillis() + (tick * 50L);}
+    
+    public RecoilPattern getNormalRecoil() {return normalRecoil;}
+    
+    public RecoilPattern getAdsRecoil() {return adsRecoil;}
+    
+    public void resetRecoil() {
+        this.adsRecoil = gunWeapon.getADSRecoil().getRandomPattern();
+        this.normalRecoil = gunWeapon.getNormalRecoil().getRandomPattern();
+    }
+    
     public void reload(){
         if(this.isReloading) return;
         if(shellCasePlayer == null) return;
         this.isReloading = true;
-        new ReloadRunnable(shellCasePlayer, this).start();
+        new ReloadActionRunnable(shellCasePlayer, this).start();
     }
 
     @Override

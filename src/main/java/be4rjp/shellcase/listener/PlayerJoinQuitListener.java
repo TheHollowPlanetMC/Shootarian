@@ -94,12 +94,12 @@ public class PlayerJoinQuitListener implements Listener {
                         }
                         
                         
-                        new WorldThreadRunnable(player.getWorld()){
+                        new BukkitRunnable(){
                             @Override
                             public void run() {
                                 shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
                             }
-                        }.runTaskLater(ShellCase.getPlugin(), 20);
+                        }.runTaskLater(ShellCase.getPlugin(), 1);
                         
                         
                         if(index % 2 == 0){
@@ -108,9 +108,11 @@ public class PlayerJoinQuitListener implements Listener {
                             team1.join(shellCasePlayer);
                         }
     
-                        GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
+                        GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("kar98k"), shellCasePlayer);
+                        GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("mk14-ebr"), shellCasePlayer);
                         GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
-                        shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
+                        shellCasePlayer.getWeaponClass().setMainWeapon(scar);
+                        shellCasePlayer.getWeaponClass().setSubWeapon(mk14);
                         shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
                         shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
                         
