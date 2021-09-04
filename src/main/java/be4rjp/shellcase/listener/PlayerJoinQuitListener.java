@@ -108,7 +108,7 @@ public class PlayerJoinQuitListener implements Listener {
                             team1.join(shellCasePlayer);
                         }
     
-                        GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("kar98k"), shellCasePlayer);
+                        GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("s868"), shellCasePlayer);
                         GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("mk14-ebr"), shellCasePlayer);
                         GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
                         shellCasePlayer.getWeaponClass().setMainWeapon(scar);

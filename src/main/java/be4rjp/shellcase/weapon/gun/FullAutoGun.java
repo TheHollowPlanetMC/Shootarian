@@ -7,14 +7,9 @@ import be4rjp.shellcase.weapon.gun.runnable.FullAutoGunRunnable;
 
 public class FullAutoGun extends GunWeapon {
     
-    //リコイル
-    private final HipShootingRecoil hipShootingRecoil = new HipShootingRecoil();
-    
     public FullAutoGun(String id) {
         super(id);
     }
-    
-    public HipShootingRecoil getHipShootingRecoil() {return hipShootingRecoil;}
     
     @Override
     public void onRightClick(ShellCasePlayer shellCasePlayer) {
@@ -33,19 +28,13 @@ public class FullAutoGun extends GunWeapon {
     }
     
     @Override
-    public MainWeaponType getType() {
-        return MainWeaponType.FULL_AUTO_GUN;
+    public GunWeaponType getType() {
+        return GunWeaponType.FULL_AUTO_GUN;
     }
     
     @Override
     public void loadDetailsData() {
-        if(yml.contains("hip-shooting-recoil")){
-            if(yml.contains("hip-shooting-recoil.shoot-random")) hipShootingRecoil.setShootRandom(yml.getDouble("hip-shooting-recoil.shoot-random"));
-            if(yml.contains("hip-shooting-recoil.shoot-max-random")) hipShootingRecoil.setShootMaxRandom(yml.getDouble("hip-shooting-recoil.shoot-max-random"));
-            if(yml.contains("hip-shooting-recoil.increase-min-tick")) hipShootingRecoil.setMinTick(yml.getInt("hip-shooting-recoil.increase-min-tick"));
-            if(yml.contains("hip-shooting-recoil.increase-max-tick")) hipShootingRecoil.setMaxTick(yml.getInt("hip-shooting-recoil.increase-max-tick"));
-            if(yml.contains("hip-shooting-recoil.increase-reset-tick")) hipShootingRecoil.setResetTick(yml.getInt("hip-shooting-recoil.increase-reset-tick"));
-        }
+        //None
     }
     
 }

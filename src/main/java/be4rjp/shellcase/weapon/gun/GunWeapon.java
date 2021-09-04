@@ -67,6 +67,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     protected Recoil adsRecoil = null;
     //腰撃ち時のリコイル
     protected Recoil normalRecoil = null;
+    //リコイル
+    private final HipShootingRecoil hipShootingRecoil = new HipShootingRecoil();
     
     public GunWeapon(String id){
         super(id);
@@ -96,7 +98,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
      * 武器のタイプを取得する
      * @return MainWeaponType
      */
-    public abstract MainWeaponType getType();
+    public abstract GunWeaponType getType();
     
     /**
      * この武器についているパッシブ効果を取得する
@@ -127,6 +129,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     public Recoil getADSRecoil(){return adsRecoil;}
     
     public Recoil getNormalRecoil() {return normalRecoil;}
+    
+    public HipShootingRecoil getHipShootingRecoil() {return hipShootingRecoil;}
     
     /**
      * ymlファイルからロードする
@@ -159,6 +163,14 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         if(yml.contains("shoot-speed")) this.shootSpeed = yml.getDouble("shoot-speed");
         if(yml.contains("ads-recoil")) this.adsRecoil = Recoil.getRecoil(yml.getString("ads-recoil"));
         if(yml.contains("normal-recoil")) this.normalRecoil = Recoil.getRecoil(yml.getString("normal-recoil"));
+    
+        if(yml.contains("hip-shooting-recoil")){
+            if(yml.contains("hip-shooting-recoil.shoot-random")) hipShootingRecoil.setShootRandom(yml.getDouble("hip-shooting-recoil.shoot-random"));
+            if(yml.contains("hip-shooting-recoil.shoot-max-random")) hipShootingRecoil.setShootMaxRandom(yml.getDouble("hip-shooting-recoil.shoot-max-random"));
+            if(yml.contains("hip-shooting-recoil.increase-min-tick")) hipShootingRecoil.setMinTick(yml.getInt("hip-shooting-recoil.increase-min-tick"));
+            if(yml.contains("hip-shooting-recoil.increase-max-tick")) hipShootingRecoil.setMaxTick(yml.getInt("hip-shooting-recoil.increase-max-tick"));
+            if(yml.contains("hip-shooting-recoil.increase-reset-tick")) hipShootingRecoil.setResetTick(yml.getInt("hip-shooting-recoil.increase-reset-tick"));
+        }
         
         loadDetailsData();
     }
@@ -170,13 +182,13 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     
     
-    public enum MainWeaponType{
+    public enum GunWeaponType {
         FULL_AUTO_GUN(FullAutoGun.class),
         SEMI_AUTO_GUN(SemiAutoGun.class);
         
         private final Class<? extends GunWeapon> weaponClass;
         
-        MainWeaponType(Class<? extends GunWeapon> weaponClass){
+        GunWeaponType(Class<? extends GunWeapon> weaponClass){
             this.weaponClass = weaponClass;
         }
         
@@ -189,7 +201,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     }
     
     
-    public class HipShootingRecoil {
+    public static class HipShootingRecoil {
         //撃った時の弾の散らばり
         private double shootRandom = 0.0;
         //撃った時の弾の散らばりの最大値

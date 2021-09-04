@@ -71,7 +71,7 @@ public class WeaponManager {
                 String id = file.getName().replace(".yml", "");
                 try {
                     YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-                    GunWeapon.MainWeaponType type = GunWeapon.MainWeaponType.valueOf(yml.getString("type"));
+                    GunWeapon.GunWeaponType type = GunWeapon.GunWeaponType.valueOf(yml.getString("type"));
                     GunWeapon gunWeapon = type.createGunWeaponInstance(id);
                     gunWeapon.loadData(yml);
                 }catch (Exception e){e.printStackTrace();}

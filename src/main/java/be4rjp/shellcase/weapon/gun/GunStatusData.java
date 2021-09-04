@@ -17,10 +17,12 @@ public class GunStatusData extends WeaponStatusData {
     
     private Sight sight;
     
-    private PassiveInfluence passiveInfluence = new PassiveInfluence();
+    private final PassiveInfluence passiveInfluence = new PassiveInfluence();
     
     private int maxBullets = 20;
     private long coolTime = 0;
+    private long lastClickTime = 0;
+    private long clickTick = 0;
     
     private RecoilPattern adsRecoil;
     private RecoilPattern normalRecoil;
@@ -59,6 +61,14 @@ public class GunStatusData extends WeaponStatusData {
     
     public RecoilPattern getAdsRecoil() {return adsRecoil;}
     
+    public long getLastClickTime() {return lastClickTime;}
+    
+    public void setLastClickTime(long lastClickTime) {this.lastClickTime = lastClickTime;}
+    
+    public long getClickTick() {return clickTick;}
+    
+    public void setClickTick(long clickTick) {this.clickTick = clickTick;}
+    
     public void resetRecoil() {
         this.adsRecoil = gunWeapon.getADSRecoil().getRandomPattern();
         this.normalRecoil = gunWeapon.getNormalRecoil().getRandomPattern();
@@ -69,6 +79,7 @@ public class GunStatusData extends WeaponStatusData {
         if(shellCasePlayer == null) return;
         this.isReloading = true;
         new ReloadActionRunnable(shellCasePlayer, this).start();
+        this.resetRecoil();
     }
 
     @Override

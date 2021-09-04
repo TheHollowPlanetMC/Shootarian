@@ -16,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Timer;
+
 public final class ShellCase extends JavaPlugin {
     
     public static final String VERSION = "v0.0.1 - α";
@@ -26,11 +28,15 @@ public final class ShellCase extends JavaPlugin {
     private static PlayerLobbyMatch playerLobbyMatch;
     private static ShellCaseTeam lobbyTeam;
     
+    private static Timer asyncTimer;
+    
     
     @Override
     public void onEnable() {
         // Plugin startup logic
         shellCase = this;
+        
+        asyncTimer = new Timer(true);
     
         SlimePlugin slimePluginInstance = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         if(slimePluginInstance == null){
@@ -65,6 +71,9 @@ public final class ShellCase extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        try{
+            asyncTimer.cancel();
+        }catch (Exception e){e.printStackTrace();}
     }
     
     public static ShellCase getPlugin() {return shellCase;}
@@ -74,4 +83,6 @@ public final class ShellCase extends JavaPlugin {
     public static PlayerLobbyMatch getLobbyMatch() {return playerLobbyMatch;}
     
     public static ShellCaseTeam getLobbyTeam() {return lobbyTeam;}
+    
+    public static Timer getAsyncTimer() {return asyncTimer;}
 }
