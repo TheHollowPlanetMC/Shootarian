@@ -3,11 +3,8 @@ package be4rjp.shellcase.data.sql;
 import be4rjp.shellcase.ShellCaseConfig;
 import be4rjp.shellcase.data.AchievementData;
 import be4rjp.shellcase.data.HeadGearPossessionData;
-import be4rjp.shellcase.data.WeaponPossessionData;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.costume.HeadGear;
-import be4rjp.shellcase.player.costume.HeadGearData;
-import be4rjp.shellcase.player.passive.Gear;
 
 public class SQLDriver {
     
@@ -44,11 +41,11 @@ public class SQLDriver {
         achievementData.getShellCasePlayer().getPlayerSettings().setByCombinedID(settings);
     
         HeadGearPossessionData headGearPossessionData = achievementData.getHeadGearPossessionData();
-        if(headGearPossessionData.getHeadGearData(0) == null){
-            headGearPossessionData.addHeadGearData(new HeadGearData(HeadGear.getHeadGearBySaveNumber(1), Gear.NO_GEAR, Gear.NO_GEAR, Gear.NO_GEAR));
+        if(headGearPossessionData.getHeadGear(0) == null){
+            headGearPossessionData.addHeadGear(HeadGear.getHeadGearBySaveNumber(1));
         }
-        HeadGearData headGearData = achievementData.getHeadGearPossessionData().getHeadGearData(head);
-        if(headGearData != null) achievementData.getShellCasePlayer().setHeadGearData(headGearData, head);
+        HeadGear headGear = achievementData.getHeadGearPossessionData().getHeadGear(head);
+        if(headGear != null) achievementData.getShellCasePlayer().setHeadGear(headGear, head);
         achievementData.getShellCasePlayer().equipHeadGear();
     
         

@@ -12,14 +12,14 @@ public class AchievementData {
     private int rank = 0;
     private int coin = 0;
     
-    private final WeaponPossessionData weaponPossessionData;
+    private final GunWeaponPossessionData gunWeaponPossessionData;
     private final HeadGearPossessionData headGearPossessionData;
     private final ProgressData progressData = new ProgressData();
     
     public AchievementData(ShellCasePlayer ShellCasePlayer){
         this.ShellCasePlayer = ShellCasePlayer;
         
-        this.weaponPossessionData = ShellCasePlayer.getWeaponPossessionData();
+        this.gunWeaponPossessionData = ShellCasePlayer.getWeaponPossessionData();
         this.headGearPossessionData = ShellCasePlayer.getHeadGearPossessionData();
     }
     
@@ -49,7 +49,7 @@ public class AchievementData {
     
     public HeadGearPossessionData getHeadGearPossessionData() {return headGearPossessionData;}
     
-    public WeaponPossessionData getWeaponPossessionData() {return weaponPossessionData;}
+    public GunWeaponPossessionData getWeaponPossessionData() {return gunWeaponPossessionData;}
 
     public ProgressData getProgressData() {return progressData;}
 

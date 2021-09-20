@@ -4,11 +4,14 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.WeaponStatusData;
+import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.recoil.RecoilPattern;
 import be4rjp.shellcase.weapon.actions.ReloadActionRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.BitSet;
 
 public class GunStatusData extends WeaponStatusData {
     
@@ -26,6 +29,8 @@ public class GunStatusData extends WeaponStatusData {
     
     private RecoilPattern adsRecoil;
     private RecoilPattern normalRecoil;
+    
+    private BitSet attachmentPossessionData = new BitSet(32);
     
     public GunStatusData(GunWeapon gunWeapon, ShellCasePlayer shellCasePlayer){
         super(gunWeapon, shellCasePlayer);
@@ -68,6 +73,14 @@ public class GunStatusData extends WeaponStatusData {
     public long getClickTick() {return clickTick;}
     
     public void setClickTick(long clickTick) {this.clickTick = clickTick;}
+    
+    public void addAttachment(Attachment attachment){this.attachmentPossessionData.set(attachment.getSaveNumber(), 1);}
+    
+    public boolean hasAttachment(Attachment attachment){return this.attachmentPossessionData.get(attachment.getSaveNumber());}
+    
+    public void setAttachmentPossessionData(byte[] bytes){this.attachmentPossessionData = BitSet.valueOf(bytes);}
+    
+    public byte[] getAttachmentPossessionData() {return attachmentPossessionData.toByteArray();}
     
     public void resetRecoil() {
         this.adsRecoil = gunWeapon.getADSRecoil().getRandomPattern();

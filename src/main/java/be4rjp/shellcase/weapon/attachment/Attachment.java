@@ -19,6 +19,15 @@ public abstract class Attachment {
     
     public static Attachment getAttachment(String id){return attachmentMap.get(id);}
     
+    public static Attachment getAttachmentBySaveNumber(int saveNumber){
+        for(Attachment attachment : attachmentMap.values()){
+            if(saveNumber == attachment.getSaveNumber()){
+                return attachment;
+            }
+        }
+        return null;
+    }
+    
     
     //アタッチメントの識別名
     protected final String id;
@@ -32,6 +41,8 @@ public abstract class Attachment {
     protected int modelID = 0;
     //パッシブ効果とその効果倍率のマップ
     protected Map<Passive, Float> passiveInfluenceMap = new HashMap<>();
+    //SQLに保存するための識別番号
+    protected int saveNumber = 0;
     
     
     public Attachment(String id){
@@ -65,6 +76,7 @@ public abstract class Attachment {
                 passiveInfluenceMap.put(passive, influence);
             }
         }
+        if(yml.contains("save-number")) this.saveNumber = yml.getInt("save-number");
         
         this.loadDetailsData();
     }
@@ -95,6 +107,8 @@ public abstract class Attachment {
     public Map<Passive, Float> getPassiveInfluenceMap() {return passiveInfluenceMap;}
     
     public Material getMaterial() {return material;}
+    
+    public int getSaveNumber() {return saveNumber;}
     
     /**
      * アイテムを取得する

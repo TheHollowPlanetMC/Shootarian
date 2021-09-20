@@ -5,7 +5,7 @@ import be4rjp.parallel.ParallelWorld;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.data.AchievementData;
 import be4rjp.shellcase.data.HeadGearPossessionData;
-import be4rjp.shellcase.data.WeaponPossessionData;
+import be4rjp.shellcase.data.GunWeaponPossessionData;
 import be4rjp.shellcase.data.settings.PlayerSettings;
 import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.data.sql.SQLDriver;
@@ -13,11 +13,12 @@ import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.language.MessageManager;
-import be4rjp.shellcase.player.costume.HeadGearData;
+import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.player.death.DeathType;
 import be4rjp.shellcase.player.death.PlayerDeathManager;
 import be4rjp.shellcase.player.passive.Gear;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
+import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import be4rjp.shellcase.util.ShellCaseSound;
@@ -28,7 +29,6 @@ import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.gun.runnable.GunWeaponRunnable;
-import io.papermc.lib.PaperLib;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -36,9 +36,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -150,11 +148,11 @@ public class ShellCasePlayer {
     //パッシブ効果
     private final PassiveInfluence passiveInfluence = new PassiveInfluence();
     //装備しているヘッドギア
-    private HeadGearData headGearData = null;
+    private HeadGear headGear = null;
     //装備しているヘッドギアの番号
     private int headGearNumber = 0;
     //武器の所持データ
-    private final WeaponPossessionData weaponPossessionData = new WeaponPossessionData();
+    private final GunWeaponPossessionData gunWeaponPossessionData = new GunWeaponPossessionData();
     //ヘッドギアの所持データ
     private final HeadGearPossessionData headGearPossessionData = new HeadGearPossessionData();
     //実績データ
@@ -164,10 +162,8 @@ public class ShellCasePlayer {
 
     //キルカウントの動作の同期用インスタンス
     private final Object KILL_COUNT_LOCK = new Object();
-    //ペイントカウントの動作の同期用インスタンス
+    //ポイントの動作の同期用インスタンス
     private final Object POINT_COUNT_LOCK = new Object();
-    //インク系の動作の同期用インスタンス
-    private final Object INK_LOCK = new Object();
     //フライ系の動作の同期用インスタンス
     private final Object FLY_LOCK = new Object();
     //死亡系の動作の同期用インスタンス
@@ -248,7 +244,7 @@ public class ShellCasePlayer {
     
     public PassiveInfluence getPassiveInfluence() {return passiveInfluence;}
     
-    public HeadGearData getHeadGearData() {return headGearData;}
+    public HeadGear getHeadGear() {return headGear;}
     
     public int getHeadGearNumber() {return headGearNumber;}
     
@@ -276,7 +272,7 @@ public class ShellCasePlayer {
     
     public HeadGearPossessionData getHeadGearPossessionData() {return headGearPossessionData;}
     
-    public WeaponPossessionData getWeaponPossessionData() {return weaponPossessionData;}
+    public GunWeaponPossessionData getWeaponPossessionData() {return gunWeaponPossessionData;}
     
     public WeaponClass getWeaponClass() {return weaponClass;}
     
@@ -302,7 +298,7 @@ public class ShellCasePlayer {
         this.observableOption = ObservableOption.ALL_PLAYER;
         this.isDeath = false;
         this.isADS = false;
-        this.headGearData = null;
+        this.headGear = null;
         this.gearList.clear();
         this.setFOV(0.1F);
         this.setFly(false);
@@ -363,12 +359,9 @@ public class ShellCasePlayer {
      * Mojangのセッションサーバーへスキンデータのリクエストを送信して取得する
      */
     public void sendSkinRequest(){
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                skin = SkinManager.getSkin(uuid);
-            }
-        }.runTaskAsynchronously(ShellCase.getPlugin());
+        TaskHandler.runAsync(() -> {
+            skin = SkinManager.getSkin(uuid);
+        }, ShellCase.getPlugin());
     }
     
     /**
@@ -400,14 +393,11 @@ public class ShellCasePlayer {
                 if(this.player == null) break;
                 if(this.shellCaseTeam == null) break;
                 
-                new WorldThreadRunnable(player.getWorld()) {
-                    @Override
-                    public void run() {
-                        for(Player op : Bukkit.getServer().getOnlinePlayers()) {
-                            if(player != op) player.hidePlayer(ShellCase.getPlugin(), op);
-                        }
+                TaskHandler.runSync(() ->{
+                    for(Player op : Bukkit.getServer().getOnlinePlayers()) {
+                        if(player != op) player.hidePlayer(ShellCase.getPlugin(), op);
                     }
-                }.runTask(ShellCase.getPlugin());
+                }, ShellCase.getPlugin());
                 break;
             }
             
@@ -428,31 +418,25 @@ public class ShellCasePlayer {
                     }
                 }
     
-                new WorldThreadRunnable(player.getWorld()) {
-                    @Override
-                    public void run() {
-                        for(Player op : hidePlayers) {
-                            if(player != op) player.hidePlayer(ShellCase.getPlugin(), op);
-                        }
-                        for(Player op : showPlayers) {
-                            if(player != op) player.showPlayer(ShellCase.getPlugin(), op);
-                        }
+                TaskHandler.runSync(() -> {
+                    for(Player op : hidePlayers) {
+                        if(player != op) player.hidePlayer(ShellCase.getPlugin(), op);
                     }
-                }.runTask(ShellCase.getPlugin());
+                    for(Player op : showPlayers) {
+                        if(player != op) player.showPlayer(ShellCase.getPlugin(), op);
+                    }
+                }, ShellCase.getPlugin());
                 break;
             }
             
             case ALL_PLAYER:{
                 if(this.player == null) break;
     
-                new WorldThreadRunnable(player.getWorld()) {
-                    @Override
-                    public void run() {
-                        for(Player op : Bukkit.getServer().getOnlinePlayers()) {
-                            if(player != op) player.showPlayer(ShellCase.getPlugin(), op);
-                        }
+                TaskHandler.runSync(() -> {
+                    for(Player op : Bukkit.getServer().getOnlinePlayers()) {
+                        if(player != op) player.showPlayer(ShellCase.getPlugin(), op);
                     }
-                }.runTask(ShellCase.getPlugin());
+                }, ShellCase.getPlugin());
                 break;
             }
         }
@@ -460,20 +444,22 @@ public class ShellCasePlayer {
     
     /**
      * ヘッドギアを装備させる
-     * @param headGearData
+     * @param headGear
      */
-    public void setHeadGearData(HeadGearData headGearData, int headGearNumber){
-        this.headGearData = headGearData;
+    public void setHeadGear(HeadGear headGear, int headGearNumber){
+        this.headGear = headGear;
         this.headGearNumber = headGearNumber;
-        headGearData.setHeadGear(this);
+        
+        if(player == null) return;
+        player.getInventory().setHelmet(headGear.getItemStack(lang));
     }
     
     /**
      * ヘッドギアを装備させる
      */
     public void equipHeadGear(){
-        if(player == null || headGearData == null) return;
-        player.getInventory().setHelmet(headGearData.getItemStack(lang));
+        if(player == null || headGear == null) return;
+        player.getInventory().setHelmet(headGear.getItemStack(lang));
     }
     
     /**
@@ -722,14 +708,12 @@ public class ShellCasePlayer {
         long time = System.currentTimeMillis();
         this.teleportTime = time;
         if(player == null) return;
-        new WorldThreadRunnable(player.getWorld()) {
-            @Override
-            public void run() {
-                if (player == null) return;
-                if (time != teleportTime) return;
-                player.teleport(location);
-            }
-        }.runTask(ShellCase.getPlugin());
+        
+        TaskHandler.runWorldSync(() -> {
+            if (player == null) return;
+            if (time != teleportTime) return;
+            player.teleport(location);
+        }, player.getWorld(), ShellCase.getPlugin());
     }
     
     /**
@@ -741,15 +725,13 @@ public class ShellCasePlayer {
         this.teleportTime = time;
         this.setHealth(20.0F);
         if(player == null) return;
-        new WorldThreadRunnable(player.getWorld()) {
-            @Override
-            public void run() {
-                if (player == null) return;
-                player.teleport(location);
-                player.setGameMode(GameMode.ADVENTURE);
-                setDeath(false);
-            }
-        }.runTask(ShellCase.getPlugin());
+        
+        TaskHandler.runWorldSync(() -> {
+            if (player == null) return;
+            player.teleport(location);
+            player.setGameMode(GameMode.ADVENTURE);
+            setDeath(false);
+        }, player.getWorld(), ShellCase.getPlugin());
     }
     
     /**
@@ -758,13 +740,11 @@ public class ShellCasePlayer {
      */
     public void setGameMode(GameMode gameMode){
         if(player == null) return;
-        new WorldThreadRunnable(player.getWorld()) {
-            @Override
-            public void run() {
-                if (player == null) return;
-                player.setGameMode(gameMode);
-            }
-        }.runTask(ShellCase.getPlugin());
+        
+        TaskHandler.runWorldSync(() -> {
+            if (player == null) return;
+            player.setGameMode(gameMode);
+        }, player.getWorld(), ShellCase.getPlugin());
     }
     
     

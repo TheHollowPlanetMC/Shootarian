@@ -38,11 +38,25 @@ public abstract class GunWeapon extends ShellCaseWeapon {
      * メインウエポンのリストを取得します
      * @return Collection<MainWeapon>
      */
-    public static Collection<GunWeapon> getMainWeaponList(){return gunWeaponMap.values();}
+    public static Collection<GunWeapon> getGunWeaponList(){return gunWeaponMap.values();}
+    
+    /**
+     * SaveNumberからGunWeaponを取得します
+     * @param saveNumber int
+     * @return GunWeapon
+     */
+    public static GunWeapon getGunWeaponBySaveNumber(int saveNumber){
+        for(GunWeapon gunWeapon : gunWeaponMap.values()){
+            if(gunWeapon.getSaveNumber() == saveNumber) return gunWeapon;
+        }
+        return null;
+    }
     
     
     //設定ファイル
     protected YamlConfiguration yml;
+    //SQLに保存するための識別番号
+    protected int saveNumber = 0;
     //射撃時に鳴らすサウンド
     protected ShellCaseSound shootSound = new ShellCaseSound(Sound.ENTITY_PIG_STEP, 0.3F, 1F);
     //武器のパッシブ効果
@@ -132,6 +146,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public HipShootingRecoil getHipShootingRecoil() {return hipShootingRecoil;}
     
+    public int getSaveNumber() {return saveNumber;}
+    
     /**
      * ymlファイルからロードする
      * @param yml
@@ -146,6 +162,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
                 this.displayName.put(lang, ChatColor.translateAlternateColorCodes('&', name));
             }
         }
+        if(yml.contains("save-number")) this.saveNumber = yml.getInt("save-number");
         if(yml.contains("material")) this.material = Material.getMaterial(Objects.requireNonNull(yml.getString("material")));
         if(yml.contains("custom-model-data")) this.modelID = yml.getInt("custom-model-data");
         if(yml.contains("damage")) this.damage = (float)yml.getDouble("damage");

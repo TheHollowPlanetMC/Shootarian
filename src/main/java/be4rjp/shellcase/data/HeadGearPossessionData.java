@@ -1,8 +1,6 @@
 package be4rjp.shellcase.data;
 
 import be4rjp.shellcase.player.costume.HeadGear;
-import be4rjp.shellcase.player.costume.HeadGearData;
-import be4rjp.shellcase.player.passive.Gear;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +8,10 @@ import java.util.List;
 
 public class HeadGearPossessionData extends SavableByteData{
     
-    private final List<HeadGearData> headGearDataList = new ArrayList<>();
+    private final List<HeadGear> headGearList = new ArrayList<>();
     
     public HeadGearPossessionData() {
-        super(2560 + 5);
+        super(256);
     }
     
     /**
@@ -21,25 +19,21 @@ public class HeadGearPossessionData extends SavableByteData{
      * @param index インデックス (0 ~ 511)
      * @return
      */
-    public HeadGearData getHeadGearData(int index){
+    public HeadGear getHeadGear(int index){
         indexCheck(index);
-        if(headGearDataList.size() <= index) return null;
-        return headGearDataList.get(index);
+        if(headGearList.size() <= index) return null;
+        return headGearList.get(index);
     }
     
     /**
      * SQLに書き込むためのbyte配列を作成する
      */
     public void writeToByteArray(){
-        for(int index = 0; index < 512; index++){
-            HeadGearData headGearData = this.getHeadGearData(index);
-            if(headGearData == null) break;
+        for(int index = 0; index < 256; index++){
+            HeadGear headGear = this.getHeadGear(index);
+            if(headGear == null) break;
     
-            bytes[index * 5] = (byte) (headGearData.headGear.getSaveNumber() >> 8);
-            bytes[index * 5 + 1] = (byte) (headGearData.headGear.getSaveNumber() & 0xFF);
-            bytes[index * 5 + 2] = (byte) headGearData.gear1.getSaveNumber();
-            bytes[index * 5 + 3] = (byte) headGearData.gear2.getSaveNumber();
-            bytes[index * 5 + 4] = (byte) headGearData.gear3.getSaveNumber();
+            bytes[index] = (byte) (headGear.getSaveNumber() & 0xFF);
         }
     }
     
@@ -47,33 +41,29 @@ public class HeadGearPossessionData extends SavableByteData{
      * SQLからロードしたbyte配列から読み込む
      */
     public void loadFromByteArray(){
-        this.headGearDataList.clear();
+        this.headGearList.clear();
         
-        for(int index = 0; index < 512; index++){
+        for(int index = 0; index < 256; index++){
             byte[] data = Arrays.copyOfRange(bytes, index * 5, index * 5 + 5);
             
             if(data[0] == 0 && data[1] == 0) break;
     
-            int headGearNumber = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
+            int headGearNumber = (data[1] & 0xFF);
             HeadGear headGear = HeadGear.getHeadGearBySaveNumber(headGearNumber);
-            Gear gear1 = Gear.getGearByID(data[2]);
-            Gear gear2 = Gear.getGearByID(data[3]);
-            Gear gear3 = Gear.getGearByID(data[4]);
-    
-            HeadGearData headGearData = new HeadGearData(headGear, gear1, gear2, gear3);
-            this.headGearDataList.add(headGearData);
+            
+            this.headGearList.add(headGear);
         }
     }
     
     /**
-     * ヘッドギアのデータを追加する。最大で512個まで追加できる
-     * @param headGearData
+     * ヘッドギアのデータを追加する。最大で256個まで追加できる
+     * @param headGear
      * @return 追加に成功すれば true
      */
-    public boolean addHeadGearData(HeadGearData headGearData){
-        if(headGearDataList.size() >= 512) return false;
+    public boolean addHeadGear(HeadGear headGear){
+        if(headGearList.size() >= 256) return false;
         
-        headGearDataList.add(headGearData);
+        headGearList.add(headGear);
         return true;
     }
     
@@ -81,12 +71,12 @@ public class HeadGearPossessionData extends SavableByteData{
      * ヘッドギアのデータのリストをコピーして返す
      * @return List<HeadGearData>
      */
-    public List<HeadGearData> getHeadGearDataList() {
-        return new ArrayList<>(headGearDataList);
+    public List<HeadGear> getHeadGearList() {
+        return new ArrayList<>(headGearList);
     }
     
     private static void indexCheck(int index){
-        if (index >= 512) throw new IllegalArgumentException("The index must be less than 512.");
+        if (index >= 256) throw new IllegalArgumentException("The index must be less than 256.");
     }
     
     
