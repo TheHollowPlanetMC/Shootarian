@@ -361,7 +361,7 @@ public class ShellCasePlayer {
     public void sendSkinRequest(){
         TaskHandler.runAsync(() -> {
             skin = SkinManager.getSkin(uuid);
-        }, ShellCase.getPlugin());
+        });
     }
     
     /**
@@ -397,7 +397,7 @@ public class ShellCasePlayer {
                     for(Player op : Bukkit.getServer().getOnlinePlayers()) {
                         if(player != op) player.hidePlayer(ShellCase.getPlugin(), op);
                     }
-                }, ShellCase.getPlugin());
+                });
                 break;
             }
             
@@ -425,7 +425,7 @@ public class ShellCasePlayer {
                     for(Player op : showPlayers) {
                         if(player != op) player.showPlayer(ShellCase.getPlugin(), op);
                     }
-                }, ShellCase.getPlugin());
+                });
                 break;
             }
             
@@ -436,7 +436,7 @@ public class ShellCasePlayer {
                     for(Player op : Bukkit.getServer().getOnlinePlayers()) {
                         if(player != op) player.showPlayer(ShellCase.getPlugin(), op);
                     }
-                }, ShellCase.getPlugin());
+                });
                 break;
             }
         }
@@ -709,11 +709,11 @@ public class ShellCasePlayer {
         this.teleportTime = time;
         if(player == null) return;
         
-        TaskHandler.runWorldSync(() -> {
+        TaskHandler.runWorldSync(player.getWorld(), () -> {
             if (player == null) return;
             if (time != teleportTime) return;
             player.teleport(location);
-        }, player.getWorld(), ShellCase.getPlugin());
+        });
     }
     
     /**
@@ -726,12 +726,12 @@ public class ShellCasePlayer {
         this.setHealth(20.0F);
         if(player == null) return;
         
-        TaskHandler.runWorldSync(() -> {
+        TaskHandler.runWorldSync(player.getWorld(), () -> {
             if (player == null) return;
             player.teleport(location);
             player.setGameMode(GameMode.ADVENTURE);
             setDeath(false);
-        }, player.getWorld(), ShellCase.getPlugin());
+        });
     }
     
     /**
@@ -741,10 +741,10 @@ public class ShellCasePlayer {
     public void setGameMode(GameMode gameMode){
         if(player == null) return;
         
-        TaskHandler.runWorldSync(() -> {
+        TaskHandler.runWorldSync(player.getWorld(), () -> {
             if (player == null) return;
             player.setGameMode(gameMode);
-        }, player.getWorld(), ShellCase.getPlugin());
+        });
     }
     
     
