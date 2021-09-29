@@ -58,6 +58,8 @@ public class MatchWaitRunnable extends BukkitRunnable {
         }
         scoreboard.updateSidebar(matchManager.getJoinedPlayers());
 
+
+
         if(timeLeft == 0){
             //開始処理
             

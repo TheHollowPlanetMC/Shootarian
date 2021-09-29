@@ -27,7 +27,11 @@ public class IntroManager {
 
     private static Map<Integer, Match> matchMap = new ConcurrentHashMap<>();
 
-    public static Match getMatchByMoviePlayID(int playID){return matchMap.get(playID);}
+    public static Match getAndRemoveMatchByMoviePlayID(int playID){
+        Match match = matchMap.get(playID);
+        matchMap.remove(playID);
+        return match;
+    }
 
     private static void registerMatch(Match match, int playID){matchMap.put(playID, match);}
 

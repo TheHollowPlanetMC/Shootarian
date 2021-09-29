@@ -29,6 +29,7 @@ import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerJoinQuitListener implements Listener {
     
@@ -88,18 +89,12 @@ public class PlayerJoinQuitListener implements Listener {
                     public void run() {
                         if(index == 0){
                             match.initialize();
-                            match.loadGameMap();
-                            match.loadGameMapTaskAtMainThread();
-                            match.start();
-                        }
-                        
-                        
-                        new BukkitRunnable(){
-                            @Override
-                            public void run() {
+                            CompletableFuture<Void> completableFuture = match.loadGameMap();
+                            completableFuture.thenAccept(v -> {
+                                match.start();
                                 shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-                            }
-                        }.runTaskLater(ShellCase.getPlugin(), 1);
+                            });
+                        }
                         
                         
                         if(index % 2 == 0){

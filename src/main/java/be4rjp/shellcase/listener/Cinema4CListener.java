@@ -13,10 +13,11 @@ public class Cinema4CListener implements Listener {
     public void onFinishMovie(AsyncMoviePlayFinishEvent event){
         int playID = event.getPlayID();
 
-        Match match = IntroManager.getMatchByMoviePlayID(playID);
+        Match match = IntroManager.getAndRemoveMatchByMoviePlayID(playID);
         if(match != null){
             ReadyRunnable readyRunnable = new ReadyRunnable(match);
             readyRunnable.start();
+            return;
         }
     }
 }

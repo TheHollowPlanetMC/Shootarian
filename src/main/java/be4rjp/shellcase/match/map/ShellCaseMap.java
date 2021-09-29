@@ -95,6 +95,8 @@ public abstract class ShellCaseMap {
     protected MovieData resultMovie = null;
     //建造物
     protected Set<MapStructure> mapStructures = new HashSet<>();
+    //マップの範囲
+    protected MapRange mapRange = null;
     
     
     /**
@@ -134,7 +136,15 @@ public abstract class ShellCaseMap {
      * @return
      */
     public int getNumberOfTeamLocations(){return this.teamLocations.size();}
-    
+
+    /**
+     * マップ範囲を取得します
+     * @return
+     */
+    public MapRange getMapRange() {
+        return mapRange;
+    }
+
     /**
      * このマップのタイプを取得する
      * @return
@@ -181,6 +191,14 @@ public abstract class ShellCaseMap {
             for(String line : yml.getStringList("structures")){
                 mapStructures.add(MapStructure.getMapStructure(line));
             }
+        }
+
+        if(yml.contains("map-range")){
+            String worldName = yml.getString("map-range.world");
+            String firstPosition = yml.getString("map-range.first-position");
+            String secondPosition = yml.getString("map-range.second-position");
+
+            this.mapRange = new MapRange(worldName, firstPosition, secondPosition);
         }
         
         loadDetailsData();

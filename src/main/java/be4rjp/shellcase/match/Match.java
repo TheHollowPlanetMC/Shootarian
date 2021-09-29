@@ -6,6 +6,7 @@ import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.entity.ShellCaseEntity;
 import be4rjp.shellcase.entity.ShellCaseEntityTickRunnable;
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.match.map.AsyncMapLoader;
 import be4rjp.shellcase.match.map.ShellCaseMap;
 import be4rjp.shellcase.match.map.structure.MapStructure;
 import be4rjp.shellcase.match.map.structure.MapStructureData;
@@ -23,6 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 各試合の親クラス
@@ -77,22 +79,13 @@ public abstract class Match {
     /**
      * マップのロード
      */
-    public void loadGameMap(){
-        try {
-            this.shellCaseMap.getWaitSCLocation().loadSlimeWorld();
-        }catch (Exception e){e.printStackTrace();}
-        
+    public CompletableFuture<Void> loadGameMap(){
         for(MapStructure mapStructure : getShellCaseMap().getMapStructures()){
             MapStructureData mapStructureData = new MapStructureData(this, mapStructure);
             this.mapStructureData.add(mapStructureData);
         }
-    }
-    
-    /**
-     * マップのロード
-     */
-    public void loadGameMapTaskAtMainThread(){
-        this.shellCaseMap.getWaitSCLocation().createWorldAtMainThread();
+        
+        return AsyncMapLoader.startLoad(getShellCaseMap().getMapRange()).getCompletableFuture();
     }
     
     /**
