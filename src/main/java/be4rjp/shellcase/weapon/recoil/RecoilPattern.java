@@ -37,7 +37,7 @@ public class RecoilPattern {
     
     public void sendRecoil(ShellCasePlayer shellCasePlayer, int index){
         Vec2f vec2f = this.get(index);
-        PacketPlayOutPosition position = new PacketPlayOutPosition(0.0, 0.0, 0.0, vec2f.x, vec2f.y, teleportFlags, 0);
+        PacketPlayOutPosition position = new PacketPlayOutPosition(0, 0, 0, vec2f.x, vec2f.y, teleportFlags, 0);
         shellCasePlayer.sendPacket(position);
     }
 }

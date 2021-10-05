@@ -3,26 +3,38 @@ package be4rjp.shellcase.weapon.gun.runnable;
 import be4rjp.shellcase.entity.BulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.scheduler.MultiThreadRunnable;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.gun.SemiAutoGun;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class BurstGunRunnable extends BukkitRunnable {
+public class BurstGunRunnable extends MultiThreadRunnable {
     
     private final ShellCasePlayer shellCasePlayer;
     private final GunStatusData gunStatusData;
     
     private int tick = 0;
     
-    public BurstGunRunnable(ShellCasePlayer shellCasePlayer, GunStatusData gunStatusData){
+    private int i = 0;
+    
+    private final int shootTick;
+    
+    public BurstGunRunnable(ShellCasePlayer shellCasePlayer, GunStatusData gunStatusData, int shootTick){
         this.shellCasePlayer = shellCasePlayer;
         this.gunStatusData = gunStatusData;
+        this.shootTick = shootTick;
     }
     
     @Override
     public void run() {
+        
+        if(i % shootTick != 0){
+            i++;
+            return;
+        }
+        i++;
     
         ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
         if(shellCaseTeam == null){

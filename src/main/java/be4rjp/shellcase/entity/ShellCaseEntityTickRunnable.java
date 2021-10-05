@@ -2,13 +2,16 @@ package be4rjp.shellcase.entity;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.match.Match;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
-public class ShellCaseEntityTickRunnable extends BukkitRunnable {
+public class ShellCaseEntityTickRunnable extends WorldThreadRunnable {
     
     private final Match match;
     
     public ShellCaseEntityTickRunnable(Match match){
+        super(Bukkit.getWorlds().get(0));
         this.match = match;
     }
     
@@ -19,6 +22,6 @@ public class ShellCaseEntityTickRunnable extends BukkitRunnable {
     
     
     public void start(){
-        this.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 1);
+        this.runTaskTimer(ShellCase.getPlugin(), 0, 1);
     }
 }

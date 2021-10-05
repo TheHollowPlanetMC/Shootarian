@@ -71,6 +71,7 @@ public class AsyncMapLoader extends WorldThreadRunnable {
 
             TaskHandler.runSync(() -> {
                 mapRange.getFirstLocation().createWorldAtMainThread();
+                asyncMapLoader.setWorld(mapRange.getFirstLocation().getBukkitLocation().getWorld());
                 asyncMapLoader.runTaskTimer(ShellCase.getPlugin(), 0, 10);
             });
         });

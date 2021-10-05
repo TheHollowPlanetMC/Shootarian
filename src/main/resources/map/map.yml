@@ -13,3 +13,8 @@ result-movie: 'result-shionome'
 
 structures:
   - 'structure-1'
+
+map-range:
+  world: 'map'
+  first-position: '-20, 0, -20'
+  second-position: '20, 100, 20'

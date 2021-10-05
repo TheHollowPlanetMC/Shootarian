@@ -73,6 +73,7 @@ public abstract class Match {
         this.blockUpdater.start();
         
         this.getPlayers().forEach(this::initializePlayer);
+        this.entityTickRunnable.setWorld(this.shellCaseMap.getMapRange().getFirstLocation().getBukkitLocation().getWorld());
         this.entityTickRunnable.start();
     }
     
