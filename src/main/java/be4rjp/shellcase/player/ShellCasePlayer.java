@@ -10,6 +10,7 @@ import be4rjp.shellcase.data.settings.PlayerSettings;
 import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.data.sql.SQLDriver;
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.map.PlayerGUIRenderer;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.language.MessageManager;
@@ -159,6 +160,8 @@ public class ShellCasePlayer {
     private final AchievementData achievementData = new AchievementData(this);
     //プレイヤーの設定
     private final PlayerSettings playerSettings = new PlayerSettings();
+    //マップのレンダラー
+    private PlayerGUIRenderer playerGUIRenderer = null;
 
     //キルカウントの動作の同期用インスタンス
     private final Object KILL_COUNT_LOCK = new Object();
@@ -276,6 +279,10 @@ public class ShellCasePlayer {
     
     public WeaponClass getWeaponClass() {return weaponClass;}
     
+    public PlayerGUIRenderer getPlayerGUIRenderer() {return playerGUIRenderer;}
+    
+    public void setPlayerGUIRenderer(PlayerGUIRenderer playerGUIRenderer) {this.playerGUIRenderer = playerGUIRenderer;}
+    
     /**
      * 情報をリセットする
      */
@@ -306,6 +313,10 @@ public class ShellCasePlayer {
         this.setFoodLevel(20);
         this.clearGunWeaponTasks();
         this.weaponStatusDataMap.clear();
+        if(this.playerGUIRenderer != null){
+            this.playerGUIRenderer.cancel();
+            this.playerGUIRenderer = null;
+        }
     }
     
     /**

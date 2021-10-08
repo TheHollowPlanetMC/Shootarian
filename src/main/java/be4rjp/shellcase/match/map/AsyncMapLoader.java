@@ -37,19 +37,24 @@ public class AsyncMapLoader extends WorldThreadRunnable {
     @Override
     public void run() {
         World world = mapRange.getFirstLocation().getBukkitLocation().getWorld();
-
+    
+        if(queue.size() == 0){
+            if(load == maxLoad){
+                completableFuture.complete(null);
+                cancel();
+            }
+            return;
+        }
+        
         for(int i = 0; i < CPUS; i++){
             ChunkPosition chunkPosition = queue.poll();
             if(chunkPosition == null){
-                cancel();
                 return;
             }
-
-            boolean isLast = queue.size() == 0;
+    
             world.getChunkAtAsync(chunkPosition.x, chunkPosition.z).thenAccept(chunk -> {
                 chunk.setForceLoaded(true);
                 AsyncMapLoader.this.load++;
-                if(isLast) completableFuture.complete(null);
             });
         }
     }

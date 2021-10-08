@@ -9,6 +9,7 @@ import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.packet.PacketHandler;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.gadget.Gadget;
 import be4rjp.shellcase.weapon.gadget.GadgetStatusData;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
@@ -17,6 +18,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -24,6 +26,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
@@ -83,37 +87,43 @@ public class PlayerJoinQuitListener implements Listener {
     
                 
                 //ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
-                
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if(index == 0){
-                            match.initialize();
-                            CompletableFuture<Void> completableFuture = match.loadGameMap();
-                            completableFuture.thenAccept(v -> {
-                                match.start();
-                                shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-                            });
-                        }
-                        
-                        
-                        if(index % 2 == 0){
-                            team0.join(shellCasePlayer);
-                        }else{
-                            team1.join(shellCasePlayer);
-                        }
     
-                        GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
-                        GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("m16-a3"), shellCasePlayer);
-                        GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
-                        shellCasePlayer.getWeaponClass().setMainWeapon(scar);
-                        shellCasePlayer.getWeaponClass().setSubWeapon(mk14);
-                        shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
-                        shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
-                        
-                        index++;
+                TaskHandler.runSync(() -> {
+                    
+                    if(index % 2 == 0){
+                        team0.join(shellCasePlayer);
+                    }else{
+                        team1.join(shellCasePlayer);
                     }
-                }.runTask(ShellCase.getPlugin());
+    
+                    if(index == 0){
+                        CompletableFuture<Void> completableFuture = match.loadGameMap();
+                        completableFuture.thenAccept(v -> {
+                            match.initialize();
+                            match.start();
+                            shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
+                        });
+                    }
+    
+                    GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
+                    GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("m16-a3"), shellCasePlayer);
+                    GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
+                    shellCasePlayer.getWeaponClass().setMainWeapon(scar);
+                    shellCasePlayer.getWeaponClass().setSubWeapon(mk14);
+                    shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
+                    shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
+    
+                    ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
+                    MapMeta meta = (MapMeta) itemStack.getItemMeta();
+                    meta.setMapId(0);
+                    meta.setDisplayName("Copy map");
+                    itemStack.setItemMeta(meta);
+                    player.getInventory().addItem(itemStack);
+    
+                    index++;
+                    
+                });
+                
                 
                 /*
                 if(ShellCaseTeam != null) {

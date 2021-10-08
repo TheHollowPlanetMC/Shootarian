@@ -1,6 +1,7 @@
 package be4rjp.shellcase.packet;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.map.PlayerGUIRenderer;
 import be4rjp.shellcase.packet.manager.*;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import io.netty.channel.*;
@@ -52,6 +53,16 @@ public class PacketHandler extends ChannelDuplexHandler {
         
         if(packet instanceof PacketPlayOutUpdateHealth){
             HealthUpdatePacketManager.write((PacketPlayOutUpdateHealth) packet, shellCasePlayer);
+        }
+        
+        if(packet instanceof PacketPlayOutMap){
+            PlayerGUIRenderer playerGUIRenderer = shellCasePlayer.getPlayerGUIRenderer();
+            if(playerGUIRenderer != null){
+                if(playerGUIRenderer.getPacket() != null) {
+                    super.write(channelHandlerContext, playerGUIRenderer.getPacket(), channelPromise);
+                    return;
+                }
+            }
         }
         
         
