@@ -2,6 +2,7 @@ package be4rjp.shellcase;
 
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.listener.*;
+import be4rjp.shellcase.map.CanvasData;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.PlayerLobbyMatch;
 import be4rjp.shellcase.match.map.ShellCaseMap;
@@ -46,6 +47,7 @@ public final class ShellCase extends JavaPlugin {
     
         ShellCaseConfig.load();
         MessageManager.loadAllMessage();
+        CanvasData.loadAllCanvas();
         MapStructure.loadAllMapStructure();
         ShellCaseMap.loadAllMap();
         

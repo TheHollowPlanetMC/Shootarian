@@ -11,8 +11,8 @@ import java.util.Random;
 
 public enum ShellCaseColor {
     
-    BLUE("Blue", ChatColor.BLUE, Color.BLUE, Material.BLUE_WOOL, Material.BLUE_CONCRETE, Material.BLUE_STAINED_GLASS),
-    ORANGE("Orange", ChatColor.GOLD, Color.ORANGE, Material.ORANGE_WOOL, Material.ORANGE_CONCRETE, Material.ORANGE_STAINED_GLASS);
+    BLUE("Blue", ChatColor.BLUE, Color.BLUE, Material.BLUE_WOOL, Material.BLUE_CONCRETE, Material.BLUE_STAINED_GLASS, (byte) 48),
+    ORANGE("Orange", ChatColor.GOLD, Color.ORANGE, Material.ORANGE_WOOL, Material.ORANGE_CONCRETE, Material.ORANGE_STAINED_GLASS, (byte) 60);
     
     private final String displayName;
     private final ChatColor chatColor;
@@ -20,14 +20,16 @@ public enum ShellCaseColor {
     private final Material wool;
     private final Material concrete;
     private final Material glass;
+    private final byte canvasColor;
     
-    ShellCaseColor(String displayName, ChatColor chatColor, Color bukkitColor, Material wool, Material concrete, Material glass){
+    ShellCaseColor(String displayName, ChatColor chatColor, Color bukkitColor, Material wool, Material concrete, Material glass, byte canvasColor){
         this.displayName = chatColor + displayName + ChatColor.RESET;
         this.chatColor = chatColor;
         this.bukkitColor = bukkitColor;
         this.wool = wool;
         this.concrete = concrete;
         this.glass = glass;
+        this.canvasColor = canvasColor;
     }
     
     
@@ -42,7 +44,9 @@ public enum ShellCaseColor {
     public String getDisplayName() {return displayName;}
 
     public Material getGlass() {return glass;}
-
+    
+    public byte getCanvasColor() {return canvasColor;}
+    
     @Override
     public String toString() {
         return this.chatColor.toString();

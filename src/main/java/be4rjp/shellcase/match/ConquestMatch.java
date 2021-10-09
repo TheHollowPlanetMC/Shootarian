@@ -2,6 +2,7 @@ package be4rjp.shellcase.match;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.map.*;
+import be4rjp.shellcase.map.component.MapComponent;
 import be4rjp.shellcase.map.component.MapObjectiveComponent;
 import be4rjp.shellcase.map.component.MapTextComponent;
 import be4rjp.shellcase.match.map.ConquestMap;
@@ -10,6 +11,8 @@ import be4rjp.shellcase.match.map.area.FlagAreaData;
 import be4rjp.shellcase.match.runnable.ConquestMatchRunnable;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.Position2i;
+import be4rjp.shellcase.util.math.Vec2f;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_15_R1.map.CraftMapView;
@@ -55,20 +58,17 @@ public class ConquestMatch extends Match{
     public void initialize() {
         this.matchRunnable = new ConquestMatchRunnable(this, 180);
         
-        CanvasBuffer canvasBuffer = new CanvasBuffer(new byte[128 * 128]);
+        CanvasBuffer canvasBuffer = new CanvasBuffer(this.conquestMap.getCanvasData().getBytes());
         this.conquestStatusRenderer = new ConquestStatusRenderer(canvasBuffer);
-        this.conquestStatusRenderer.addMapComponent(new MapObjectiveComponent(" A ", true, 10, 10, () -> {}));
         this.conquestStatusRenderer.start();
-        
-        this.getPlayers().forEach(shellCasePlayer -> {
-            PlayerGUIRenderer playerGUIRenderer = new ConquestPlayerClickableGUIRenderer(shellCasePlayer, conquestStatusRenderer);
-            playerGUIRenderer.addMapComponent(new MapTextComponent("Test", true, 50, 50, () -> {}));
-            playerGUIRenderer.start();
-            shellCasePlayer.setPlayerGUIRenderer(playerGUIRenderer);
-        });
-        
+    
+        CanvasData canvasData = this.conquestMap.getCanvasData();
         for(FlagArea flagArea : conquestMap.getFlagAreas()){
             FlagAreaData flagAreaData = new FlagAreaData(this, flagArea);
+            
+            Position2i pixelPosition = canvasData.locationToPixel(flagArea.getBoundingBox().getMin().getBlockX(), flagArea.getBoundingBox().getMin().getBlockZ());
+            MapComponent component = new MapObjectiveComponent(flagAreaData, true, pixelPosition.x, pixelPosition.y, () -> {});
+            this.conquestStatusRenderer.addMapComponent(component);
             
             this.flagAreaData.add(flagAreaData);
         }
@@ -101,4 +101,6 @@ public class ConquestMatch extends Match{
     }
     
     public Set<FlagAreaData> getFlagAreaData() {return flagAreaData;}
+    
+    public ConquestMap getConquestMap() {return conquestMap;}
 }

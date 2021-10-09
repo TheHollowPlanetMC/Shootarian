@@ -2,6 +2,9 @@ package be4rjp.shellcase.listener;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.ShellCaseConfig;
+import be4rjp.shellcase.map.ConquestPlayerClickableGUIRenderer;
+import be4rjp.shellcase.map.ConquestPlayerMapRenderer;
+import be4rjp.shellcase.map.PlayerGUIRenderer;
 import be4rjp.shellcase.match.ConquestMatch;
 import be4rjp.shellcase.match.map.ConquestMap;
 import be4rjp.shellcase.match.map.ShellCaseMap;
@@ -89,20 +92,25 @@ public class PlayerJoinQuitListener implements Listener {
                 //ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
     
                 TaskHandler.runSync(() -> {
-                    
+    
+                    if(index == 0){
+                        match.initialize();
+                        CompletableFuture<Void> completableFuture = match.loadGameMap();
+                        completableFuture.thenAccept(v -> {
+                            System.out.println("Map loaded!");
+                            match.start();
+                            shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
+    
+                            PlayerGUIRenderer playerGUIRenderer = new ConquestPlayerMapRenderer(shellCasePlayer, match.getConquestStatusRenderer(), match.getConquestMap().getCanvasData());
+                            playerGUIRenderer.start();
+                            shellCasePlayer.setPlayerGUIRenderer(playerGUIRenderer);
+                        });
+                    }
+    
                     if(index % 2 == 0){
                         team0.join(shellCasePlayer);
                     }else{
                         team1.join(shellCasePlayer);
-                    }
-    
-                    if(index == 0){
-                        CompletableFuture<Void> completableFuture = match.loadGameMap();
-                        completableFuture.thenAccept(v -> {
-                            match.initialize();
-                            match.start();
-                            shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-                        });
                     }
     
                     GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);

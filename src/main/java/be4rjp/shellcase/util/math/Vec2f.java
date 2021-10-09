@@ -2,6 +2,16 @@ package be4rjp.shellcase.util.math;
 
 public class Vec2f implements Cloneable{
     
+    public static Vec2f fromString(String line){
+        String[] args = line.replace(" ", "").split(",");
+        
+        float x = Float.parseFloat(args[0]);
+        float y = Float.parseFloat(args[1]);
+        
+        return new Vec2f(x, y);
+    }
+    
+    
     public float x;
     public float y;
     

@@ -22,6 +22,7 @@ public class CanvasBuffer implements Cloneable{
     private final byte[] buffer;
     
     public CanvasBuffer(byte[] buffer){
+        if(buffer.length != 128 * 128) throw new IllegalArgumentException("Buffer length : " + buffer.length);
         this.buffer = buffer;
     }
     
