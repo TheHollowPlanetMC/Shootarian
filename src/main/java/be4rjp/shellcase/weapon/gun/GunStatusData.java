@@ -108,7 +108,11 @@ public class GunStatusData extends WeaponStatusData {
             if(gunWeapon == null) continue;
             if(gunWeapon != this.gunWeapon) continue;
             
-            player.getInventory().setItem(index, this.getItemStack(shellCasePlayer.getLang()));
+            if(shellCasePlayer.isADS()) {
+                player.sendActionBar(this.getItemStack(shellCasePlayer.getLang()).getItemMeta().getDisplayName());
+            } else {
+                player.getInventory().setItem(index, this.getItemStack(shellCasePlayer.getLang()));
+            }
             break;
         }
     }

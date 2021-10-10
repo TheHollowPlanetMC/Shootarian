@@ -65,6 +65,14 @@ public class PacketHandler extends ChannelDuplexHandler {
             }
         }
         
+        if(packet instanceof PacketPlayOutSetSlot){
+            PacketPlayOutSetSlot slotPacket = shellCasePlayer.getSlotPacket();
+            if(slotPacket != null){
+                super.write(channelHandlerContext, slotPacket, channelPromise);
+                return;
+            }
+        }
+        
         
         super.write(channelHandlerContext, packet, channelPromise);
     }

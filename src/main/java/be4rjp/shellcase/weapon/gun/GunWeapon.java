@@ -155,16 +155,9 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     public void loadData(YamlConfiguration yml){
         this.yml = yml;
         
-        if(yml.contains("display-name")){
-            for(String languageName : yml.getConfigurationSection("display-name").getKeys(false)){
-                Lang lang = Lang.valueOf(languageName);
-                String name = yml.getString("display-name." + languageName);
-                this.displayName.put(lang, ChatColor.translateAlternateColorCodes('&', name));
-            }
-        }
+        super.itemLoad(yml);
+        
         if(yml.contains("save-number")) this.saveNumber = yml.getInt("save-number");
-        if(yml.contains("material")) this.material = Material.getMaterial(Objects.requireNonNull(yml.getString("material")));
-        if(yml.contains("custom-model-data")) this.modelID = yml.getInt("custom-model-data");
         if(yml.contains("damage")) this.damage = (float)yml.getDouble("damage");
         if(yml.contains("sound")) this.shootSound = ShellCaseSound.getSoundByString(Objects.requireNonNull(yml.getString("sound")));
         if(yml.contains("passive")) yml.getStringList("passive").forEach(passiveString -> passiveList.add(Passive.valueOf(passiveString)));

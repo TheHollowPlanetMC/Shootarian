@@ -162,6 +162,8 @@ public class ShellCasePlayer {
     private final PlayerSettings playerSettings = new PlayerSettings();
     //マップのレンダラー
     private PlayerGUIRenderer playerGUIRenderer = null;
+    //SetSlotPacket
+    private PacketPlayOutSetSlot slotPacket = null;
 
     //キルカウントの動作の同期用インスタンス
     private final Object KILL_COUNT_LOCK = new Object();
@@ -282,6 +284,11 @@ public class ShellCasePlayer {
     public PlayerGUIRenderer getPlayerGUIRenderer() {return playerGUIRenderer;}
     
     public void setPlayerGUIRenderer(PlayerGUIRenderer playerGUIRenderer) {this.playerGUIRenderer = playerGUIRenderer;}
+    
+    public PacketPlayOutSetSlot getSlotPacket() {return slotPacket;}
+    
+    public void setSlotPacket(PacketPlayOutSetSlot slotPacket) {this.slotPacket = slotPacket;}
+    
     
     /**
      * 情報をリセットする

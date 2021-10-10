@@ -8,8 +8,10 @@ import be4rjp.shellcase.weapon.gadget.GadgetWeapon;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.recoil.Recoil;
+import net.minecraft.server.v1_15_R1.PacketPlayOutSetSlot;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -147,14 +149,27 @@ public class WeaponManager {
     
                 Sight sight = gunStatusData.getSight();
                 if(sight != null) {
-                    shellCasePlayer.sendIconTitle(sight.getUnicode(), "", 0, Integer.MAX_VALUE, 0);
                     shellCasePlayer.setFOV(sight.getFOV());
+                    
+                    Player player = shellCasePlayer.getBukkitPlayer();
+                    if(player != null) {
+                        ItemStack itemStack = sight.isHasSightItem() ? sight.getSightItemStack(shellCasePlayer.getLang()) : sight.getItemStack(shellCasePlayer.getLang());
+                        PacketPlayOutSetSlot slot = new PacketPlayOutSetSlot(-2, player.getInventory().getHeldItemSlot(), CraftItemStack.asNMSCopy(itemStack));
+                        shellCasePlayer.setSlotPacket(slot);
+                        shellCasePlayer.sendPacket(slot);
+                    }
                 }
             }
         }else{
             shellCasePlayer.setWalkSpeed(0.2F);
             shellCasePlayer.setFOV(0.1F);
-            shellCasePlayer.resetTitle();
+            shellCasePlayer.setSlotPacket(null);
+            if(gunStatusData != null) gunStatusData.updateDisplayName(shellCasePlayer);
+            Player player = shellCasePlayer.getBukkitPlayer();
+            if(player != null) {
+                player.updateInventory();
+            }
+            //shellCasePlayer.resetTitle();
         }
     }
     

@@ -1,5 +1,6 @@
 package be4rjp.shellcase.weapon;
 
+import be4rjp.shellcase.item.ShellCaseItem;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.match.map.structure.MapStructureData;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class ShellCaseWeapon {
+public abstract class ShellCaseWeapon extends ShellCaseItem {
     //識別IDと武器のマップ
     private static Map<String, ShellCaseWeapon> weaponMap = new ConcurrentHashMap<>();
     
@@ -59,12 +60,6 @@ public abstract class ShellCaseWeapon {
     
     //武器の識別名
     protected final String id;
-    //武器の表示名
-    protected Map<Lang, String> displayName = new HashMap<>();
-    //武器のマテリアル
-    protected Material material = Material.BARRIER;
-    //CustomModelDataのID
-    protected int modelID = 0;
     //一発分のダメージ
     protected float damage = 1.0F;
     //デフォルトの最大弾数
@@ -73,19 +68,6 @@ public abstract class ShellCaseWeapon {
     public ShellCaseWeapon(String id){
         this.id = id;
         weaponMap.put(id, this);
-    }
-
-    /**
-     * 表示名を取得する
-     * @return String
-     */
-    public String getDisplayName(Lang lang) {
-        String name = displayName.get(lang);
-        if(name == null){
-            return "No name.";
-        }else{
-            return name;
-        }
     }
 
 
@@ -108,18 +90,6 @@ public abstract class ShellCaseWeapon {
      * @return String
      */
     public String getID() {return id;}
-
-    /**
-     * マテリアルを取得する
-     * @return Material
-     */
-    public Material getMaterial() {return material;}
-
-    /**
-     * CustomModelDataのIDを取得する
-     * @return int
-     */
-    public int getModelID() {return modelID;}
     
     /**
      * 一発分のダメージを取得する

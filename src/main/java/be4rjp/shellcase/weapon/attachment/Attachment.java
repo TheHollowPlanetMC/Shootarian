@@ -1,5 +1,6 @@
 package be4rjp.shellcase.weapon.attachment;
 
+import be4rjp.shellcase.item.ShellCaseItem;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.passive.Passive;
 import org.bukkit.ChatColor;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class Attachment {
+public abstract class Attachment extends ShellCaseItem {
     
     private static final Map<String, Attachment> attachmentMap = new HashMap<>();
     
@@ -33,12 +34,6 @@ public abstract class Attachment {
     protected final String id;
     //設定ファイル
     protected YamlConfiguration yml;
-    //アタッチメントの表示名
-    protected Map<Lang, String> displayName = new HashMap<>();
-    //マテリアル
-    protected Material material = Material.BARRIER;
-    //CustomModelDataのID
-    protected int modelID = 0;
     //パッシブ効果とその効果倍率のマップ
     protected Map<Passive, Float> passiveInfluenceMap = new HashMap<>();
     //SQLに保存するための識別番号
@@ -56,16 +51,9 @@ public abstract class Attachment {
      */
     public void loadData(YamlConfiguration yml) {
         this.yml = yml;
-    
-        if (yml.contains("display-name")) {
-            for (String languageName : yml.getConfigurationSection("display-name").getKeys(false)) {
-                Lang lang = Lang.valueOf(languageName);
-                String name = yml.getString("display-name." + languageName);
-                this.displayName.put(lang, ChatColor.translateAlternateColorCodes('&', name));
-            }
-        }
-        if (yml.contains("material")) this.material = Material.getMaterial(Objects.requireNonNull(yml.getString("material")));
-        if (yml.contains("custom-model-data")) this.modelID = yml.getInt("custom-model-data");
+        
+        super.itemLoad(yml);
+        
         if (yml.contains("passive")){
             List<String> passiveList = yml.getStringList("passive");
             for(String line : passiveList){
@@ -86,27 +74,9 @@ public abstract class Attachment {
      */
     public abstract void loadDetailsData();
     
-    
-    /**
-     * 表示名を取得する
-     * @return String
-     */
-    public String getDisplayName(Lang lang) {
-        String name = displayName.get(lang);
-        if(name == null){
-            return "No name.";
-        }else{
-            return name;
-        }
-    }
-    
     public String getId(){return id;}
     
-    public int getModelID() {return modelID;}
-    
     public Map<Passive, Float> getPassiveInfluenceMap() {return passiveInfluenceMap;}
-    
-    public Material getMaterial() {return material;}
     
     public int getSaveNumber() {return saveNumber;}
     
