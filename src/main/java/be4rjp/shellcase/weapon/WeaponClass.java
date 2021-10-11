@@ -1,6 +1,8 @@
 package be4rjp.shellcase.weapon;
 
+import be4rjp.shellcase.data.AchievementData;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.weapon.gadget.Gadget;
 import be4rjp.shellcase.weapon.gadget.GadgetStatusData;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
@@ -81,5 +83,25 @@ public class WeaponClass {
         if(subGadget != null){
             player.getInventory().setItem(3, subGadget.getItemStack(shellCasePlayer.getLang()));
         }
+    }
+    
+    
+    public long getCombinedID(){
+        long id = 0;
+        
+        id |= mainWeapon.getGunWeapon().getSaveNumber();
+        id |= (long) subWeapon.getGunWeapon().getSaveNumber() << 12;
+        id |= (long) mainGadget.getGadgetWeapon().getGadget().getSaveNumber() << 24;
+        id |= (long) subGadget.getGadgetWeapon().getGadget().getSaveNumber() << 36;
+        
+        return id;
+    }
+    
+    
+    public void setByCombinedID(long id, AchievementData achievementData){
+        mainWeapon = achievementData.getWeaponPossessionData().getGunStatusData((int) (id & 0xFFF), achievementData.getShellCasePlayer());
+        subWeapon = achievementData.getWeaponPossessionData().getGunStatusData((int) (id >> 12 & 0xFFF), achievementData.getShellCasePlayer());
+        mainGadget = new GadgetStatusData(Gadget.getGadgetBySaveNumber((int) (id >> 24 & 0xFFF)).getInstance(), achievementData.getShellCasePlayer());
+        subGadget = new GadgetStatusData(Gadget.getGadgetBySaveNumber((int) (id >> 36 & 0xFFF)).getInstance(), achievementData.getShellCasePlayer());
     }
 }

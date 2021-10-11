@@ -1,21 +1,26 @@
 package be4rjp.shellcase.data.progress;
 
-public class ProgressData {
+import be4rjp.shellcase.data.SavableBitData;
 
-    private TutorialProgress tutorialProgress = TutorialProgress.PLAY_TUTORIAL;
+import java.util.BitSet;
 
-    public TutorialProgress getTutorialProgress() {return tutorialProgress;}
-
-    public int getCombinedID(){
-        int data = 0;
-
-        data |= (tutorialProgress.getSaveNumber() & 0xF);
-
-        return data;
+public class ProgressData extends SavableBitData {
+    
+    /**
+     * 進捗を達成しているかどうか
+     * @return
+     */
+    public boolean isAchievedProgress(Progress progress){
+        return super.getBit(progress.getSaveNumber());
     }
-
-    public void setByCombinedID(int data){
-        tutorialProgress = TutorialProgress.getBySaveNumber(data & 0xF);
+    
+    
+    /**
+     * 進捗を達成させる
+     * @param progress
+     */
+    public void setAchievedProgress(Progress progress){
+        super.setBit(progress.getSaveNumber(), true);
     }
 
 }

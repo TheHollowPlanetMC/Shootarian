@@ -4,6 +4,7 @@ import be4rjp.cinema4c.util.SkinManager;
 import be4rjp.parallel.ParallelWorld;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.data.AchievementData;
+import be4rjp.shellcase.data.GadgetPossessionData;
 import be4rjp.shellcase.data.HeadGearPossessionData;
 import be4rjp.shellcase.data.GunWeaponPossessionData;
 import be4rjp.shellcase.data.settings.PlayerSettings;
@@ -31,16 +32,15 @@ import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.gun.runnable.GunWeaponRunnable;
 import net.minecraft.server.v1_15_R1.*;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -156,6 +156,8 @@ public class ShellCasePlayer {
     private final GunWeaponPossessionData gunWeaponPossessionData = new GunWeaponPossessionData();
     //ヘッドギアの所持データ
     private final HeadGearPossessionData headGearPossessionData = new HeadGearPossessionData();
+    //ガジェットの所持データ
+    private final GadgetPossessionData gadgetPossessionData = new GadgetPossessionData();
     //実績データ
     private final AchievementData achievementData = new AchievementData(this);
     //プレイヤーの設定
@@ -164,6 +166,8 @@ public class ShellCasePlayer {
     private PlayerGUIRenderer playerGUIRenderer = null;
     //SetSlotPacket
     private PacketPlayOutSetSlot slotPacket = null;
+    //GUIのスタック
+    private final Deque<Map.Entry<Class<?>, Object>> guiStack = new ConcurrentLinkedDeque<>();
 
     //キルカウントの動作の同期用インスタンス
     private final Object KILL_COUNT_LOCK = new Object();
@@ -279,6 +283,8 @@ public class ShellCasePlayer {
     
     public GunWeaponPossessionData getWeaponPossessionData() {return gunWeaponPossessionData;}
     
+    public GadgetPossessionData getGadgetPossessionData() {return gadgetPossessionData;}
+    
     public WeaponClass getWeaponClass() {return weaponClass;}
     
     public PlayerGUIRenderer getPlayerGUIRenderer() {return playerGUIRenderer;}
@@ -289,6 +295,7 @@ public class ShellCasePlayer {
     
     public void setSlotPacket(PacketPlayOutSetSlot slotPacket) {this.slotPacket = slotPacket;}
     
+    public Deque<Map.Entry<Class<?>, Object>> getGUIStack() {return guiStack;}
     
     /**
      * 情報をリセットする
@@ -337,8 +344,23 @@ public class ShellCasePlayer {
     /**
      * プレイヤーの実績データをSQLからロードする
      */
-    public void loadAchievementFromSQL() throws Exception{
-        SQLDriver.loadAchievementData(this.achievementData);
+    public void loadAchievementFromSQL(){
+        try {
+            SQLDriver.loadAchievementData(this.achievementData);
+            this.setLoadedSaveData(true);
+        }catch (Exception e){
+            player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.flat(0, Note.Tone.G));
+            Date dateObj = new Date();
+            SimpleDateFormat format = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
+            player.sendMessage("§c§n以下の理由により正常にセーブデータを読み込むことができませんでした。");
+            player.sendMessage("§c§n再度接続し直しても同じエラーが出る場合は運営に報告してください。");
+            player.sendMessage("§c§nThe save data could not be loaded properly for the following reasons.");
+            player.sendMessage("§c§nIf you still get the same error after trying to connect again, please report it to the administrators.");
+            player.sendMessage("");
+            player.sendMessage("§eError (" + format.format(dateObj) + ") : ");
+            player.sendMessage(e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     /**

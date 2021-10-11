@@ -13,6 +13,7 @@ import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.actions.Actions;
 import com.grinderwolf.swm.api.SlimePlugin;
+import com.samjakob.spigui.SpiGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,11 +32,15 @@ public final class ShellCase extends JavaPlugin {
     
     private static Timer asyncTimer;
     
+    private static SpiGUI spiGUI;
+    
     
     @Override
     public void onEnable() {
         // Plugin startup logic
         shellCase = this;
+        
+        spiGUI = new SpiGUI(this);
         
         asyncTimer = new Timer(true);
     
@@ -88,4 +93,6 @@ public final class ShellCase extends JavaPlugin {
     public static ShellCaseTeam getLobbyTeam() {return lobbyTeam;}
     
     public static Timer getAsyncTimer() {return asyncTimer;}
+    
+    public static SpiGUI getSpiGUI() {return spiGUI;}
 }

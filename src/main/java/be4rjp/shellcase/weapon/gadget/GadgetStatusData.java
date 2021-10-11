@@ -1,10 +1,15 @@
 package be4rjp.shellcase.weapon.gadget;
 
+import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.WeaponStatusData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GadgetStatusData extends WeaponStatusData {
 
@@ -38,5 +43,18 @@ public class GadgetStatusData extends WeaponStatusData {
             player.getInventory().setItem(index, this.getItemStack(shellCasePlayer.getLang()));
             break;
         }
+    }
+    
+    @Override
+    public ItemStack getItemStackFlexible(Lang lang){
+        ItemStack itemStack = gadgetWeapon.getItemStack(lang);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = itemMeta.getLore();
+        if(lore == null) lore = new ArrayList<>();
+        lore.add("");
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        
+        return itemStack;
     }
 }

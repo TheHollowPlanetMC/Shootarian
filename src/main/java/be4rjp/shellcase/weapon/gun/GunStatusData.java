@@ -1,5 +1,6 @@
 package be4rjp.shellcase.weapon.gun;
 
+import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.weapon.WeaponManager;
@@ -10,8 +11,11 @@ import be4rjp.shellcase.weapon.recoil.RecoilPattern;
 import be4rjp.shellcase.weapon.actions.ReloadActionRunnable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
 public class GunStatusData extends WeaponStatusData {
     
@@ -30,7 +34,7 @@ public class GunStatusData extends WeaponStatusData {
     private RecoilPattern adsRecoil;
     private RecoilPattern normalRecoil;
     
-    private BitSet attachmentPossessionData = new BitSet(32);
+    private BitSet attachmentPossessionData = new BitSet(64 * 8);
     
     public GunStatusData(GunWeapon gunWeapon, ShellCasePlayer shellCasePlayer){
         super(gunWeapon, shellCasePlayer);
@@ -115,5 +119,19 @@ public class GunStatusData extends WeaponStatusData {
             }
             break;
         }
+    }
+    
+    
+    @Override
+    public ItemStack getItemStackFlexible(Lang lang){
+        ItemStack itemStack = gunWeapon.getItemStack(lang);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = itemMeta.getLore();
+        if(lore == null) lore = new ArrayList<>();
+        lore.add("");
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        
+        return itemStack;
     }
 }

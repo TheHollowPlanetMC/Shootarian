@@ -2,6 +2,7 @@ package be4rjp.shellcase.listener;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.ShellCaseConfig;
+import be4rjp.shellcase.gui.MainMenuGUI;
 import be4rjp.shellcase.map.ConquestPlayerClickableGUIRenderer;
 import be4rjp.shellcase.map.ConquestPlayerMapRenderer;
 import be4rjp.shellcase.map.PlayerGUIRenderer;
@@ -68,29 +69,23 @@ public class PlayerJoinQuitListener implements Listener {
                 shellCasePlayer.updateBukkitPlayer(player);
                 shellCasePlayer.sendSkinRequest();
     
-                try {
-                    //shellCasePlayer.loadAchievementFromSQL();
-                }catch (Exception e){
-                    player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.flat(0, Note.Tone.G));
-                    Date dateObj = new Date();
-                    SimpleDateFormat format = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
-                    player.sendMessage("§c§n以下の理由により正常にセーブデータを読み込むことができませんでした。");
-                    player.sendMessage("§c§n再度接続し直しても同じエラーが出る場合は運営に報告してください。");
-                    player.sendMessage("§c§nThe save data could not be loaded properly for the following reasons.");
-                    player.sendMessage("§c§nIf you still get the same error after trying to connect again, please report it to the administrators.");
-                    player.sendMessage("");
-                    player.sendMessage("§eError (" + format.format(dateObj) + ") : ");
-                    player.sendMessage(e.getMessage());
-                    e.printStackTrace();
-                    
-                    return;
-                }
+                shellCasePlayer.loadAchievementFromSQL();
+                
+                
+                //if(!shellCasePlayer.getWeaponPossessionData().hasWeapon(0)){
+                    //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), shellCasePlayer));
+                    //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer));
+                //}
+    
+                MainMenuGUI.openMainMenuGUI(shellCasePlayer);
+                
                 
                 //shellCasePlayer.setLoadedSaveData(true);
     
                 
                 //ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
     
+                /*----------------------------------
                 TaskHandler.runSync(() -> {
     
                     if(index == 0){
@@ -113,12 +108,15 @@ public class PlayerJoinQuitListener implements Listener {
                         team1.join(shellCasePlayer);
                     }
     
-                    GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
-                    GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("m16-a3"), shellCasePlayer);
-                    GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
-                    shellCasePlayer.getWeaponClass().setMainWeapon(scar);
-                    shellCasePlayer.getWeaponClass().setSubWeapon(mk14);
-                    shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
+                    if(!shellCasePlayer.getWeaponPossessionData().hasWeapon(GunWeapon.getGunWeapon("scar-h").getSaveNumber())) {
+                        GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
+                        GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("m16-a3"), shellCasePlayer);
+                        //GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
+                        shellCasePlayer.getWeaponClass().setMainWeapon(scar);
+                        shellCasePlayer.getWeaponClass().setSubWeapon(mk14);
+                        //shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
+                    }
+    
                     shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
     
                     ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
@@ -130,7 +128,7 @@ public class PlayerJoinQuitListener implements Listener {
     
                     index++;
                     
-                });
+                });--------------------*/
                 
                 
                 /*

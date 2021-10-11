@@ -14,7 +14,7 @@ public class GunWeaponPossessionData extends SavableByteData{
     }
     
     public boolean hasWeapon(int index){
-        return bytes[index] != 0;
+        return bytes[index * 38] != 0;
     }
     
     public void setGunStatusData(GunStatusData gunStatusData){
@@ -32,13 +32,27 @@ public class GunWeaponPossessionData extends SavableByteData{
         //6 - つけているアクセサリー
         bytes[saveIndex + 5] = 0x00;
         //7 ~ 39 - どのアタッチメントを所持しているかどうか
+        int i = 0;
         for(int index = saveIndex + 6; index < saveIndex + 38; index++){
-            bytes[index] = gunStatusData.getAttachmentPossessionData()[index];
+            byte b = 0;
+            if(gunStatusData.getAttachmentPossessionData().length > i) b = gunStatusData.getAttachmentPossessionData()[i];
+            bytes[index] = b;
+            i++;
         }
     }
     
     public GunStatusData getGunStatusData(int saveNumber, ShellCasePlayer shellCasePlayer){
+        if(!hasWeapon(saveNumber)){
+            System.out.println("NOT HAVE " + saveNumber);
+            return null;
+        }
+        
         int saveIndex = saveNumber * 38;
+        
+        if(GunWeapon.getGunWeaponBySaveNumber(saveNumber) == null){
+            System.out.println("WEAPON NULL " + saveNumber);
+            return null;
+        }
         
         GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(saveNumber), shellCasePlayer);
     
@@ -59,18 +73,4 @@ public class GunWeaponPossessionData extends SavableByteData{
         return gunStatusData;
     }
     
-    
-    
-    /**
-     * 指定されたクラスを所持しているかどうかを返す
-     * @param weaponClass
-     * @return boolean
-     */
-    //public boolean hasWeaponClass(WeaponClass weaponClass){return getBit(weaponClass.getSaveNumber());}
-    
-    /**
-     * 指定されたクラスを所持させる
-     * @param weaponClass
-     */
-    //public void giveWeaponClass(WeaponClass weaponClass){setBit(weaponClass.getSaveNumber(), true);}
 }

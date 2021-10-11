@@ -5,7 +5,7 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 
 public class AchievementData {
     
-    private final ShellCasePlayer ShellCasePlayer;
+    private final ShellCasePlayer shellCasePlayer;
     
     private int point = 0;
     private int kill = 0;
@@ -14,13 +14,15 @@ public class AchievementData {
     
     private final GunWeaponPossessionData gunWeaponPossessionData;
     private final HeadGearPossessionData headGearPossessionData;
+    private final GadgetPossessionData gadgetPossessionData;
     private final ProgressData progressData = new ProgressData();
     
-    public AchievementData(ShellCasePlayer ShellCasePlayer){
-        this.ShellCasePlayer = ShellCasePlayer;
+    public AchievementData(ShellCasePlayer shellCasePlayer){
+        this.shellCasePlayer = shellCasePlayer;
         
-        this.gunWeaponPossessionData = ShellCasePlayer.getWeaponPossessionData();
-        this.headGearPossessionData = ShellCasePlayer.getHeadGearPossessionData();
+        this.gunWeaponPossessionData = shellCasePlayer.getWeaponPossessionData();
+        this.headGearPossessionData = shellCasePlayer.getHeadGearPossessionData();
+        this.gadgetPossessionData = shellCasePlayer.getGadgetPossessionData();
     }
     
     public int getKill() {return kill;}
@@ -50,8 +52,10 @@ public class AchievementData {
     public HeadGearPossessionData getHeadGearPossessionData() {return headGearPossessionData;}
     
     public GunWeaponPossessionData getWeaponPossessionData() {return gunWeaponPossessionData;}
-
+    
+    public GadgetPossessionData getGadgetPossessionData() {return gadgetPossessionData;}
+    
     public ProgressData getProgressData() {return progressData;}
 
-    public ShellCasePlayer getShellCasePlayer() {return ShellCasePlayer;}
+    public ShellCasePlayer getShellCasePlayer() {return shellCasePlayer;}
 }

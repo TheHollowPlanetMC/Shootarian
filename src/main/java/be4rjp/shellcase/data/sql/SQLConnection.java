@@ -21,7 +21,7 @@ public class SQLConnection {
         this.username = username;
         this.password = password;
     
-        connection = DriverManager.getConnection("jdbc:mysql://" + this.ip + ":" + this.port + "/" + this.database + "?autoReconnect=true&useSSL=false", this.username, this.password);
+        connection = DriverManager.getConnection("jdbc:mysql://" + this.ip + ":" + this.port + "/" + this.database + "?autoReconnect=true&useSSL=false&sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false", this.username, this.password);
         if (connection != null) {
             this.connected = true;
         } else {
@@ -39,6 +39,21 @@ public class SQLConnection {
             resultSet.next();
         }
         int i = resultSet.getInt(column);
+        resultSet.close();
+        statement.close();
+        return i;
+    }
+    
+    
+    public long getLong(String table, String column, String searchColumn, String searchColumnValue, String notExistExecute) throws Exception{
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE " + searchColumn + " = '" + searchColumnValue + "';");
+        if(!resultSet.next()){
+            execute(notExistExecute);
+            resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE " + searchColumn + " = '" + searchColumnValue + "';");
+            resultSet.next();
+        }
+        long i = resultSet.getLong(column);
         resultSet.close();
         statement.close();
         return i;

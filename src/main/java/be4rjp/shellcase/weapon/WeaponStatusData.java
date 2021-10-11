@@ -30,6 +30,8 @@ public abstract class WeaponStatusData {
 
     protected int bullets = 20;
     protected boolean isReloading = false;
+    
+    protected int saveIndexNumber;
 
     //弾数系の動作の同期用インスタンス
     protected final Object BULLETS_LOCK = new Object();
@@ -62,7 +64,7 @@ public abstract class WeaponStatusData {
     }
 
     public ItemStack getItemStack(Lang lang){
-        ItemStack itemStack = shellCaseWeapon.getItemStack(lang);
+        ItemStack itemStack = this.getItemStackFlexible(lang);
         ItemMeta itemMeta = itemStack.getItemMeta();
         String displayName = itemMeta.getDisplayName();
         displayName = displayName + "§r < " + this.getBullets() + " >";
@@ -73,4 +75,6 @@ public abstract class WeaponStatusData {
     }
 
     public abstract void updateDisplayName(ShellCasePlayer shellCasePlayer);
+    
+    public abstract ItemStack getItemStackFlexible(Lang lang);
 }
