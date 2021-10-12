@@ -7,7 +7,9 @@ import com.samjakob.spigui.buttons.SGButton;
 import com.samjakob.spigui.item.ItemBuilder;
 import com.samjakob.spigui.pagination.SGPaginationButtonBuilder;
 import com.samjakob.spigui.pagination.SGPaginationButtonType;
+import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -38,6 +40,9 @@ public class CloseMenuPaginationButtonBuilder implements SGPaginationButtonBuild
                 ).withListener(event -> {
                     event.setCancelled(true);
                     inventory.previousPage(event.getWhoClicked());
+                    if(event.getWhoClicked() instanceof Player){
+                        ((Player) event.getWhoClicked()).playNote(event.getWhoClicked().getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
+                    }
                 });
                 else return null;
             
@@ -48,6 +53,9 @@ public class CloseMenuPaginationButtonBuilder implements SGPaginationButtonBuild
                     if(!(event.getWhoClicked() instanceof Player)) return;
                     Player player = (Player) event.getWhoClicked();
                     player.closeInventory();
+                    if(event.getWhoClicked() instanceof Player){
+                        ((Player) event.getWhoClicked()).playNote(event.getWhoClicked().getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
+                    }
                 });
             
             case NEXT_BUTTON:
@@ -58,6 +66,9 @@ public class CloseMenuPaginationButtonBuilder implements SGPaginationButtonBuild
                 ).withListener(event -> {
                     event.setCancelled(true);
                     inventory.nextPage(event.getWhoClicked());
+                    if(event.getWhoClicked() instanceof Player){
+                        ((Player) event.getWhoClicked()).playNote(event.getWhoClicked().getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
+                    }
                 });
                 else return null;
             

@@ -64,6 +64,17 @@ public class WeaponClass {
     }
     
     
+    public void loadGunStatusData(ShellCasePlayer shellCasePlayer){
+        if(mainWeapon != null){
+            mainWeapon = shellCasePlayer.getWeaponPossessionData().getGunStatusData(mainWeapon.getGunWeapon().getSaveNumber(), shellCasePlayer);
+        }
+    
+        if(subWeapon != null){
+            subWeapon = shellCasePlayer.getWeaponPossessionData().getGunStatusData(subWeapon.getGunWeapon().getSaveNumber(), shellCasePlayer);
+        }
+    }
+    
+    
     public void setItem(ShellCasePlayer shellCasePlayer){
         Player player = shellCasePlayer.getBukkitPlayer();
         if(player == null) return;

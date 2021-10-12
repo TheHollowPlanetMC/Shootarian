@@ -2,9 +2,12 @@ package be4rjp.shellcase.data.sql;
 
 import be4rjp.shellcase.ShellCaseConfig;
 import be4rjp.shellcase.data.AchievementData;
+import be4rjp.shellcase.data.GunWeaponPossessionData;
 import be4rjp.shellcase.data.HeadGearPossessionData;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.costume.HeadGear;
+import be4rjp.shellcase.weapon.gun.GunStatusData;
+import be4rjp.shellcase.weapon.gun.GunWeapon;
 
 public class SQLDriver {
     
@@ -42,8 +45,14 @@ public class SQLDriver {
         achievementData.getProgressData().load_from_byte_array(progress);
         achievementData.getShellCasePlayer().getPlayerSettings().setByCombinedID(settings);
     
+        GunWeaponPossessionData weaponPossessionData = achievementData.getWeaponPossessionData();
+        if(!weaponPossessionData.hasWeapon(0)){
+            GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), achievementData.getShellCasePlayer());
+            weaponPossessionData.setGunStatusData(gunStatusData);
+        }
+        
         HeadGearPossessionData headGearPossessionData = achievementData.getHeadGearPossessionData();
-        if(headGearPossessionData.hasHeadGear(HeadGear.getHeadGearBySaveNumber(0))){
+        if(!headGearPossessionData.hasHeadGear(HeadGear.getHeadGearBySaveNumber(0))){
             headGearPossessionData.setHeadGear(HeadGear.getHeadGearBySaveNumber(0));
         }
         HeadGear headGear = HeadGear.getHeadGearBySaveNumber(head);
@@ -72,12 +81,12 @@ public class SQLDriver {
         sqlConnection.updateValue(mySQLConfig.table, "points = " + achievementData.getPoint(), "uuid = '" + uuid + "'");
         sqlConnection.updateValue(mySQLConfig.table, "ranks = " + achievementData.getRank(), "uuid = '" + uuid + "'");
         sqlConnection.updateValue(mySQLConfig.table, "coin = " + achievementData.getCoin(), "uuid = '" + uuid + "'");
-        sqlConnection.updateValue(mySQLConfig.table, "weapon = " + "'" + new String(achievementData.getWeaponPossessionData().write_to_byte_array()) + "'", "uuid = '" + uuid + "'");
-        sqlConnection.updateValue(mySQLConfig.table, "gear = " + "'" + new String(achievementData.getHeadGearPossessionData().write_to_byte_array()) + "'", "uuid = '" + uuid + "'");
-        sqlConnection.updateValue(mySQLConfig.table, "gadget = " + "'" + new String(achievementData.getGadgetPossessionData().write_to_byte_array()) + "'", "uuid = '" + uuid + "'");
-        sqlConnection.updateValue(mySQLConfig.table, "equip = " + /*achievementData.getShellCasePlayer().getWeaponClass().getCombinedID()*/0, "uuid = '" + uuid + "'");
+        sqlConnection.updateByteValue(mySQLConfig.table, "weapon", achievementData.getWeaponPossessionData().write_to_byte_array(), "uuid = '" + uuid + "'");
+        sqlConnection.updateByteValue(mySQLConfig.table, "gear", achievementData.getHeadGearPossessionData().write_to_byte_array(), "uuid = '" + uuid + "'");
+        sqlConnection.updateByteValue(mySQLConfig.table, "gadget", achievementData.getGadgetPossessionData().write_to_byte_array(), "uuid = '" + uuid + "'");
+        sqlConnection.updateValue(mySQLConfig.table, "equip = " + achievementData.getShellCasePlayer().getWeaponClass().getCombinedID(), "uuid = '" + uuid + "'");
         sqlConnection.updateValue(mySQLConfig.table, "head = " + achievementData.getShellCasePlayer().getHeadGearNumber(), "uuid = '" + uuid + "'");
-        sqlConnection.updateValue(mySQLConfig.table, "progress = " + "'" + new String(achievementData.getProgressData().write_to_byte_array()) + "'", "uuid = '" + uuid + "'");
+        sqlConnection.updateByteValue(mySQLConfig.table, "progress", achievementData.getProgressData().write_to_byte_array(), "uuid = '" + uuid + "'");
         sqlConnection.updateValue(mySQLConfig.table, "settings = " + achievementData.getShellCasePlayer().getPlayerSettings().getCombinedID(), "uuid = '" + uuid + "'");
         
         sqlConnection.close();

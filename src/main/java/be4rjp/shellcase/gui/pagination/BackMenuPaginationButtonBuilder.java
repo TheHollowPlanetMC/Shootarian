@@ -12,7 +12,9 @@ import com.samjakob.spigui.buttons.SGButton;
 import com.samjakob.spigui.item.ItemBuilder;
 import com.samjakob.spigui.pagination.SGPaginationButtonBuilder;
 import com.samjakob.spigui.pagination.SGPaginationButtonType;
+import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -41,13 +43,21 @@ public class BackMenuPaginationButtonBuilder implements SGPaginationButtonBuilde
                 ).withListener(event -> {
                     event.setCancelled(true);
                     inventory.previousPage(event.getWhoClicked());
+                    if(event.getWhoClicked() instanceof Player){
+                        ((Player) event.getWhoClicked()).playNote(event.getWhoClicked().getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
+                    }
                 });
                 else return null;
             
             case CURRENT_BUTTON:
                 return new SGButton(new ItemBuilder(Material.OAK_DOOR)
                         .name(MessageManager.getText(lang, "gui-back-to-menu")).build()
-                ).withListener(event -> runnable.run());
+                ).withListener(event -> {
+                    runnable.run();
+                    if(event.getWhoClicked() instanceof Player){
+                        ((Player) event.getWhoClicked()).playNote(event.getWhoClicked().getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
+                    }
+                });
             
             case NEXT_BUTTON:
                 if (inventory.getCurrentPage() < inventory.getMaxPage() - 1) return new SGButton(new ItemBuilder(Material.ARROW)
@@ -57,6 +67,9 @@ public class BackMenuPaginationButtonBuilder implements SGPaginationButtonBuilde
                 ).withListener(event -> {
                     event.setCancelled(true);
                     inventory.nextPage(event.getWhoClicked());
+                    if(event.getWhoClicked() instanceof Player){
+                        ((Player) event.getWhoClicked()).playNote(event.getWhoClicked().getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
+                    }
                 });
                 else return null;
             

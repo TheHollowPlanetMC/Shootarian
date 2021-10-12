@@ -82,7 +82,9 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     //腰撃ち時のリコイル
     protected Recoil normalRecoil = null;
     //リコイル
-    private final HipShootingRecoil hipShootingRecoil = new HipShootingRecoil();
+    protected final HipShootingRecoil hipShootingRecoil = new HipShootingRecoil();
+    //装着可能なアタッチメント
+    protected final Set<Attachment> attachments = new HashSet<>();
     
     public GunWeapon(String id){
         super(id);
@@ -148,6 +150,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public int getSaveNumber() {return saveNumber;}
     
+    public Set<Attachment> getAttachments() {return attachments;}
+    
     /**
      * ymlファイルからロードする
      * @param yml
@@ -180,6 +184,13 @@ public abstract class GunWeapon extends ShellCaseWeapon {
             if(yml.contains("hip-shooting-recoil.increase-min-tick")) hipShootingRecoil.setMinTick(yml.getInt("hip-shooting-recoil.increase-min-tick"));
             if(yml.contains("hip-shooting-recoil.increase-max-tick")) hipShootingRecoil.setMaxTick(yml.getInt("hip-shooting-recoil.increase-max-tick"));
             if(yml.contains("hip-shooting-recoil.increase-reset-tick")) hipShootingRecoil.setResetTick(yml.getInt("hip-shooting-recoil.increase-reset-tick"));
+        }
+        
+        if(yml.contains("attachment")){
+            for(String line : yml.getStringList("attachment")){
+                Attachment attachment = Attachment.getAttachment(line);
+                if(attachment != null) this.attachments.add(attachment);
+            }
         }
         
         loadDetailsData();

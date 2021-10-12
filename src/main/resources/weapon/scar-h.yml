@@ -20,3 +20,6 @@ hip-shooting-recoil:
   increase-min-tick: 10
   increase-max-tick: 30
   increase-reset-tick: 40
+
+attachment:
+  - 'rds'

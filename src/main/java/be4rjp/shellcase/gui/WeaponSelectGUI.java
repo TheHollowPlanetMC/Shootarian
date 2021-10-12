@@ -31,6 +31,7 @@ public class WeaponSelectGUI {
                 
                 menu.addButton(new SGButton(gunStatusData.getItemStack(lang)).withListener(event -> {
                     weaponSelectRunnable.run(gunStatusData);
+                    shellCasePlayer.playGUIClickSound();
                 }));
             }
             

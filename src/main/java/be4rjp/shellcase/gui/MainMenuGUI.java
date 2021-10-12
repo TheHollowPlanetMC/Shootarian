@@ -37,9 +37,8 @@ public class MainMenuGUI {
                     .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-equip"))
                     .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-equip-des")).build()).withListener(event -> {
     
-                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
-                
-                });
+                ClassGUI.openClassGUI(shellCasePlayer);
+                shellCasePlayer.playGUIClickSound();
                 
             }));
     
@@ -48,7 +47,7 @@ public class MainMenuGUI {
                     .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon-des")).build()).withListener(event -> {
                     
                 WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
-                
+                    GunCustomGUI.openGunCustomGUI(shellCasePlayer, gunStatusData);
                 });
                 
             }));

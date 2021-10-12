@@ -2,10 +2,7 @@ package be4rjp.shellcase.data.sql;
 
 import be4rjp.shellcase.ShellCase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class SQLConnection {
     private final String ip, port, database, username, password;
@@ -21,7 +18,7 @@ public class SQLConnection {
         this.username = username;
         this.password = password;
     
-        connection = DriverManager.getConnection("jdbc:mysql://" + this.ip + ":" + this.port + "/" + this.database + "?autoReconnect=true&useSSL=false&sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false", this.username, this.password);
+        connection = DriverManager.getConnection("jdbc:mysql://" + this.ip + ":" + this.port + "/" + this.database + "?autoReconnect=true&useSSL=false", this.username, this.password);
         if (connection != null) {
             this.connected = true;
         } else {
@@ -107,6 +104,13 @@ public class SQLConnection {
     
     public void updateValue(String tableName, String Value, String search) throws Exception{
         execute("UPDATE " + tableName +  " SET " + Value + " WHERE " + search + ";");
+    }
+    
+    public void updateByteValue(String tableName, String column, byte[] bytes, String search) throws Exception{
+        PreparedStatement statement = connection.prepareStatement("UPDATE " + tableName +  " SET " + column + " = ? WHERE " + search + ";");
+        statement.setBytes(1, bytes);
+        statement.execute();
+        statement.close();
     }
     
     public void execute(String cmd) throws Exception{

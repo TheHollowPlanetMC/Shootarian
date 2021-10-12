@@ -14,6 +14,7 @@ import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.packet.PacketHandler;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.TaskHandler;
+import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.gadget.Gadget;
 import be4rjp.shellcase.weapon.gadget.GadgetStatusData;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
@@ -70,6 +71,24 @@ public class PlayerJoinQuitListener implements Listener {
                 shellCasePlayer.sendSkinRequest();
     
                 shellCasePlayer.loadAchievementFromSQL();
+    
+                //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), shellCasePlayer));
+                //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer));
+                
+                /*
+                GunStatusData gunStatusData1 = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), shellCasePlayer);
+                gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(0));
+                gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(2));
+    
+                GunStatusData gunStatusData2 = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer);
+                gunStatusData2.addAttachment(Attachment.getAttachmentBySaveNumber(0));
+                gunStatusData2.addAttachment(Attachment.getAttachmentBySaveNumber(1));
+                gunStatusData2.addAttachment(Attachment.getAttachmentBySaveNumber(2));
+                
+                shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData1);
+                shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData2);
+                */
+                MainMenuGUI.openMainMenuGUI(shellCasePlayer);
                 
                 
                 //if(!shellCasePlayer.getWeaponPossessionData().hasWeapon(0)){
@@ -77,7 +96,7 @@ public class PlayerJoinQuitListener implements Listener {
                     //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer));
                 //}
     
-                MainMenuGUI.openMainMenuGUI(shellCasePlayer);
+                //MainMenuGUI.openMainMenuGUI(shellCasePlayer);
                 
                 
                 //shellCasePlayer.setLoadedSaveData(true);

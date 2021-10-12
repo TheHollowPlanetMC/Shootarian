@@ -366,8 +366,10 @@ public class ShellCasePlayer {
     /**
      * プレイヤーの実績データをSQLに保存する
      */
-    public void saveAchievementToSQL() throws Exception{
-        SQLDriver.saveAchievementData(this.achievementData);
+    public void saveAchievementToSQL(){
+        try {
+            SQLDriver.saveAchievementData(this.achievementData);
+        }catch (Exception e){e.printStackTrace();}
     }
     
     /**
@@ -416,9 +418,27 @@ public class ShellCasePlayer {
      * ロビー上で装備させるアイテムを渡す
      */
     public void setLobbyItem(){
-        
         this.equipHeadGear();
         this.setMainMenu();
+    }
+    
+    /**
+     * 全てを装備させえる
+     */
+    public void giveItems(){
+        this.equipHeadGear();
+        this.weaponClass.setItem(this);
+        this.setMainMenu();
+    }
+    
+    /**
+     * GUIをクリックしたときの音をプレイヤーに聞かせる
+     */
+    public void playGUIClickSound(){
+        Player player = this.getBukkitPlayer();
+        if(player == null) return;
+        
+        player.playNote(player.getLocation(), Instrument.STICKS, Note.flat(1, Note.Tone.C));
     }
     
     /**

@@ -1,6 +1,7 @@
 package be4rjp.shellcase.weapon.gun;
 
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.weapon.WeaponManager;
@@ -78,7 +79,7 @@ public class GunStatusData extends WeaponStatusData {
     
     public void setClickTick(long clickTick) {this.clickTick = clickTick;}
     
-    public void addAttachment(Attachment attachment){this.attachmentPossessionData.set(attachment.getSaveNumber(), 1);}
+    public void addAttachment(Attachment attachment){this.attachmentPossessionData.set(attachment.getSaveNumber(), true);}
     
     public boolean hasAttachment(Attachment attachment){return this.attachmentPossessionData.get(attachment.getSaveNumber());}
     
@@ -129,6 +130,7 @@ public class GunStatusData extends WeaponStatusData {
         List<String> lore = itemMeta.getLore();
         if(lore == null) lore = new ArrayList<>();
         lore.add("");
+        lore.add(String.format(MessageManager.getText(lang, "weapon-attachment-sight"), sight == null ? MessageManager.getText(lang, "nothing") : sight.getDisplayName(lang)));
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         

@@ -42,17 +42,11 @@ public class GunWeaponPossessionData extends SavableByteData{
     }
     
     public GunStatusData getGunStatusData(int saveNumber, ShellCasePlayer shellCasePlayer){
-        if(!hasWeapon(saveNumber)){
-            System.out.println("NOT HAVE " + saveNumber);
-            return null;
-        }
+        if(!hasWeapon(saveNumber)) return null;
         
         int saveIndex = saveNumber * 38;
         
-        if(GunWeapon.getGunWeaponBySaveNumber(saveNumber) == null){
-            System.out.println("WEAPON NULL " + saveNumber);
-            return null;
-        }
+        if(GunWeapon.getGunWeaponBySaveNumber(saveNumber) == null) return null;
         
         GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(saveNumber), shellCasePlayer);
     
