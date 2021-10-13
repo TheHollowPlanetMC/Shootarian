@@ -2,6 +2,7 @@ package be4rjp.shellcase.weapon.recoil;
 
 import be4rjp.cinema4c.util.Vec2f;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.player.passive.Passive;
 import net.minecraft.server.v1_15_R1.PacketPlayOutPosition;
 
 import java.util.*;
@@ -37,7 +38,14 @@ public class RecoilPattern {
     
     public void sendRecoil(ShellCasePlayer shellCasePlayer, int index){
         Vec2f vec2f = this.get(index);
-        PacketPlayOutPosition position = new PacketPlayOutPosition(0, 0, 0, vec2f.x, vec2f.y, teleportFlags, 0);
+        
+        float x = vec2f.x;
+        float y = vec2f.y;
+        
+        x = (float) shellCasePlayer.getPlayerPassiveInfluence().setInfluence(Passive.HORIZONTAL_RECOIL, x);
+        y = (float) shellCasePlayer.getPlayerPassiveInfluence().setInfluence(Passive.VERTICAL_RECOIL, y);
+        
+        PacketPlayOutPosition position = new PacketPlayOutPosition(0, 0, 0, x, y, teleportFlags, 0);
         shellCasePlayer.sendPacket(position);
     }
 }

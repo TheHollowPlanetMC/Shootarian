@@ -3,16 +3,14 @@ package be4rjp.shellcase.weapon.attachment;
 import be4rjp.shellcase.item.ShellCaseItem;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.passive.Passive;
+import be4rjp.shellcase.player.passive.PassiveInfluence;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class Attachment extends ShellCaseItem {
     
@@ -34,10 +32,11 @@ public abstract class Attachment extends ShellCaseItem {
     protected final String id;
     //設定ファイル
     protected YamlConfiguration yml;
-    //パッシブ効果とその効果倍率のマップ
-    protected Map<Passive, Float> passiveInfluenceMap = new HashMap<>();
+    //パッシブ効果
+    protected List<PassiveInfluence> passiveInfluenceList = new ArrayList<>();
     //SQLに保存するための識別番号
     protected int saveNumber = 0;
+    //パッシブ効果のリスト
     
     
     public Attachment(String id){
@@ -53,17 +52,8 @@ public abstract class Attachment extends ShellCaseItem {
         this.yml = yml;
         
         super.itemLoad(yml);
-        
-        if (yml.contains("passive")){
-            List<String> passiveList = yml.getStringList("passive");
-            for(String line : passiveList){
-                String[] args = line.replace(" ", "").split(",");
-                Passive passive = Passive.valueOf(args[0]);
-                float influence = Float.parseFloat(args[1]);
-                
-                passiveInfluenceMap.put(passive, influence);
-            }
-        }
+    
+        if(yml.contains("passive")) yml.getStringList("passive").forEach(passiveString -> passiveInfluenceList.add(PassiveInfluence.fromString(passiveString)));
         if(yml.contains("save-number")) this.saveNumber = yml.getInt("save-number");
         
         this.loadDetailsData();
@@ -76,7 +66,7 @@ public abstract class Attachment extends ShellCaseItem {
     
     public String getId(){return id;}
     
-    public Map<Passive, Float> getPassiveInfluenceMap() {return passiveInfluenceMap;}
+    public List<PassiveInfluence> getPassiveInfluenceList() {return passiveInfluenceList;}
     
     public int getSaveNumber() {return saveNumber;}
     
@@ -90,6 +80,7 @@ public abstract class Attachment extends ShellCaseItem {
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(this.getDisplayName(lang));
         itemMeta.setCustomModelData(modelID);
+        itemMeta.setLore(super.getDescription(lang));
         itemStack.setItemMeta(itemMeta);
         
         return itemStack;
@@ -97,7 +88,8 @@ public abstract class Attachment extends ShellCaseItem {
     
     
     public enum AttachmentType{
-        SIGHT(Sight.class);
+        SIGHT(Sight.class),
+        GRIP(Grip.class);
     
         private final Class<? extends Attachment> attachmentClass;
     

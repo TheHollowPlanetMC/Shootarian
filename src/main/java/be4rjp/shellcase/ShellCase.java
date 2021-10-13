@@ -1,5 +1,6 @@
 package be4rjp.shellcase;
 
+import be4rjp.shellcase.gui.MainMenuItem;
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.listener.*;
 import be4rjp.shellcase.map.CanvasData;
@@ -70,6 +71,8 @@ public final class ShellCase extends JavaPlugin {
         WeaponManager.loadAllWeapon();
         HeadGear.loadAllHeadGear();
         MatchManager.load();
+        
+        new MainMenuItem();
     
     
         playerLobbyMatch = new PlayerLobbyMatch(ShellCaseMap.getRandomMap());

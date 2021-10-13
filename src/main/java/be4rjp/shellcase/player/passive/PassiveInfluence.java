@@ -1,58 +1,60 @@
 package be4rjp.shellcase.player.passive;
 
-import be4rjp.shellcase.weapon.gun.GunStatusData;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-public class PassiveInfluence {
+public abstract class PassiveInfluence {
     
-    private final Map<Passive, Float> passiveInfluenceMap;
-    
-    public PassiveInfluence(){
-        passiveInfluenceMap = new ConcurrentHashMap<>();
+    public static PassiveInfluence fromString(String line){
+        //RUN_SPEED, +20%
+        String[] args = line.replace(" ", "").split(",");
         
-        for(Passive passive : Passive.values()){
-            passiveInfluenceMap.put(passive, 0.0F);
-        }
-    }
-    
-    /*
-    public void createPassiveInfluence(ShellCasePlayer ShellCasePlayer){
-        List<Passive> passiveList = new ArrayList<>();
+        if(args.length != 2) throwSyntaxError();
         
-        //プレイヤーについているギアのパッシブ効果を取得
-        ShellCasePlayer.getGearList().forEach(gear -> passiveList.add(gear.getPassive()));
-    
-        //メイン武器のパッシブ効果を取得
-        WeaponClass weaponClass = ShellCasePlayer.getWeaponClass();
-        if(weaponClass != null){
-            if(weaponClass.getMainWeapon() != null){
-                passiveList.addAll(weaponClass.getMainWeapon().getPassiveList());
+        Passive passive = Passive.valueOf(args[0]);
+        String plusOrRate = args[1];
+        
+        switch (plusOrRate.toCharArray()[0]){
+            case '+':{
+                if(plusOrRate.contains("%")){
+                    double rate = Double.parseDouble(plusOrRate.replace("+", "").replace("%", ""));
+                    rate = rate / 100.0 + 1.0;
+                    
+                    return new PassiveRateInfluence(passive, rate);
+                }else{
+                    double plus = Double.parseDouble(plusOrRate.replace("+", ""));
+                    
+                    return new PassivePlusInfluence(passive, plus);
+                }
+            }
+            case '-':{
+                if(plusOrRate.contains("%")){
+                    double rate = Double.parseDouble(plusOrRate.replace("-", "").replace("%", ""));
+                    rate = 1.0 - (rate / 100.0);
+                    
+                    return new PassiveRateInfluence(passive, rate);
+                }else{
+                    double plus = -1.0 * Double.parseDouble(plusOrRate.replace("-", ""));
+                    
+                    return new PassivePlusInfluence(passive, plus);
+                }
+            }
+            default:{
+                throwSyntaxError();
+                return null;
             }
         }
-    }*/
+    }
     
-    public void createPassiveInfluence(GunStatusData gunStatusData){
-        if(gunStatusData.getSight() != null) this.addPassive(gunStatusData.getSight().getPassiveInfluenceMap());
+    public static void throwSyntaxError(){
+        throw new IllegalArgumentException("PassiveInfluence needs to be written in the form of 'RUN_SPEED, +20%'.");
     }
-
-    private void addPassive(Map<Passive, Float> passiveFloatMap){
-        for(Map.Entry<Passive, Float> entry : passiveFloatMap.entrySet()){
-            Passive passive = entry.getKey();
-            float influence = passiveInfluenceMap.get(passive);
-            influence += passiveFloatMap.get(passive);
-            passiveInfluenceMap.put(passive, influence);
-        }
-    }
-
     
-    /**
-     * 指定されたパッシブの影響倍率を取得します
-     * @param passive 取得したいパッシブ効果
-     * @return パッシブの影響倍率
-     */
-    public float getInfluence(Passive passive){
-        return passiveInfluenceMap.get(passive);
+    
+    protected final Passive passive;
+    
+    public PassiveInfluence(Passive passive){
+        this.passive = passive;
     }
+    
+    public Passive getPassive() {return passive;}
+    
+    public abstract double setInfluence(double raw);
 }

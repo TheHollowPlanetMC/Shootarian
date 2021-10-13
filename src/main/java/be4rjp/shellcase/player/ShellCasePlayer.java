@@ -10,6 +10,7 @@ import be4rjp.shellcase.data.GunWeaponPossessionData;
 import be4rjp.shellcase.data.settings.PlayerSettings;
 import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.data.sql.SQLDriver;
+import be4rjp.shellcase.gui.MainMenuItem;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.map.PlayerGUIRenderer;
 import be4rjp.shellcase.match.MatchManager;
@@ -19,7 +20,8 @@ import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.player.death.DeathType;
 import be4rjp.shellcase.player.death.PlayerDeathManager;
 import be4rjp.shellcase.player.passive.Gear;
-import be4rjp.shellcase.player.passive.PassiveInfluence;
+import be4rjp.shellcase.player.passive.Passive;
+import be4rjp.shellcase.player.passive.PlayerPassiveInfluence;
 import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
@@ -147,7 +149,7 @@ public class ShellCasePlayer {
     //ギアのリスト
     private final List<Gear> gearList = new CopyOnWriteArrayList<>();
     //パッシブ効果
-    private final PassiveInfluence passiveInfluence = new PassiveInfluence();
+    private final PlayerPassiveInfluence playerPassiveInfluence = new PlayerPassiveInfluence(this);
     //装備しているヘッドギア
     private HeadGear headGear = null;
     //装備しているヘッドギアの番号
@@ -251,7 +253,7 @@ public class ShellCasePlayer {
     
     public List<Gear> getGearList() {return gearList;}
     
-    public PassiveInfluence getPassiveInfluence() {return passiveInfluence;}
+    public PlayerPassiveInfluence getPassiveInfluence() {return playerPassiveInfluence;}
     
     public HeadGear getHeadGear() {return headGear;}
     
@@ -296,6 +298,8 @@ public class ShellCasePlayer {
     public void setSlotPacket(PacketPlayOutSetSlot slotPacket) {this.slotPacket = slotPacket;}
     
     public Deque<Map.Entry<Class<?>, Object>> getGUIStack() {return guiStack;}
+    
+    public PlayerPassiveInfluence getPlayerPassiveInfluence() {return playerPassiveInfluence;}
     
     /**
      * 情報をリセットする
@@ -411,7 +415,7 @@ public class ShellCasePlayer {
      */
     public void setMainMenu(){
         if(player == null) return;
-        //player.getInventory().setItem(6, MainMenuItem.getItemStack(lang));
+        player.getInventory().setItem(6, MainMenuItem.mainMenuItem.getItemStack(lang));
     }
     
     /**
@@ -531,13 +535,6 @@ public class ShellCasePlayer {
     }
     
     /**
-     * 装備しているギアやメインウエポンからパッシブ効果を作成します
-     */
-    public void createPassiveInfluence(){
-        //this.passiveInfluence.createPassiveInfluence(this);
-    }
-    
-    /**
      * クライアントの視野角を取得します
      * @return float
      */
@@ -588,6 +585,8 @@ public class ShellCasePlayer {
      */
     public void setWalkSpeed(float speed){
         if(player == null) return;
+        
+        speed = (float) this.playerPassiveInfluence.setInfluence(Passive.RUN_SPEED, speed);
         this.walkSpeed = speed;
         player.setWalkSpeed(speed);
     }

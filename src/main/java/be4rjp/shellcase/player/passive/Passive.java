@@ -3,15 +3,15 @@ package be4rjp.shellcase.player.passive;
 
 public enum Passive {
     
-    //効果なし
-    NONE(0.0F);
-
+    NONE("nothing"), //効果なし
+    RUN_SPEED("passive-run-speed"), //スピードアップ
+    HORIZONTAL_RECOIL("passive-horizontal-recoil"), //横反動
+    VERTICAL_RECOIL("passive-vertical-recoil"); //縦反動
     
-    private final float default_influence;
+    public final String displayName;
     
-    Passive(float default_influence){
-        this.default_influence = default_influence;
+    Passive(String displayName){
+        this.displayName = displayName;
     }
     
-    public float getDefaultInfluence() {return default_influence;}
 }

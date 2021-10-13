@@ -2,12 +2,12 @@ package be4rjp.shellcase.gui;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.gui.pagination.BackMenuPaginationButtonBuilder;
-import be4rjp.shellcase.gui.pagination.CloseMenuPaginationButtonBuilder;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.attachment.Attachment;
+import be4rjp.shellcase.weapon.attachment.Grip;
 import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import com.samjakob.spigui.SGMenu;
@@ -39,6 +39,10 @@ public class ChangeAttachmentGUI {
                     if(clazz == Sight.class){
                         gunStatusData.setSight((Sight) attachment);
                         shellCasePlayer.sendText("gui-weapon-custom-sight-changed", gunStatusData.getGunWeapon().getDisplayName(lang), attachment.getDisplayName(lang));
+                    }
+                    if(clazz == Grip.class){
+                        gunStatusData.setGrip((Grip) attachment);
+                        shellCasePlayer.sendText("gui-weapon-custom-grip-changed", gunStatusData.getGunWeapon().getDisplayName(lang), attachment.getDisplayName(lang));
                     }
     
                     shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData);

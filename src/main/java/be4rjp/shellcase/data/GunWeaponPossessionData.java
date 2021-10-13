@@ -3,6 +3,7 @@ package be4rjp.shellcase.data;
 
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.attachment.Attachment;
+import be4rjp.shellcase.weapon.attachment.Grip;
 import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
@@ -24,9 +25,9 @@ public class GunWeaponPossessionData extends SavableByteData{
         bytes[saveIndex] |= 0x80;
         bytes[saveIndex + 1] |= 0x00;
         //3 - つけているサイト
-        bytes[saveIndex + 2] = (byte) (gunStatusData.getSight().getSaveNumber() & 0xFF);
+        bytes[saveIndex + 2] = (byte) (gunStatusData.getSight() == null ? 0 : gunStatusData.getSight().getSaveNumber() & 0xFF);
         //4 - つけているバレル
-        bytes[saveIndex + 3] = 0x00;
+        bytes[saveIndex + 3] = (byte) (gunStatusData.getGrip() == null ? 0 : gunStatusData.getGrip().getSaveNumber() & 0xFF);
         //5 - つけているグリップ
         bytes[saveIndex + 4] = 0x00;
         //6 - つけているアクセサリー
@@ -53,6 +54,7 @@ public class GunWeaponPossessionData extends SavableByteData{
         //3 - つけているサイト
         gunStatusData.setSight((Sight) Attachment.getAttachmentBySaveNumber(bytes[saveIndex + 2] & 0xFF));
         //4 - つけているバレル
+        gunStatusData.setGrip((Grip) Attachment.getAttachmentBySaveNumber(bytes[saveIndex + 3] & 0xFF));
         //5 - つけているグリップ
         //6 - つけているアクセサリー
         //7 ~ 39 - どのアタッチメントを所持しているかどうか

@@ -4,9 +4,11 @@ import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.PassiveInfluence;
+import be4rjp.shellcase.player.passive.PlayerPassiveInfluence;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.WeaponStatusData;
 import be4rjp.shellcase.weapon.attachment.Attachment;
+import be4rjp.shellcase.weapon.attachment.Grip;
 import be4rjp.shellcase.weapon.attachment.Sight;
 import be4rjp.shellcase.weapon.recoil.RecoilPattern;
 import be4rjp.shellcase.weapon.actions.ReloadActionRunnable;
@@ -24,8 +26,7 @@ public class GunStatusData extends WeaponStatusData {
     private final ShellCasePlayer shellCasePlayer;
     
     private Sight sight;
-    
-    private final PassiveInfluence passiveInfluence = new PassiveInfluence();
+    private Grip grip;
     
     private int maxBullets = 20;
     private long coolTime = 0;
@@ -50,12 +51,14 @@ public class GunStatusData extends WeaponStatusData {
         this.adsRecoil = gunWeapon.getADSRecoil().getRandomPattern();
         this.normalRecoil = gunWeapon.getNormalRecoil().getRandomPattern();
     }
-
-    public void createPassiveInfluence(){this.passiveInfluence.createPassiveInfluence(this);}
     
     public Sight getSight() {return sight;}
     
     public void setSight(Sight sight) {this.sight = sight;}
+    
+    public Grip getGrip() {return grip;}
+    
+    public void setGrip(Grip grip) {this.grip = grip;}
     
     public GunWeapon getGunWeapon() {return gunWeapon;}
     
@@ -86,6 +89,14 @@ public class GunStatusData extends WeaponStatusData {
     public void setAttachmentPossessionData(byte[] bytes){this.attachmentPossessionData = BitSet.valueOf(bytes);}
     
     public byte[] getAttachmentPossessionData() {return attachmentPossessionData.toByteArray();}
+    
+    public List<PassiveInfluence> getAllPassiveInfluences(){
+        List<PassiveInfluence> passiveInfluenceList = new ArrayList<>(gunWeapon.getPassiveInfluenceList());
+        if(sight != null) passiveInfluenceList.addAll(sight.getPassiveInfluenceList());
+        if(grip != null) passiveInfluenceList.addAll(grip.getPassiveInfluenceList());
+        
+        return passiveInfluenceList;
+    }
     
     public void resetRecoil() {
         this.adsRecoil = gunWeapon.getADSRecoil().getRandomPattern();
@@ -131,6 +142,7 @@ public class GunStatusData extends WeaponStatusData {
         if(lore == null) lore = new ArrayList<>();
         lore.add("");
         lore.add(String.format(MessageManager.getText(lang, "weapon-attachment-sight"), sight == null ? MessageManager.getText(lang, "nothing") : sight.getDisplayName(lang)));
+        lore.add(String.format(MessageManager.getText(lang, "weapon-attachment-grip"), grip == null ? MessageManager.getText(lang, "nothing") : grip.getDisplayName(lang)));
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         

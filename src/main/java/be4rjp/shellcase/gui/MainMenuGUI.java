@@ -26,6 +26,10 @@ public class MainMenuGUI {
         menu.setPaginationButtonBuilder(CloseMenuPaginationButtonBuilder.getPaginationButtonBuilder(lang));
     
         TaskHandler.runAsync(() -> {
+    
+            for(int index = 0; index < 45; index++){
+                menu.setButton(index, new SGButton(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name("§r").build()));
+            }
         
             menu.setButton(10, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
                     .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join"))

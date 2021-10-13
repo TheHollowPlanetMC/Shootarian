@@ -3,6 +3,7 @@ package be4rjp.shellcase.weapon.gun;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.player.passive.Passive;
+import be4rjp.shellcase.player.passive.PassiveInfluence;
 import be4rjp.shellcase.util.ShellCaseSound;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.WeaponStatusData;
@@ -60,7 +61,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     //射撃時に鳴らすサウンド
     protected ShellCaseSound shootSound = new ShellCaseSound(Sound.ENTITY_PIG_STEP, 0.3F, 1F);
     //武器のパッシブ効果
-    protected List<Passive> passiveList = new ArrayList<>();
+    protected List<PassiveInfluence> passiveInfluenceList = new ArrayList<>();
     //弾の大きさ
     protected double bulletSize = 0.1;
     //ADS中の移動速度
@@ -118,9 +119,9 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     /**
      * この武器についているパッシブ効果を取得する
-     * @return List<Passive>
+     * @return List<PassiveInfluence>
      */
-    public List<Passive> getPassiveList() {return passiveList;}
+    public List<PassiveInfluence> getPassiveInfluenceList() {return passiveInfluenceList;}
     
     /**
      * 弾の大きさを取得する
@@ -164,7 +165,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         if(yml.contains("save-number")) this.saveNumber = yml.getInt("save-number");
         if(yml.contains("damage")) this.damage = (float)yml.getDouble("damage");
         if(yml.contains("sound")) this.shootSound = ShellCaseSound.getSoundByString(Objects.requireNonNull(yml.getString("sound")));
-        if(yml.contains("passive")) yml.getStringList("passive").forEach(passiveString -> passiveList.add(Passive.valueOf(passiveString)));
+        if(yml.contains("passive")) yml.getStringList("passive").forEach(passiveString -> passiveInfluenceList.add(PassiveInfluence.fromString(passiveString)));
         if(yml.contains("bullet-size")) this.bulletSize = yml.getDouble("bullet-size");
         if(yml.contains("default-bullets")) this.defaultBullets = yml.getInt("default-bullets");
         if(yml.contains("default-sight")) this.defaultSight = (Sight) Attachment.getAttachment(yml.getString("default-sight"));

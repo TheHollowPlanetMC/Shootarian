@@ -63,8 +63,6 @@ public class SQLDriver {
         achievementData.getShellCasePlayer().getWeaponClass().setByCombinedID(equip, achievementData);
         achievementData.getShellCasePlayer().getWeaponClass().setItem(achievementData.getShellCasePlayer());
         
-        achievementData.getShellCasePlayer().createPassiveInfluence();
-        
         sqlConnection.close();
     }
     

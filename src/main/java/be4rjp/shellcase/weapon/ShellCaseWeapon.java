@@ -80,6 +80,7 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(this.getDisplayName(lang));
         itemMeta.setCustomModelData(modelID);
+        itemMeta.setLore(super.getDescription(lang));
         itemStack.setItemMeta(itemMeta);
 
         return WeaponManager.writeNBTTag(this, itemStack);
