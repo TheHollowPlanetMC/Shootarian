@@ -1,10 +1,10 @@
 package be4rjp.shellcase.gui;
 
 import be4rjp.shellcase.ShellCase;
-import be4rjp.shellcase.gui.pagination.BackMenuPaginationButtonBuilder;
 import be4rjp.shellcase.gui.pagination.CloseMenuPaginationButtonBuilder;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
+import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.TaskHandler;
 import com.samjakob.spigui.SGMenu;
@@ -34,7 +34,9 @@ public class MainMenuGUI {
             menu.setButton(10, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
                     .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join"))
                     .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join-des")).build()).withListener(event -> {
-            
+    
+                MatchManager.getMatchManager("conquest").join(shellCasePlayer);
+                
             }));
     
             menu.setButton(12, new SGButton(new ItemBuilder(Material.IRON_HOE)
@@ -52,7 +54,19 @@ public class MainMenuGUI {
                     
                 WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
                     GunCustomGUI.openGunCustomGUI(shellCasePlayer, gunStatusData);
+                    shellCasePlayer.playGUIClickSound();
                 });
+    
+                shellCasePlayer.playGUIClickSound();
+                
+            }));
+    
+            menu.setButton(16, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
+                    .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear"))
+                    .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear-des")).build()).withListener(event -> {
+                    
+                HeadGearGUI.openHeadGearGUI(shellCasePlayer);
+                shellCasePlayer.playGUIClickSound();
                 
             }));
         

@@ -32,6 +32,14 @@ public abstract class PlayerGUIRenderer extends BukkitRunnable {
     
     @Override
     public void run() {
+        if(shellCasePlayer.getPlayerGUIRenderer() != this){
+            return;
+        }
+        if(canvasBufferRenderer.isCancelled()){
+            canvasBufferRenderer.cancel();
+            return;
+        }
+        
         CanvasBuffer canvasBuffer = canvasBufferRenderer.copyCanvasBuffer();
     
         for(MapComponent mapComponent : this.mapComponents){

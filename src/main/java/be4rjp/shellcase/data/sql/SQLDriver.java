@@ -56,12 +56,12 @@ public class SQLDriver {
             headGearPossessionData.setHeadGear(HeadGear.getHeadGearBySaveNumber(0));
         }
         HeadGear headGear = HeadGear.getHeadGearBySaveNumber(head);
-        if(headGear != null) achievementData.getShellCasePlayer().setHeadGear(headGear, head);
+        if(headGear != null) achievementData.getShellCasePlayer().setHeadGear(headGear);
         achievementData.getShellCasePlayer().equipHeadGear();
     
         
         achievementData.getShellCasePlayer().getWeaponClass().setByCombinedID(equip, achievementData);
-        achievementData.getShellCasePlayer().getWeaponClass().setItem(achievementData.getShellCasePlayer());
+        achievementData.getShellCasePlayer().giveItems();
         
         sqlConnection.close();
     }

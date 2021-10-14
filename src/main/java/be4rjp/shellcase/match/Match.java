@@ -80,13 +80,13 @@ public abstract class Match {
     /**
      * マップのロード
      */
-    public CompletableFuture<Void> loadGameMap(){
+    public AsyncMapLoader loadGameMap(){
         for(MapStructure mapStructure : getShellCaseMap().getMapStructures()){
             MapStructureData mapStructureData = new MapStructureData(this, mapStructure);
             this.mapStructureData.add(mapStructureData);
         }
         
-        return AsyncMapLoader.startLoad(getShellCaseMap().getMapRange()).getCompletableFuture();
+        return AsyncMapLoader.startLoad(getShellCaseMap().getMapRange());
     }
     
     /**
@@ -330,6 +330,7 @@ public abstract class Match {
     
     public enum MatchStatus{
         WAITING,
+        PLAYING_INTRO,
         IN_PROGRESS,
         FINISHED
     }

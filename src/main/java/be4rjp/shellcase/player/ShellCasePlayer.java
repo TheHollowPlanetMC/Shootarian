@@ -35,8 +35,11 @@ import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.gun.runnable.GunWeaponRunnable;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.*;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.util.Vector;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +47,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * プレイヤーへの処理の全般は基本的にこのクラスで行う
@@ -170,6 +174,8 @@ public class ShellCasePlayer {
     private PacketPlayOutSetSlot slotPacket = null;
     //GUIのスタック
     private final Deque<Map.Entry<Class<?>, Object>> guiStack = new ConcurrentLinkedDeque<>();
+    //プレイヤーがマップを見ているかどうか
+    private boolean isViewingMap = false;
 
     //キルカウントの動作の同期用インスタンス
     private final Object KILL_COUNT_LOCK = new Object();
@@ -183,6 +189,8 @@ public class ShellCasePlayer {
     private final Object RANK_LOCK = new Object();
     //ADS系の動作の同期用インスタンス
     private final Object ADS_LOCK = new Object();
+    //マップレンダラー系の動作の同期用インスタンス
+    private final ReentrantLock MAP_RENDERER_LOCK = new ReentrantLock(true);
     
     
     /**
@@ -291,7 +299,19 @@ public class ShellCasePlayer {
     
     public PlayerGUIRenderer getPlayerGUIRenderer() {return playerGUIRenderer;}
     
-    public void setPlayerGUIRenderer(PlayerGUIRenderer playerGUIRenderer) {this.playerGUIRenderer = playerGUIRenderer;}
+    public void setPlayerGUIRenderer(PlayerGUIRenderer playerGUIRenderer) {
+        MAP_RENDERER_LOCK.lock();
+        try {
+            if(this.playerGUIRenderer != null){
+                try{
+                    this.playerGUIRenderer.cancel();
+                }catch (Exception e){/**/}
+            }
+            this.playerGUIRenderer = playerGUIRenderer;
+        } finally {
+            MAP_RENDERER_LOCK.unlock();
+        }
+    }
     
     public PacketPlayOutSetSlot getSlotPacket() {return slotPacket;}
     
@@ -300,6 +320,10 @@ public class ShellCasePlayer {
     public Deque<Map.Entry<Class<?>, Object>> getGUIStack() {return guiStack;}
     
     public PlayerPassiveInfluence getPlayerPassiveInfluence() {return playerPassiveInfluence;}
+    
+    public boolean isViewingMap() {return isViewingMap;}
+    
+    public void setViewingMap(boolean viewingMap) {isViewingMap = viewingMap;}
     
     /**
      * 情報をリセットする
@@ -332,7 +356,9 @@ public class ShellCasePlayer {
         this.clearGunWeaponTasks();
         this.weaponStatusDataMap.clear();
         if(this.playerGUIRenderer != null){
-            this.playerGUIRenderer.cancel();
+            try {
+                this.playerGUIRenderer.cancel();
+            }catch (Exception e){/**/}
             this.playerGUIRenderer = null;
         }
     }
@@ -362,6 +388,7 @@ public class ShellCasePlayer {
             player.sendMessage("§c§nIf you still get the same error after trying to connect again, please report it to the administrators.");
             player.sendMessage("");
             player.sendMessage("§eError (" + format.format(dateObj) + ") : ");
+            player.sendMessage(e.getClass().getName());
             player.sendMessage(e.getMessage());
             e.printStackTrace();
         }
@@ -415,7 +442,7 @@ public class ShellCasePlayer {
      */
     public void setMainMenu(){
         if(player == null) return;
-        player.getInventory().setItem(6, MainMenuItem.mainMenuItem.getItemStack(lang));
+        player.getInventory().setItem(7, MainMenuItem.mainMenuItem.getItemStack(lang));
     }
     
     /**
@@ -430,9 +457,25 @@ public class ShellCasePlayer {
      * 全てを装備させえる
      */
     public void giveItems(){
+        if(player != null) player.getInventory().clear();
         this.equipHeadGear();
         this.weaponClass.setItem(this);
         this.setMainMenu();
+        this.setMap();
+    }
+    
+    /**
+     * プレイヤーにマップを渡す
+     */
+    public void setMap(){
+        if(player != null){
+            ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
+            MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
+            mapMeta.setMapId(0);
+            mapMeta.setDisplayName("§f§nField map");
+            itemStack.setItemMeta(mapMeta);
+            player.getInventory().setItem(6, itemStack);
+        }
     }
     
     /**
@@ -510,9 +553,9 @@ public class ShellCasePlayer {
      * ヘッドギアを装備させる
      * @param headGear
      */
-    public void setHeadGear(HeadGear headGear, int headGearNumber){
+    public void setHeadGear(HeadGear headGear){
         this.headGear = headGear;
-        this.headGearNumber = headGearNumber;
+        this.headGearNumber = headGear.getSaveNumber();
         
         if(player == null) return;
         player.getInventory().setHelmet(headGear.getItemStack(lang));
@@ -768,7 +811,7 @@ public class ShellCasePlayer {
         this.teleportTime = time;
         if(player == null) return;
         
-        TaskHandler.runWorldSync(player.getWorld(), () -> {
+        TaskHandler.runWorldSync(location.getWorld(), () -> {
             if (player == null) return;
             if (time != teleportTime) return;
             player.teleport(location);
@@ -785,7 +828,7 @@ public class ShellCasePlayer {
         this.setHealth(20.0F);
         if(player == null) return;
         
-        TaskHandler.runWorldSync(player.getWorld(), () -> {
+        TaskHandler.runWorldSync(location.getWorld(), () -> {
             if (player == null) return;
             player.teleport(location);
             player.setGameMode(GameMode.ADVENTURE);

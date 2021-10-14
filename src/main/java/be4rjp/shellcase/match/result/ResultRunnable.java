@@ -9,7 +9,9 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ResultRunnable extends BukkitRunnable {
@@ -26,7 +28,7 @@ public class ResultRunnable extends BukkitRunnable {
         ShellCaseMap ShellCaseMap = match.getShellCaseMap();
         MovieData movieData = ShellCaseMap.getResultMovie();
         if(movieData != null) {
-            Set<Player> players = new HashSet<>();
+            List<Player> players = new ArrayList<>();
             match.getPlayers().stream()
                     .filter(ShellCasePlayer -> ShellCasePlayer.getBukkitPlayer() != null)
                     .forEach(ShellCasePlayer -> players.add(ShellCasePlayer.getBukkitPlayer()));

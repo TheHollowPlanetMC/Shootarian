@@ -2,10 +2,14 @@ package be4rjp.shellcase.map;
 
 import be4rjp.shellcase.map.component.MapComponent;
 import be4rjp.shellcase.map.component.MapComponentBoundingBox;
+import be4rjp.shellcase.match.Match;
+import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.LocationUtil;
 import be4rjp.shellcase.util.math.Vec2f;
 import net.minecraft.server.v1_15_R1.MapIcon;
 import net.minecraft.server.v1_15_R1.PacketPlayOutMap;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
 
 import java.util.*;
@@ -15,14 +19,18 @@ public class ConquestPlayerClickableGUIRenderer extends PlayerGUIRenderer{
     private float lastYaw;
     private float currentX = 0.0F;
     
-    public ConquestPlayerClickableGUIRenderer(ShellCasePlayer shellCasePlayer, ConquestStatusRenderer canvasBufferRenderer){
+    private final CanvasData canvasData;
+    
+    public ConquestPlayerClickableGUIRenderer(ShellCasePlayer shellCasePlayer, ConquestStatusRenderer canvasBufferRenderer, CanvasData canvasData){
         super(shellCasePlayer, canvasBufferRenderer);
         this.lastYaw = shellCasePlayer.getLocation().getYaw();
+        this.canvasData = canvasData;
     }
     
     @Override
     public void render(CanvasBuffer canvasBuffer) {
         
+        //カーソル
         float y = shellCasePlayer.getLocation().getPitch();
         y -= 0.1F;
         y = Math.min(y, 90F);
@@ -51,11 +59,30 @@ public class ConquestPlayerClickableGUIRenderer extends PlayerGUIRenderer{
                 drawBoundingBox(mapComponent.getBoundingBox(), canvasBuffer);
             }
         }
-        
-        //drawLine(canvasBuffer, new Vec2f(20, 30), new Vec2f(cursorPixelX, cursorPixelY), (byte) 116);
-        
         Set<MapIcon> mapIcons = new HashSet<>();
-        mapIcons.add(new MapIcon(MapIcon.Type.TARGET_X, (byte) currentX, (byte) y, (byte) 0, CraftChatMessage.fromStringOrNull(null)));
+        if(isDrawCursor(shellCasePlayer)) mapIcons.add(new MapIcon(MapIcon.Type.TARGET_X, (byte) currentX, (byte) y, (byte) 0, CraftChatMessage.fromStringOrNull(null)));
+        
+        
+        
+        //プレイヤーの位置
+        Location location = shellCasePlayer.getLocation();
+        int cursorX = (location.getBlockX() - canvasData.getCenterX()) << 1 >> canvasData.getScale();
+        int cursorZ = (location.getBlockZ() - canvasData.getCenterZ()) << 1 >> canvasData.getScale();
+    
+        cursorX = Math.min(cursorX, 127);
+        cursorX = Math.max(cursorX, -127);
+        cursorZ = Math.min(cursorZ, 127);
+        cursorZ = Math.max(cursorZ, -127);
+    
+        Location temp = shellCasePlayer.getLocation();
+        temp.setDirection(temp.getDirection());
+        int direction = (int) (temp.getYaw() / 22.5F);
+        direction = Math.min(direction, 15);
+        direction = Math.max(direction, 0);
+        mapIcons.add(new MapIcon(MapIcon.Type.PLAYER, (byte) cursorX, (byte) cursorZ, (byte) direction, CraftChatMessage.fromStringOrNull(null)));
+        
+        
+        
         PacketPlayOutMap map = new PacketPlayOutMap(0, (byte) 0, false, false, mapIcons, canvasBuffer.getBuffer(), 0, 0, 128, 128);
         this.packet = map;
         shellCasePlayer.sendPacket(map);
@@ -85,5 +112,15 @@ public class ConquestPlayerClickableGUIRenderer extends PlayerGUIRenderer{
             currentPosition.add(add);
             canvasBuffer.setPixel((int) currentPosition.x, (int) currentPosition.y, color);
         }
+    }
+    
+    
+    public static boolean isDrawCursor(ShellCasePlayer shellCasePlayer){
+        ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
+        if(shellCaseTeam == null) return false;
+    
+        Match match = shellCaseTeam.getMatch();
+        Location location = match.getShellCaseMap().getTeamLocation(match.getShellCaseTeams().indexOf(shellCaseTeam));
+        return LocationUtil.distanceSquaredSafeDifferentWorld(location, shellCasePlayer.getLocation()) <= 100.0;
     }
 }

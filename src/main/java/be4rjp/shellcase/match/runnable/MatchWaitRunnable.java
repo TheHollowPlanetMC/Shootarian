@@ -6,6 +6,7 @@ import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.intro.IntroManager;
 import be4rjp.shellcase.language.MessageManager;
+import be4rjp.shellcase.match.map.AsyncMapLoader;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
@@ -13,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MatchWaitRunnable extends BukkitRunnable {
 
@@ -25,6 +27,10 @@ public class MatchWaitRunnable extends BukkitRunnable {
     private final MatchManager matchManager;
     private final Match match;
     private int timeLeft = DEFAULT_WAIT_TIME;
+    
+    private AsyncMapLoader asyncMapLoader;
+    
+    private boolean isLoadComplete = false;
     
     public MatchWaitRunnable(MatchManager matchManager, Match match, int minPlayer){
         this.matchManager = matchManager;
@@ -52,21 +58,27 @@ public class MatchWaitRunnable extends BukkitRunnable {
             lines.add("   ");
             if(matchManager.getJoinedPlayers().size() < minPlayer)
                 lines.add("§b" + String.format(MessageManager.getText(lang, "match-wait-player"), minPlayer - matchManager.getJoinedPlayers().size()));
-            else
-                lines.add("§b" + MessageManager.getText(lang, "match-wait-time") + " » §r§l" + timeLeft + MessageManager.getText(lang, "word-sec"));
+            else {
+                if(timeLeft <= 0) lines.add("§b" + MessageManager.getText(lang, "match-wait-time") + " » §r§l" + timeLeft + MessageManager.getText(lang, "word-sec"));
+                else lines.add(MessageManager.getText(lang, "match-wait-map-load"));
+            }
+            
+            lines.add("    ");
+            lines.add(String.format(MessageManager.getText(lang, "match-wait-map-load-progress"), asyncMapLoader.getLoadedTaskCount() + "/" + asyncMapLoader.getMaxLoad()));
+            
             scoreboard.setSidebarLine(ShellCasePlayer, lines);
         }
         scoreboard.updateSidebar(matchManager.getJoinedPlayers());
+        
 
-
-
-        if(timeLeft == 0){
-            //開始処理
+        if(timeLeft <= 0 && asyncMapLoader.getCompletableFuture().isDone()){
+    
+            match.setMatchStatus(Match.MatchStatus.PLAYING_INTRO);
             
             if(matchManager.getType() == MatchManager.MatchManageType.CONQUEST) {
                 ShellCaseTeam team0 = match.getShellCaseTeams().get(0);
                 ShellCaseTeam team1 = match.getShellCaseTeams().get(1);
-    
+        
                 int index = 0;
                 for (ShellCasePlayer ShellCasePlayer : matchManager.getJoinedPlayers()) {
                     if(index % 2 == 0){
@@ -78,8 +90,16 @@ public class MatchWaitRunnable extends BukkitRunnable {
                     index++;
                 }
             }
+            match.getPlayers().forEach(shellCasePlayer -> shellCasePlayer.teleport(match.getShellCaseMap().getWaitSCLocation().getBukkitLocation()));
             
-            IntroManager.playIntro(match);
+            //開始処理
+            new BukkitRunnable(){
+                @Override
+                public void run(){
+                    IntroManager.playIntro(match);
+                }
+            }.runTaskLaterAsynchronously(ShellCase.getPlugin(), 40);
+            
             this.cancel();
         }
         timeLeft--;
@@ -88,5 +108,6 @@ public class MatchWaitRunnable extends BukkitRunnable {
     
     public void start(){
         this.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 20);
+        this.asyncMapLoader = match.loadGameMap();
     }
 }

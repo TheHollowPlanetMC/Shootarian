@@ -50,6 +50,7 @@ public class ConquestMatch extends Match{
     
     @Override
     public void finish() {
+        this.conquestStatusRenderer.cancel();
         super.finish();
     }
     

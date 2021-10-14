@@ -52,7 +52,7 @@ public class ReadyRunnable extends BukkitRunnable {
 
 
     public void start(){
-        this.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 2);
+        this.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 20);
     }
     
     
