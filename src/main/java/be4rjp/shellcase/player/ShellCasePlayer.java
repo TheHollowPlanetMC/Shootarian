@@ -819,6 +819,17 @@ public class ShellCasePlayer {
     }
     
     /**
+     * テレポートさせます。
+     * @param location テレポート先
+     */
+    public void teleportSynced(Location location){
+        long time = System.currentTimeMillis();
+        this.teleportTime = time;
+        if(player == null) return;
+        player.teleport(location);
+    }
+    
+    /**
      * リスポーンさせます
      * @param location テレポート先
      */
@@ -843,9 +854,23 @@ public class ShellCasePlayer {
     public void setGameMode(GameMode gameMode){
         if(player == null) return;
         
-        TaskHandler.runWorldSync(player.getWorld(), () -> {
+        TaskHandler.runSync(() -> {
             if (player == null) return;
             player.setGameMode(gameMode);
+        });
+    }
+    
+    /**
+     * ゲームモードを変更します
+     * @param gameMode 設定するゲームモード
+     */
+    public void setGameMode(GameMode gameMode, Runnable runnable){
+        if(player == null) return;
+        
+        TaskHandler.runSync(() -> {
+            if (player == null) return;
+            player.setGameMode(gameMode);
+            runnable.run();
         });
     }
     

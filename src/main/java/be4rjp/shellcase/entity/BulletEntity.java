@@ -218,13 +218,13 @@ public class BulletEntity implements ShellCaseEntity {
             
             showPlayer.add(ShellCasePlayer);
         }
-        match.getShellCaseEntities().add(this);
+        match.getAsyncEntities().add(this);
     }
     
     @Override
     public void remove() {
         this.isDead = true;
-        match.getShellCaseEntities().remove(this);
+        match.getAsyncEntities().remove(this);
     }
     
     @Override

@@ -3,7 +3,6 @@ package be4rjp.shellcase.entity;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.match.Match;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
 public class ShellCaseEntityTickRunnable extends WorldThreadRunnable {

@@ -16,7 +16,7 @@ public class MapTextComponent extends MapComponent {
     
     protected MapComponentBoundingBox boundingBox;
     
-    public MapTextComponent(String text, boolean drawGrayBack, int x, int z, Runnable clickRunnable){
+    public MapTextComponent(String text, boolean drawGrayBack, int x, int z, MapClickRunnable clickRunnable){
         super(x, z, clickRunnable);
         this.setText(text);
         this.drawGrayBack = drawGrayBack;

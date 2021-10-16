@@ -41,8 +41,13 @@ public class MatchWaitRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
+        
+        int i = 0;
+        for(ShellCasePlayer shellCasePlayer : matchManager.getJoinedPlayers()){
+            if(shellCasePlayer.isOnline()) i++;
+        }
 
-        if(matchManager.getJoinedPlayers().size() < minPlayer){
+        if(i < minPlayer){
             timeLeft = DEFAULT_WAIT_TIME;
         }
 

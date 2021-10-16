@@ -14,6 +14,7 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.Position2i;
 import be4rjp.shellcase.util.math.Vec2f;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_15_R1.map.CraftMapView;
 import org.bukkit.map.MapView;
@@ -68,7 +69,19 @@ public class ConquestMatch extends Match{
             FlagAreaData flagAreaData = new FlagAreaData(this, flagArea);
             
             Position2i pixelPosition = canvasData.locationToPixel(flagArea.getBoundingBox().getMin().getBlockX(), flagArea.getBoundingBox().getMin().getBlockZ());
-            MapComponent component = new MapObjectiveComponent(flagAreaData, true, pixelPosition.x, pixelPosition.y, () -> {});
+            MapComponent component = new MapObjectiveComponent(flagAreaData, true, pixelPosition.x, pixelPosition.y, shellCasePlayer -> {
+                double x = flagArea.getBoundingBox().getMin().getX() + ((flagArea.getBoundingBox().getMax().getX() - flagArea.getBoundingBox().getMin().getX()) * Math.random());
+                double z = flagArea.getBoundingBox().getMin().getZ() + ((flagArea.getBoundingBox().getMax().getZ() - flagArea.getBoundingBox().getMin().getZ()) * Math.random());
+                double y = flagArea.getBoundingBox().getMin().getY() + 1.5;
+                
+                shellCasePlayer.teleport(conquestMap.getWaitLocation().clone().set(x, y, z));
+                
+                String color = ChatColor.GRAY.toString();
+                ShellCaseTeam shellCaseTeam = flagAreaData.getTeam();
+                if(shellCaseTeam != null) color = shellCaseTeam.getShellCaseColor().getChatColor().toString();
+                
+                shellCasePlayer.sendText("match-conquest-teleport", color, flagArea.getDisplayName());
+            });
             this.conquestStatusRenderer.addMapComponent(component);
             
             this.flagAreaData.add(flagAreaData);

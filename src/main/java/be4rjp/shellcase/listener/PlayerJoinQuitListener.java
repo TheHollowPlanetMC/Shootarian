@@ -7,6 +7,8 @@ import be4rjp.shellcase.map.ConquestPlayerClickableGUIRenderer;
 import be4rjp.shellcase.map.ConquestPlayerMapRenderer;
 import be4rjp.shellcase.map.PlayerGUIRenderer;
 import be4rjp.shellcase.match.ConquestMatch;
+import be4rjp.shellcase.match.Match;
+import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.map.ConquestMap;
 import be4rjp.shellcase.match.map.ShellCaseMap;
 import be4rjp.shellcase.match.team.ShellCaseColor;
@@ -60,143 +62,56 @@ public class PlayerJoinQuitListener implements Listener {
         player.teleport(ShellCaseConfig.getJoinLocation());
     
     
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.setWalkSpeed(0.2F);
-                player.getInventory().clear();
-    
-                ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
-                shellCasePlayer.updateBukkitPlayer(player);
-                shellCasePlayer.sendSkinRequest();
-    
-                shellCasePlayer.loadAchievementFromSQL();
-    
-                //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), shellCasePlayer));
-                //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer));
-                
-                
-                GunStatusData gunStatusData1 = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), shellCasePlayer);
-                //gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(0));
-                gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(1));
-                gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(2));
-                gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(3));
-                gunStatusData1.addAttachment(Attachment.getAttachmentBySaveNumber(4));
-                shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData1);
-    
-                GunStatusData gunStatusData2 = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer);
-                //gunStatusData2.addAttachment(Attachment.getAttachmentBySaveNumber(0));
-                gunStatusData2.addAttachment(Attachment.getAttachmentBySaveNumber(1));
-                gunStatusData2.addAttachment(Attachment.getAttachmentBySaveNumber(2));
-                
-                shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData1);
-                shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData2);
-                
-                //MainMenuGUI.openMainMenuGUI(shellCasePlayer);
-                shellCasePlayer.giveItems();
-                
-                
-                //if(!shellCasePlayer.getWeaponPossessionData().hasWeapon(0)){
-                    //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(0), shellCasePlayer));
-                    //shellCasePlayer.getAchievementData().getWeaponPossessionData().setGunStatusData(new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(2), shellCasePlayer));
-                //}
-    
-                //MainMenuGUI.openMainMenuGUI(shellCasePlayer);
-                
-                
-                //shellCasePlayer.setLoadedSaveData(true);
-    
-                
-                //ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
-    
-                /*----------------------------------
-                TaskHandler.runSync(() -> {
-    
-                    if(index == 0){
-                        match.initialize();
-                        CompletableFuture<Void> completableFuture = match.loadGameMap();
-                        completableFuture.thenAccept(v -> {
-                            System.out.println("Map loaded!");
-                            match.start();
-                            shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-    
-                            PlayerGUIRenderer playerGUIRenderer = new ConquestPlayerMapRenderer(shellCasePlayer, match.getConquestStatusRenderer(), match.getConquestMap().getCanvasData());
-                            playerGUIRenderer.start();
-                            shellCasePlayer.setPlayerGUIRenderer(playerGUIRenderer);
-                        });
-                    }
-    
-                    if(index % 2 == 0){
-                        team0.join(shellCasePlayer);
-                    }else{
-                        team1.join(shellCasePlayer);
-                    }
-    
-                    if(!shellCasePlayer.getWeaponPossessionData().hasWeapon(GunWeapon.getGunWeapon("scar-h").getSaveNumber())) {
-                        GunStatusData scar = new GunStatusData(GunWeapon.getGunWeapon("scar-h"), shellCasePlayer);
-                        GunStatusData mk14 = new GunStatusData(GunWeapon.getGunWeapon("m16-a3"), shellCasePlayer);
-                        //GadgetStatusData gadgetStatusData = new GadgetStatusData(Gadget.FLAG_GRENADE.getInstance(), shellCasePlayer);
-                        shellCasePlayer.getWeaponClass().setMainWeapon(scar);
-                        shellCasePlayer.getWeaponClass().setSubWeapon(mk14);
-                        //shellCasePlayer.getWeaponClass().setMainGadget(gadgetStatusData);
-                    }
-    
-                    shellCasePlayer.getWeaponClass().setItem(shellCasePlayer);
-    
-                    ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
-                    MapMeta meta = (MapMeta) itemStack.getItemMeta();
-                    meta.setMapId(0);
-                    meta.setDisplayName("Copy map");
-                    itemStack.setItemMeta(meta);
-                    player.getInventory().addItem(itemStack);
-    
-                    index++;
-                    
-                });--------------------*/
-                
-                
-                /*
-                if(ShellCaseTeam != null) {
-                    if(ShellCaseTeam == ShellCase.getLobbyTeam()){
-                        MatchManager matchManager = shellCasePlayer.getMatchManager();
-                        if(matchManager != null){
-                            Match match = matchManager.getMatch();
-                            if(match != null){
-                                shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-                                shellCasePlayer.setLobbyItem();
-                                return;
-                            }
-                        }
-                        
-                        shellCasePlayer.setLobbyItem();
-                    }
-                    
-                    if(ShellCaseTeam != ShellCase.getLobbyTeam()) {
-                        Match match = ShellCaseTeam.getMatch();
-    
-                        switch (match.getMatchStatus()) {
-                            case WAITING: {
-                                shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
-                                shellCasePlayer.setLobbyItem();
-                                break;
-                            }
-        
-                            case IN_PROGRESS: {
-                                match.teleportToTeamLocation(shellCasePlayer);
-                                break;
-                            }
-        
-                            default: {
-                                shellCasePlayer.reset();
-                                shellCasePlayer.teleport(ShellCaseConfig.getLobbyLocation());
-                                shellCasePlayer.setLobbyItem();
-                                break;
-                            }
+        TaskHandler.runAsync(() -> {
+            player.setWalkSpeed(0.2F);
+            player.getInventory().clear();
+
+            ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
+            shellCasePlayer.updateBukkitPlayer(player);
+            shellCasePlayer.sendSkinRequest();
+
+            shellCasePlayer.loadAchievementFromSQL();
+            
+            shellCasePlayer.giveItems();
+            
+            
+            ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
+            
+            if(ShellCaseTeam != null) {
+                if(ShellCaseTeam == ShellCase.getLobbyTeam()){
+                    MatchManager matchManager = shellCasePlayer.getMatchManager();
+                    if(matchManager != null){
+                        Match match = matchManager.getMatch();
+                        if(match != null){
+                            shellCasePlayer.teleport(ShellCaseConfig.getLobbyLocation());
+                            return;
                         }
                     }
-                }*/
+                }
+                
+                if(ShellCaseTeam != ShellCase.getLobbyTeam()) {
+                    Match match = ShellCaseTeam.getMatch();
+
+                    switch (match.getMatchStatus()) {
+                        case WAITING: {
+                            shellCasePlayer.teleport(ShellCaseConfig.getLobbyLocation());
+                            break;
+                        }
+    
+                        case IN_PROGRESS: {
+                            match.teleportToTeamLocation(shellCasePlayer);
+                            break;
+                        }
+    
+                        default: {
+                            shellCasePlayer.reset();
+                            shellCasePlayer.teleport(ShellCaseConfig.getLobbyLocation());
+                            break;
+                        }
+                    }
+                }
             }
-        }.runTaskAsynchronously(ShellCase.getPlugin());
+        });
     }
     
     
@@ -220,17 +135,14 @@ public class PlayerJoinQuitListener implements Listener {
     public void onleave(PlayerQuitEvent event){
         Player player = event.getPlayer();
     
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
-                try {
-                    if(shellCasePlayer.isLoadedSaveData()) shellCasePlayer.saveAchievementToSQL();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+        TaskHandler.runAsync(() -> {
+            ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
+            try {
+                if(shellCasePlayer.isLoadedSaveData()) shellCasePlayer.saveAchievementToSQL();
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        }.runTaskAsynchronously(ShellCase.getPlugin());
+        });
         
         try {
             Channel channel = ((CraftPlayer)player).getHandle().playerConnection.networkManager.channel;

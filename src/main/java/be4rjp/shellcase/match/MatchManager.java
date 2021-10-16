@@ -72,6 +72,7 @@ public class MatchManager {
     
     
     public synchronized void join(ShellCasePlayer shellCasePlayer){
+        if(shellCasePlayer.getMatchManager() != null) return;
         if(match == null) createMatch();
         if(match.getMatchStatus() == Match.MatchStatus.FINISHED) createMatch();
         

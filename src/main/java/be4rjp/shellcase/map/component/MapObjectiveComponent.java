@@ -10,7 +10,7 @@ public class MapObjectiveComponent extends MapTextComponent {
     
     private final FlagAreaData flagAreaData;
     
-    public MapObjectiveComponent(FlagAreaData flagAreaData, boolean drawGrayBack, int x, int z, Runnable clickRunnable) {
+    public MapObjectiveComponent(FlagAreaData flagAreaData, boolean drawGrayBack, int x, int z, MapClickRunnable clickRunnable) {
         super(" " + flagAreaData.getFlagArea().getDisplayName().toCharArray()[0] + " ", drawGrayBack, x, z, clickRunnable);
         this.flagAreaData = flagAreaData;
     }
@@ -53,4 +53,6 @@ public class MapObjectiveComponent extends MapTextComponent {
         
         canvasBuffer.drawText(x, z, minecraftFont, text);
     }
+    
+    public FlagAreaData getFlagAreaData() {return flagAreaData;}
 }

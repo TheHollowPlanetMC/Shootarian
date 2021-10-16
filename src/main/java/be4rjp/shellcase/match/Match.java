@@ -3,6 +3,7 @@ package be4rjp.shellcase.match;
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.block.BlockUpdater;
 import be4rjp.shellcase.data.settings.Settings;
+import be4rjp.shellcase.entity.AsyncEntityTickRunnable;
 import be4rjp.shellcase.entity.ShellCaseEntity;
 import be4rjp.shellcase.entity.ShellCaseEntityTickRunnable;
 import be4rjp.shellcase.language.Lang;
@@ -24,7 +25,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 各試合の親クラス
@@ -46,9 +46,13 @@ public abstract class Match {
     //試合中に動作するスケジューラー
     protected Set<BukkitRunnable> runnableSet = new ConcurrentSet<>();
     //エンティティ
-    protected Set<ShellCaseEntity> ShellCaseEntities = new ConcurrentSet<>();
+    protected Set<ShellCaseEntity> shellCaseEntities = new ConcurrentSet<>();
+    //AsyncEntity
+    protected Set<ShellCaseEntity> asyncEntities = new ConcurrentSet<>();
     //エンティティの実行用tickRunnable
     protected ShellCaseEntityTickRunnable entityTickRunnable = new ShellCaseEntityTickRunnable(this);
+    //AsyncEntity
+    protected AsyncEntityTickRunnable asyncEntityTickRunnable = new AsyncEntityTickRunnable(this);
     //建造物のデータ
     protected Set<MapStructureData> mapStructureData = new HashSet<>();
     
@@ -75,6 +79,7 @@ public abstract class Match {
         this.getPlayers().forEach(this::initializePlayer);
         this.entityTickRunnable.setWorld(this.shellCaseMap.getMapRange().getFirstLocation().getBukkitLocation().getWorld());
         this.entityTickRunnable.start();
+        this.asyncEntityTickRunnable.start();
     }
     
     /**
@@ -130,7 +135,11 @@ public abstract class Match {
         try {
             this.entityTickRunnable.cancel();
         }catch (Exception e){/**/}
-        this.ShellCaseEntities.clear();
+        try {
+            this.asyncEntityTickRunnable.cancel();
+        }catch (Exception e){/**/}
+        this.shellCaseEntities.clear();
+        this.asyncEntities.clear();
     }
     
     /**
@@ -192,8 +201,10 @@ public abstract class Match {
      * この試合で動作しているエンティティを取得する
      * @return
      */
-    public Set<ShellCaseEntity> getShellCaseEntities() {return ShellCaseEntities;}
-
+    public Set<ShellCaseEntity> getShellCaseEntities() {return shellCaseEntities;}
+    
+    public Set<ShellCaseEntity> getAsyncEntities() {return asyncEntities;}
+    
     /**
      * 試合終了判定
      * @return boolean 試合が終了したかどうか

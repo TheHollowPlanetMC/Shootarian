@@ -4,8 +4,11 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.gui.pagination.CloseMenuPaginationButtonBuilder;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
+import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.MatchManager;
+import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.LocationUtil;
 import be4rjp.shellcase.util.TaskHandler;
 import com.samjakob.spigui.SGMenu;
 import com.samjakob.spigui.buttons.SGButton;
@@ -30,48 +33,61 @@ public class MainMenuGUI {
             for(int index = 0; index < 45; index++){
                 menu.setButton(index, new SGButton(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name("§r").build()));
             }
+            
+            boolean isShowAllComponent = GUIManager.isShowAllComponent(shellCasePlayer);
         
-            menu.setButton(10, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
-                    .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join"))
-                    .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join-des")).build()).withListener(event -> {
+            if(isShowAllComponent) {
+                if(shellCasePlayer.getShellCaseTeam() == ShellCase.getLobbyTeam()) {
+                    menu.setButton(10, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
+                            .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join"))
+                            .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-join-des")).build()).withListener(event -> {
+        
+                        MatchManager.getMatchManager("conquest").join(shellCasePlayer);
+        
+                    }));
+                }else {
+                    menu.setButton(10, new SGButton(new ItemBuilder(Material.GRAY_STAINED_GLASS)
+                            .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-leave"))
+                            .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-leave-des")).build()).withListener(event -> {
+        
+                        shellCasePlayer.reset();
+        
+                    }));
+                }
     
-                MatchManager.getMatchManager("conquest").join(shellCasePlayer);
-                
-            }));
-    
-            menu.setButton(12, new SGButton(new ItemBuilder(Material.IRON_HOE)
-                    .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-equip"))
-                    .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-equip-des")).build()).withListener(event -> {
-    
-                ClassGUI.openClassGUI(shellCasePlayer);
-                shellCasePlayer.playGUIClickSound();
-                
-            }));
-    
-            menu.setButton(14, new SGButton(new ItemBuilder(Material.ANVIL)
-                    .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon"))
-                    .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon-des")).build()).withListener(event -> {
-                    
-                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
-                    GunCustomGUI.openGunCustomGUI(shellCasePlayer, gunStatusData);
+                menu.setButton(12, new SGButton(new ItemBuilder(Material.IRON_HOE)
+                        .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-equip"))
+                        .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-equip-des")).build()).withListener(event -> {
+        
+                    ClassGUI.openClassGUI(shellCasePlayer);
                     shellCasePlayer.playGUIClickSound();
-                });
+        
+                }));
     
-                shellCasePlayer.playGUIClickSound();
-                
-            }));
+                menu.setButton(14, new SGButton(new ItemBuilder(Material.ANVIL)
+                        .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon"))
+                        .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon-des")).build()).withListener(event -> {
+        
+                    WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
+                        GunCustomGUI.openGunCustomGUI(shellCasePlayer, gunStatusData);
+                        shellCasePlayer.playGUIClickSound();
+                    });
+        
+                    shellCasePlayer.playGUIClickSound();
+        
+                }));
     
-            menu.setButton(16, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
-                    .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear"))
-                    .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear-des")).build()).withListener(event -> {
-                    
-                HeadGearGUI.openHeadGearGUI(shellCasePlayer);
-                shellCasePlayer.playGUIClickSound();
-                
-            }));
+                menu.setButton(16, new SGButton(new ItemBuilder(Material.LIME_STAINED_GLASS)
+                        .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear"))
+                        .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear-des")).build()).withListener(event -> {
+        
+                    HeadGearGUI.openHeadGearGUI(shellCasePlayer);
+                    shellCasePlayer.playGUIClickSound();
+        
+                }));
+            }
         
             TaskHandler.runSync(() -> player.openInventory(menu.getInventory()));
         });
     }
-    
 }
