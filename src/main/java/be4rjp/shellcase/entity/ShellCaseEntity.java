@@ -5,7 +5,8 @@ package be4rjp.shellcase.entity;
  */
 public interface ShellCaseEntity {
     
-    double ENTITY_DRAW_DISTANCE_SQUARE = 800.0;
+    double ENTITY_DRAW_DISTANCE = 40.0;
+    double ENTITY_DRAW_DISTANCE_SQUARE = ENTITY_DRAW_DISTANCE * ENTITY_DRAW_DISTANCE;
     
     /**
      * 非同期で1tickごとに実行する処理

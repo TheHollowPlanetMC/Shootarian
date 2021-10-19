@@ -15,12 +15,14 @@ import be4rjp.shellcase.match.runnable.MatchRunnable;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ObservableOption;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.LocationUtil;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import be4rjp.shellcase.util.ShellCaseSound;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_15_R1.Packet;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
@@ -299,6 +301,22 @@ public abstract class Match {
      * @param packet 送信するパケット
      */
     public void sendPacket(Packet<?> packet){this.getPlayers().forEach(ShellCasePlayer -> ShellCasePlayer.sendPacket(packet));}
+    
+    
+    /**
+     * 指定された範囲内にいるプレイヤーを取得します
+     * @param center 中心
+     * @param distance 距離
+     */
+    public Set<ShellCasePlayer> getPlayersInRange(Location center, double distance){
+        Set<ShellCasePlayer> shellCasePlayers = new HashSet<>();
+        for(ShellCasePlayer shellCasePlayer : this.getPlayers()){
+            if(LocationUtil.distanceSquaredSafeDifferentWorld(shellCasePlayer.getLocation(), center) > distance * distance) continue;
+            shellCasePlayers.add(shellCasePlayer);
+        }
+        
+        return shellCasePlayers;
+    }
     
     
     

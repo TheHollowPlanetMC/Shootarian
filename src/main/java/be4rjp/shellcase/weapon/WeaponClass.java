@@ -96,6 +96,24 @@ public class WeaponClass {
         }
     }
     
+    public void reset(){
+        if(mainWeapon != null){
+            mainWeapon.reset();
+        }
+    
+        if(subWeapon != null){
+            subWeapon.reset();
+        }
+    
+        if(mainGadget != null){
+            mainGadget.reset();
+        }
+    
+        if(subGadget != null){
+            subGadget.reset();
+        }
+    }
+    
     
     public long getCombinedID(){
         long id = 0;

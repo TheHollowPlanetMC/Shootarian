@@ -30,6 +30,7 @@ public abstract class WeaponStatusData {
 
     protected int bullets = 20;
     protected boolean isReloading = false;
+    protected long coolTime = 0;
     
     protected int saveIndexNumber;
 
@@ -77,4 +78,12 @@ public abstract class WeaponStatusData {
     public abstract void updateDisplayName(ShellCasePlayer shellCasePlayer);
     
     public abstract ItemStack getItemStackFlexible(Lang lang);
+    
+    public boolean isCoolTime(){return System.currentTimeMillis() < coolTime;}
+    
+    public void setCoolTime(long tick){coolTime = System.currentTimeMillis() + (tick * 50L);}
+    
+    public void reset(){
+        bullets = shellCaseWeapon.getDefaultBullets();
+    }
 }

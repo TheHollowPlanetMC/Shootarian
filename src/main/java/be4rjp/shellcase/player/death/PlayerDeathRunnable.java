@@ -1,6 +1,8 @@
 package be4rjp.shellcase.player.death;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.match.Match;
+import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import net.minecraft.server.v1_15_R1.*;
@@ -27,7 +29,7 @@ public class PlayerDeathRunnable extends BukkitRunnable {
     private Location center;
     
     private int tick = 0;
-    private int timeLeft = 5;
+    private int timeLeft;
     
     public PlayerDeathRunnable(Location respawnLocation, ShellCasePlayer target, ShellCasePlayer killer, ShellCaseWeapon ShellCaseWeapon, DeathType deathType){
         this.respawnLocation = respawnLocation;
@@ -53,6 +55,16 @@ public class PlayerDeathRunnable extends BukkitRunnable {
     
     @Override
     public void run() {
+    
+        ShellCaseTeam shellCaseTeam = target.getShellCaseTeam();
+        if(shellCaseTeam == null){
+            cancel();
+            return;
+        }
+        if(shellCaseTeam.getMatch().getMatchStatus() == Match.MatchStatus.FINISHED){
+            cancel();
+            return;
+        }
         
         if(!killer.isDeath()){
             this.center = killer.getLocation();
@@ -122,6 +134,7 @@ public class PlayerDeathRunnable extends BukkitRunnable {
         target.sendPacket(destroy);
         target.resetTitle();
         target.respawn(respawnLocation);
+        target.getWeaponClass().reset();
         super.cancel();
     }
     

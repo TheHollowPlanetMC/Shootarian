@@ -13,6 +13,7 @@ import be4rjp.shellcase.data.sql.SQLDriver;
 import be4rjp.shellcase.gui.MainMenuItem;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.map.PlayerGUIRenderer;
+import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.language.MessageManager;
@@ -387,8 +388,7 @@ public class ShellCasePlayer {
             player.sendMessage("§c§nThe save data could not be loaded properly for the following reasons.");
             player.sendMessage("§c§nIf you still get the same error after trying to connect again, please report it to the administrators.");
             player.sendMessage("");
-            player.sendMessage("§eError (" + format.format(dateObj) + ") : ");
-            player.sendMessage(e.getClass().getName());
+            player.sendMessage("§eError (" + format.format(dateObj) + ") : §n" + e.getClass().getSimpleName());
             player.sendMessage(e.getMessage());
             e.printStackTrace();
         }
@@ -424,18 +424,12 @@ public class ShellCasePlayer {
     /**
      * BukkitのPlayerをアップデートする（参加時用）
      */
-    public void updateBukkitPlayer(Player bukkitPlayer){
-        if(bukkitPlayer != null) this.player = bukkitPlayer;
-    }
+    public void updateBukkitPlayer(Player bukkitPlayer){if(bukkitPlayer != null) this.player = bukkitPlayer;}
     
     /**
      * Mojangのセッションサーバーへスキンデータのリクエストを送信して取得する
      */
-    public void sendSkinRequest(){
-        TaskHandler.runAsync(() -> {
-            skin = SkinManager.getSkin(uuid);
-        });
-    }
+    public void sendSkinRequest(){TaskHandler.runAsync(() -> skin = SkinManager.getSkin(uuid));}
     
     /**
      * メインメニューを渡す
@@ -462,6 +456,18 @@ public class ShellCasePlayer {
         this.weaponClass.setItem(this);
         this.setMainMenu();
         this.setMap();
+    }
+    
+    /**
+     * 同じ試合位に参加しているプレイヤーの中から指定した範囲内にいるプレイヤーを取得します
+     * @param distance 距離
+     * @return Set<ShellCasePlayer>
+     */
+    public Set<ShellCasePlayer> getNearPlayer(double distance){
+        ShellCaseTeam shellCaseTeam = this.getShellCaseTeam();
+        if(shellCaseTeam == null) return new HashSet<>();
+        
+        return shellCaseTeam.getMatch().getPlayersInRange(this.getLocation(), distance);
     }
     
     /**

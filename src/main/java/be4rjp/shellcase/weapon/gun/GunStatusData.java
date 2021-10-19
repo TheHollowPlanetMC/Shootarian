@@ -29,7 +29,6 @@ public class GunStatusData extends WeaponStatusData {
     private Grip grip;
     
     private int maxBullets = 20;
-    private long coolTime = 0;
     private long lastClickTime = 0;
     private long clickTick = 0;
     
@@ -65,10 +64,6 @@ public class GunStatusData extends WeaponStatusData {
     public int getMaxBullets() {return maxBullets;}
     
     public void setMaxBullets(int maxBullets) {this.maxBullets = maxBullets;}
-    
-    public boolean isCoolTime(){return System.currentTimeMillis() < coolTime;}
-    
-    public void setCoolTime(long tick){coolTime = System.currentTimeMillis() + (tick * 50L);}
     
     public RecoilPattern getNormalRecoil() {return normalRecoil;}
     

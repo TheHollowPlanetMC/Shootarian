@@ -72,6 +72,16 @@ public class PlayerJoinQuitListener implements Listener {
 
             shellCasePlayer.loadAchievementFromSQL();
             
+            for(int i = 0; i < 4; i++) {
+                GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(i), shellCasePlayer);
+                gunStatusData.addAttachment(Attachment.getAttachmentBySaveNumber(1));
+                gunStatusData.addAttachment(Attachment.getAttachmentBySaveNumber(2));
+                gunStatusData.addAttachment(Attachment.getAttachmentBySaveNumber(3));
+                gunStatusData.addAttachment(Attachment.getAttachmentBySaveNumber(4));
+                shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData);
+            }
+            shellCasePlayer.getWeaponClass().setSubGadget(new GadgetStatusData(Gadget.GRAPPLE_GUN.getInstance(), shellCasePlayer));
+            
             shellCasePlayer.giveItems();
             
             

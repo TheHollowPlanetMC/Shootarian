@@ -218,6 +218,7 @@ public class BulletEntity implements ShellCaseEntity {
             
             showPlayer.add(ShellCasePlayer);
         }
+        this.tick();
         match.getAsyncEntities().add(this);
     }
     

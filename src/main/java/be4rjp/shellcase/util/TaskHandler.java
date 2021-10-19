@@ -34,6 +34,12 @@ public class TaskHandler<T> extends BukkitRunnable {
         Bukkit.getScheduler().runTaskAsynchronously(ShellCase.getPlugin(), runnable);
     }
     
+    public static void runAsyncImmediately(Runnable runnable){
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.start();
+    }
+    
     public static void runWorldSync(World world, Runnable runnable){
         new WorldThreadRunnable(world){
             @Override
