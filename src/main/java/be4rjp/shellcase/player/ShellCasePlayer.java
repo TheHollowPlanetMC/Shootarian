@@ -817,7 +817,7 @@ public class ShellCasePlayer {
         this.teleportTime = time;
         if(player == null) return;
         
-        TaskHandler.runWorldSync(location.getWorld(), () -> {
+        TaskHandler.runWorldSync(player.getWorld(), () -> {
             if (player == null) return;
             if (time != teleportTime) return;
             player.teleport(location);
@@ -845,7 +845,7 @@ public class ShellCasePlayer {
         this.setHealth(20.0F);
         if(player == null) return;
         
-        TaskHandler.runWorldSync(location.getWorld(), () -> {
+        TaskHandler.runWorldSync(player.getWorld(), () -> {
             if (player == null) return;
             player.teleport(location);
             player.setGameMode(GameMode.ADVENTURE);
