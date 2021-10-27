@@ -52,7 +52,7 @@ public class SemiAutoGun extends GunWeapon{
         if(isBurst){
             if(!gunStatusData.isReloading()) {
                 BurstGunRunnable burstGunRunnable = new BurstGunRunnable(shellCasePlayer, gunStatusData, shootTick);
-                burstGunRunnable.runTaskTimer();
+                burstGunRunnable.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 1);
             }
         }else {
             if (gunStatusData.consumeBullets(1)) {

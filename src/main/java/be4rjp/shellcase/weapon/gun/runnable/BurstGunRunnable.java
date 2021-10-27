@@ -10,7 +10,7 @@ import be4rjp.shellcase.weapon.gun.SemiAutoGun;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class BurstGunRunnable extends MultiThreadRunnable {
+public class BurstGunRunnable extends BukkitRunnable{
     
     private final ShellCasePlayer shellCasePlayer;
     private final GunStatusData gunStatusData;

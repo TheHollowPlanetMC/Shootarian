@@ -14,11 +14,15 @@ public class ShellCaseConfig {
     
     private static Location lobbyLocation;
     
+    private static int runnerThreads;
+    
     public static MySQLConfig getMySQLConfig(){return mySQLConfig;}
     
     public static Location getJoinLocation() {return joinLocation;}
     
     public static Location getLobbyLocation() {return lobbyLocation;}
+    
+    public static int getRunnerThreads() {return runnerThreads;}
     
     public static void load(){
         File file = new File("plugins/ShellCase", "config.yml");
@@ -41,6 +45,7 @@ public class ShellCaseConfig {
         
         joinLocation = ConfigUtil.getLocationByString(yml.getString("join-location"));
         lobbyLocation = ConfigUtil.getLocationByString(yml.getString("lobby-location"));
+        runnerThreads = yml.getInt("runner-threads");
     }
     
     

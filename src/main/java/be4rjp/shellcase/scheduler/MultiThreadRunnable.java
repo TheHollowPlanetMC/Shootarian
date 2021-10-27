@@ -9,7 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MultiThreadRunnable implements Runnable{
     
-    private static final int CPUS = Runtime.getRuntime().availableProcessors();
+    private static int CPUS = Runtime.getRuntime().availableProcessors();
+    
+    public static void setThreads(int threads){CPUS = threads;}
     
     private static final Map<Integer, Set<MultiThreadRunnable>> multiThreadRunnableMap = new ConcurrentHashMap<>();
     

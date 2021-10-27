@@ -4,6 +4,7 @@ import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.WeaponStatusData;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
@@ -25,25 +26,22 @@ public class PlayerItemClickListener implements Listener {
         if(!event.hasItem()) return;
         if(event.getHand() != EquipmentSlot.HAND && event.getHand() != EquipmentSlot.OFF_HAND) return;
     
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                ShellCaseWeapon shellCaseWeapon = WeaponManager.getShellCaseWeaponByItem(event.getItem());
-                ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
-                if(shellCaseWeapon == null) return;
+        TaskHandler.runAsyncImmediately(() -> {
+            ShellCaseWeapon shellCaseWeapon = WeaponManager.getShellCaseWeaponByItem(event.getItem());
+            ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
+            if(shellCaseWeapon == null) return;
     
-                ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
-                if(ShellCaseTeam == null) return;
-                Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
-                //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
+            ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
+            if(ShellCaseTeam == null) return;
+            Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
+            //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
     
-                Action action = event.getAction();
-                if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)
-                    shellCaseWeapon.onLeftClick(shellCasePlayer);
-                if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
-                    shellCaseWeapon.onRightClick(shellCasePlayer);
-            }
-        }.runTaskAsynchronously(ShellCase.getPlugin());
+            Action action = event.getAction();
+            if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)
+                shellCaseWeapon.onLeftClick(shellCasePlayer);
+            if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
+                shellCaseWeapon.onRightClick(shellCasePlayer);
+        });
     }
     
     
@@ -52,23 +50,20 @@ public class PlayerItemClickListener implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
     
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                GunWeapon gunWeapon = WeaponManager.getGunWeaponByItem(event.getItemDrop().getItemStack());
-                if(gunWeapon == null) return;
-
-                ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
-                ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
-                if(ShellCaseTeam == null) return;
-                Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
-                //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
-
-                GunStatusData gunStatusData = (GunStatusData) shellCasePlayer.getWeaponStatusData(gunWeapon);
-                if(gunStatusData == null) return;
-
-                gunStatusData.reload();
-            }
-        }.runTaskAsynchronously(ShellCase.getPlugin());
+        TaskHandler.runAsync(() -> {
+            GunWeapon gunWeapon = WeaponManager.getGunWeaponByItem(event.getItemDrop().getItemStack());
+            if(gunWeapon == null) return;
+    
+            ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);
+            ShellCaseTeam ShellCaseTeam = shellCasePlayer.getShellCaseTeam();
+            if(ShellCaseTeam == null) return;
+            Match.MatchStatus matchStatus = ShellCaseTeam.getMatch().getMatchStatus();
+            //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shellCaseWeapon.getId().endsWith("nw")) return;
+    
+            GunStatusData gunStatusData = (GunStatusData) shellCasePlayer.getWeaponStatusData(gunWeapon);
+            if(gunStatusData == null) return;
+    
+            gunStatusData.reload();
+        });
     }
 }

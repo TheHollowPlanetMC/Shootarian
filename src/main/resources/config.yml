@@ -9,3 +9,5 @@ my-sql:
 
 join-location: 'world, 0.0, 0.0, 0.0'
 lobby-location: 'world, 0.0, 0.0, 0.0'
+
+runner-threads: 12

@@ -11,6 +11,7 @@ import be4rjp.shellcase.match.map.structure.MapStructure;
 import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
+import be4rjp.shellcase.scheduler.MultiThreadRunnable;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.actions.Actions;
 import com.grinderwolf.swm.api.SlimePlugin;
@@ -52,6 +53,7 @@ public final class ShellCase extends JavaPlugin {
         slimePlugin = slimePluginInstance;
     
         ShellCaseConfig.load();
+        MultiThreadRunnable.setThreads(ShellCaseConfig.getRunnerThreads());
         MessageManager.loadAllMessage();
         CanvasData.loadAllCanvas();
         MapStructure.loadAllMapStructure();
