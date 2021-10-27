@@ -68,7 +68,7 @@ public class MainMenuGUI {
                         .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon"))
                         .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-weapon-des")).build()).withListener(event -> {
         
-                    WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
+                    WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-weapon", true, gunStatusData -> {
                         GunCustomGUI.openGunCustomGUI(shellCasePlayer, gunStatusData);
                         shellCasePlayer.playGUIClickSound();
                     });

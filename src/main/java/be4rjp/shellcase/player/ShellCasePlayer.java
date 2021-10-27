@@ -696,7 +696,7 @@ public class ShellCasePlayer {
     /**
      * 言語別のメッセージを送信します。
      * @param textName message.ymlに設定されているテキストの名前
-     * @param args 置き換える値 (%d等)
+     * @param args %s等と置き換える値
      */
     public void sendText(String textName, Object... args){
         if(player == null) return;

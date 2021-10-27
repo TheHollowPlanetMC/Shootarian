@@ -5,7 +5,7 @@ import be4rjp.shellcase.scheduler.MultiThreadRunnable;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public abstract class GunWeaponRunnable extends BukkitRunnable {
+public abstract class GunWeaponRunnable extends MultiThreadRunnable {
     
     protected final ShellCasePlayer shellCasePlayer;
     protected final GunWeapon gunWeapon;

@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AsyncDropItem implements ShellCaseEntity{
+public class WorldSyncDropItem implements ShellCaseEntity{
 
     protected final Match match;
     protected final EntityItem entityItem;
@@ -25,7 +25,7 @@ public class AsyncDropItem implements ShellCaseEntity{
     protected int tick = 0;
     protected boolean isDead = false;
 
-    public AsyncDropItem(Match match, Location location, ItemStack itemStack){
+    public WorldSyncDropItem(Match match, Location location, ItemStack itemStack){
         this.match = match;
 
         this.entityItem = new EntityItem(((CraftWorld) location.getWorld()).getHandle(), location.getX(), location.getY(), location.getZ());

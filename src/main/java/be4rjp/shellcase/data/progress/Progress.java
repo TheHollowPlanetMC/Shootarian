@@ -1,7 +1,10 @@
 package be4rjp.shellcase.data.progress;
 
+/**
+ * 最大512
+ */
 public enum Progress {
-    COMPLETED_TUTORIAL(0);
+    COMPLETE_TUTORIAL(0);
 
     private final int saveNumber;
 

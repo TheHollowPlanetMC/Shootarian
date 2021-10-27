@@ -1,5 +1,6 @@
 package be4rjp.shellcase.weapon;
 
+import be4rjp.shellcase.entity.AsyncFallingBlock;
 import be4rjp.shellcase.item.ShellCaseItem;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.match.map.structure.MapStructureData;
@@ -21,10 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ShellCaseWeapon extends ShellCaseItem {
@@ -64,6 +62,8 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
     protected float damage = 1.0F;
     //デフォルトの最大弾数
     protected int defaultBullets = 20;
+    //メイン武器として使えるかどうか
+    protected boolean isMain = false;
     
     public ShellCaseWeapon(String id){
         this.id = id;
@@ -100,27 +100,33 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
 
     /**
      * デフォルトの最大弾数を取得する
-     * @return
+     * @return int
      */
     public int getDefaultBullets() {return defaultBullets;}
     
     /**
      * この武器を持って右クリックしたときの処理
-     * @param shellCasePlayer
+     * @param shellCasePlayer player
      */
     public abstract void onRightClick(ShellCasePlayer shellCasePlayer);
     
     /**
      * この武器を持って左クリックしたときの処理
-     * @param shellCasePlayer
+     * @param shellCasePlayer player
      */
     public abstract void onLeftClick(ShellCasePlayer shellCasePlayer);
-    
-    
-    
-    private static ShellCaseSound EXPLOSION_SOUND = new ShellCaseSound(Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
-    private static ShellCaseParticle EXPLOSION_PARTICLE1 = new NormalParticle(Particle.EXPLOSION_NORMAL, 1, 0, 0, 0, 0);
-    private static ShellCaseParticle EXPLOSION_PARTICLE2 = new NormalParticle(Particle.EXPLOSION_HUGE, 1, 0, 0, 0, 0);
+
+    /**
+     * メイン武器として使えるかどうか
+     * @return boolean
+     */
+    public boolean isMain() {return isMain;}
+
+
+
+    private static final ShellCaseSound EXPLOSION_SOUND = new ShellCaseSound(Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
+    private static final ShellCaseParticle EXPLOSION_PARTICLE1 = new NormalParticle(Particle.EXPLOSION_NORMAL, 1, 0, 0, 0, 0);
+    private static final ShellCaseParticle EXPLOSION_PARTICLE2 = new NormalParticle(Particle.EXPLOSION_HUGE, 1, 0, 0, 0, 0);
     
     /**
      * 爆発を作成する
@@ -166,6 +172,14 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
                 mapStructureData.giveDamage(1);
                 
                 if(mapStructureData.isDead()) continue;
+
+                //FallingBlock
+                if(new Random().nextInt(5) == 0) {
+                    AsyncFallingBlock asyncFallingBlock = new AsyncFallingBlock(shellCaseTeam.getMatch(), block.getLocation(), block.getBlockData());
+                    asyncFallingBlock.setVelocity(new Vector(block.getX() - center.getX(), block.getY() - center.getY(), block.getZ() - center.getZ()));
+                    asyncFallingBlock.spawn();
+                }
+
                 shellCaseTeam.getMatch().getBlockUpdater().remove(block);
             }
         }

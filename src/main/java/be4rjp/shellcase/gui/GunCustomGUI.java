@@ -32,7 +32,7 @@ public class GunCustomGUI {
     
         SGMenu menu = ShellCase.getSpiGUI().create(String.format(menuName, gunStatusData.getGunWeapon().getDisplayName(lang)), 3);
         menu.setPaginationButtonBuilder(new BackMenuPaginationButtonBuilder(lang, () -> {
-            WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gun -> {
+            WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-weapon", true, gun -> {
                 GunCustomGUI.openGunCustomGUI(shellCasePlayer, gun);
             });
         }));

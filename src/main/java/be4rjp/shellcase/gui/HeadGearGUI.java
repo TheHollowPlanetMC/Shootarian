@@ -22,7 +22,7 @@ public class HeadGearGUI {
         if(player == null) return;
         
         Lang lang = shellCasePlayer.getLang();
-        String menuName = MessageManager.getText(shellCasePlayer.getLang(), "gui-head-gear-select");
+        String menuName = String.format(MessageManager.getText(shellCasePlayer.getLang(), "gui-page"), MessageManager.getText(lang, "gui-select-head-gear"));
         
         SGMenu menu = ShellCase.getSpiGUI().create(menuName, 4);
         menu.setPaginationButtonBuilder(new BackMenuPaginationButtonBuilder(lang, () -> MainMenuGUI.openMainMenuGUI(shellCasePlayer)));

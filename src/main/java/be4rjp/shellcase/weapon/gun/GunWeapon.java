@@ -167,6 +167,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         if(yml.contains("sound")) this.shootSound = ShellCaseSound.getSoundByString(Objects.requireNonNull(yml.getString("sound")));
         if(yml.contains("passive")) yml.getStringList("passive").forEach(passiveString -> passiveInfluenceList.add(PassiveInfluence.fromString(passiveString)));
         if(yml.contains("bullet-size")) this.bulletSize = yml.getDouble("bullet-size");
+        if(yml.contains("main-weapon")) super.isMain = yml.getBoolean("main-weapon");
         if(yml.contains("default-bullets")) this.defaultBullets = yml.getInt("default-bullets");
         if(yml.contains("default-sight")) this.defaultSight = (Sight) Attachment.getAttachment(yml.getString("default-sight"));
         if(yml.contains("reload")) this.reloadActions = Actions.getAction(yml.getString("reload"));

@@ -1,8 +1,9 @@
 package be4rjp.shellcase.weapon.gun.runnable;
 
-import be4rjp.shellcase.entity.BulletEntity;
+import be4rjp.shellcase.entity.AsyncBulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
+import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.FullAutoGun;
 import org.bukkit.Location;
@@ -51,12 +52,12 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                     Vector direction = player.getEyeLocation().getDirection();
                     Location origin = player.getEyeLocation();
 
-                    BulletEntity bulletEntity = new BulletEntity(shellCasePlayer.getShellCaseTeam(), origin, fullAutoGun);
+                    AsyncBulletEntity asyncBulletEntity = new AsyncBulletEntity(shellCasePlayer.getShellCaseTeam(), origin, fullAutoGun);
                     double range = fullAutoGun.getHipShootingRecoil().getShootRandomRange(clickTick);
                     Vector randomVector = new Vector(Math.random() * range - range / 2, Math.random() * range - range / 2, Math.random() * range - range / 2);
                     if(shellCasePlayer.isADS()) randomVector = new Vector(0.0, 0.0, 0.0);
-                    bulletEntity.shootInitialize(shellCasePlayer, direction.clone().add(randomVector).multiply(fullAutoGun.getShootSpeed()), fullAutoGun.getFallTick());
-                    bulletEntity.spawn();
+                    asyncBulletEntity.shootInitialize(shellCasePlayer, direction.clone().add(randomVector).multiply(fullAutoGun.getShootSpeed()), fullAutoGun.getFallTick());
+                    TaskHandler.runAsyncImmediately(asyncBulletEntity::spawn);
                     
                     //反動
                     if(shellCasePlayer.isADS()){

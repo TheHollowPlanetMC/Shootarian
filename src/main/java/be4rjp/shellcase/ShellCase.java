@@ -53,7 +53,7 @@ public final class ShellCase extends JavaPlugin {
         slimePlugin = slimePluginInstance;
     
         ShellCaseConfig.load();
-        MultiThreadRunnable.setThreads(ShellCaseConfig.getRunnerThreads());
+        MultiThreadRunnable.initialize(ShellCaseConfig.getRunnerThreads());
         MessageManager.loadAllMessage();
         CanvasData.loadAllCanvas();
         MapStructure.loadAllMapStructure();
@@ -88,6 +88,8 @@ public final class ShellCase extends JavaPlugin {
         try{
             asyncTimer.cancel();
         }catch (Exception e){e.printStackTrace();}
+
+        MultiThreadRunnable.onDisable();
     }
     
     public static ShellCase getPlugin() {return shellCase;}

@@ -1,16 +1,16 @@
 package be4rjp.shellcase.weapon.gun.runnable;
 
-import be4rjp.shellcase.entity.BulletEntity;
+import be4rjp.shellcase.entity.AsyncBulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.scheduler.MultiThreadRunnable;
+import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.gun.SemiAutoGun;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class BurstGunRunnable extends BukkitRunnable{
+public class BurstGunRunnable extends MultiThreadRunnable{
     
     private final ShellCasePlayer shellCasePlayer;
     private final GunStatusData gunStatusData;
@@ -72,10 +72,10 @@ public class BurstGunRunnable extends BukkitRunnable{
                 
                 direction.add(randomVector);
             }
-    
-            BulletEntity bulletEntity = new BulletEntity(shellCasePlayer.getShellCaseTeam(), shellCasePlayer.getEyeLocation(), burstGun);
-            bulletEntity.shootInitialize(shellCasePlayer, direction.multiply(burstGun.getShootSpeed()), burstGun.getFallTick());
-            bulletEntity.spawn();
+
+            AsyncBulletEntity asyncBulletEntity = new AsyncBulletEntity(shellCasePlayer.getShellCaseTeam(), shellCasePlayer.getEyeLocation(), burstGun);
+            asyncBulletEntity.shootInitialize(shellCasePlayer, direction.multiply(burstGun.getShootSpeed()), burstGun.getFallTick());
+            TaskHandler.runAsyncImmediately(asyncBulletEntity::spawn);
             
             for(ShellCasePlayer matchPlayer : shellCaseTeam.getMatch().getPlayers()) {
                 if(matchPlayer == shellCasePlayer){

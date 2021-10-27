@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.UUID;
 
-public class FlagGrenadeEntity extends AsyncDropItem{
+public class FlagGrenadeEntity extends WorldSyncDropItem {
 
     private final ShellCasePlayer shellCasePlayer;
     private final ShellCaseWeapon shellCaseWeapon;

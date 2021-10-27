@@ -2,16 +2,8 @@ package be4rjp.shellcase.listener;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.ShellCaseConfig;
-import be4rjp.shellcase.gui.MainMenuGUI;
-import be4rjp.shellcase.map.ConquestPlayerClickableGUIRenderer;
-import be4rjp.shellcase.map.ConquestPlayerMapRenderer;
-import be4rjp.shellcase.map.PlayerGUIRenderer;
-import be4rjp.shellcase.match.ConquestMatch;
 import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.MatchManager;
-import be4rjp.shellcase.match.map.ConquestMap;
-import be4rjp.shellcase.match.map.ShellCaseMap;
-import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.packet.PacketHandler;
 import be4rjp.shellcase.player.ShellCasePlayer;
@@ -23,38 +15,14 @@ import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
-import io.papermc.lib.PaperLib;
-import org.bukkit.Instrument;
-import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.CompletableFuture;
 
 public class PlayerJoinQuitListener implements Listener {
-    
-    private static final ConquestMatch match;
-    private static final ShellCaseTeam team0;
-    private static final ShellCaseTeam team1;
-    
-    private static int index = 0;
-    
-    static {
-        match = new ConquestMatch(ConquestMap.getRandomConquestMap());
-        team0 = new ShellCaseTeam(match, ShellCaseColor.BLUE);
-        team1 = new ShellCaseTeam(match, ShellCaseColor.ORANGE);
-    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event){

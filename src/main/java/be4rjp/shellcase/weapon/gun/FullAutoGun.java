@@ -20,7 +20,7 @@ public class FullAutoGun extends GunWeapon {
         if (runnable == null) {
             shellCasePlayer.clearGunWeaponTasks();
             runnable = new FullAutoGunRunnable(this, (GunStatusData) gunStatusData, shellCasePlayer);
-            runnable.runTaskTimerAsynchronously(ShellCase.getPlugin(), 0, 1);
+            runnable.runTaskTimer();
             shellCasePlayer.getGunWeaponTaskMap().put(this, runnable);
         }
         

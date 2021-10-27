@@ -14,9 +14,10 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CloseMenuPaginationButtonBuilder implements SGPaginationButtonBuilder{
-    private static Map<Lang, SGPaginationButtonBuilder> buttonBuilderMap = new HashMap<>();
+    private static final Map<Lang, SGPaginationButtonBuilder> buttonBuilderMap = new ConcurrentHashMap<>();
     
     public static SGPaginationButtonBuilder getPaginationButtonBuilder(Lang lang){
         return buttonBuilderMap.computeIfAbsent(lang, k -> new CloseMenuPaginationButtonBuilder(lang));

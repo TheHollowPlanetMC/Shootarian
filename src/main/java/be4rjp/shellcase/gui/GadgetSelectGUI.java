@@ -1,13 +1,14 @@
 package be4rjp.shellcase.gui;
 
 import be4rjp.shellcase.ShellCase;
-import be4rjp.shellcase.gui.pagination.BackMenuPaginationButtonBuilder;
+import be4rjp.shellcase.gui.pagination.CloseMenuPaginationButtonBuilder;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.ShellCaseSound;
 import be4rjp.shellcase.util.TaskHandler;
-import be4rjp.shellcase.weapon.gun.GunStatusData;
+import be4rjp.shellcase.weapon.gadget.Gadget;
+import be4rjp.shellcase.weapon.gadget.GadgetWeapon;
 import com.samjakob.spigui.SGMenu;
 import com.samjakob.spigui.buttons.SGButton;
 import org.bukkit.Material;
@@ -18,39 +19,36 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class WeaponSelectGUI {
+public class GadgetSelectGUI {
 
     private static final ShellCaseSound SOUND = new ShellCaseSound(Sound.ITEM_ARMOR_EQUIP_IRON, 1.0F, 1.0F);
 
-    /**
-     * 武器選択画面を開く
-     * @param shellCasePlayer player
-     * @param isMain メイン武器を表示するかどうか
-     * @param weaponSelectRunnable クリックイベント
-     */
-    public static void openWeaponSelectGUI(ShellCasePlayer shellCasePlayer, String guiName, boolean isMain, WeaponSelectRunnable weaponSelectRunnable){
+    public static void openGadgetSelectGUI(ShellCasePlayer shellCasePlayer, String guiName, boolean isMain, GadgetRunnable gadgetRunnable) {
         Player player = shellCasePlayer.getBukkitPlayer();
-        if(player == null) return;
-    
+        if (player == null) return;
+
         Lang lang = shellCasePlayer.getLang();
         String menuName = String.format(MessageManager.getText(shellCasePlayer.getLang(), "gui-page"), MessageManager.getText(lang, guiName));
-    
-        SGMenu menu = ShellCase.getSpiGUI().create(menuName, 4);
-        menu.setPaginationButtonBuilder(new BackMenuPaginationButtonBuilder(lang, () -> MainMenuGUI.openMainMenuGUI(shellCasePlayer)));
-    
-        TaskHandler.runAsync(() -> {
-            
-            for(int index = 0; index < 1024; index++){
-                GunStatusData gunStatusData = shellCasePlayer.getWeaponPossessionData().getGunStatusData(index, shellCasePlayer);
-                if(gunStatusData == null) continue;
 
-                if(!isMain && gunStatusData.getGunWeapon().isMain()){
+        SGMenu menu = ShellCase.getSpiGUI().create(menuName, 5);
+        menu.setPaginationButtonBuilder(CloseMenuPaginationButtonBuilder.getPaginationButtonBuilder(lang));
+
+        TaskHandler.runAsync(() -> {
+
+            for(int index = 0; index < 512; index++){
+                Gadget gadget = Gadget.getGadgetBySaveNumber(index);
+                if(gadget == null) break;
+                if(!shellCasePlayer.getGadgetPossessionData().hasGadget(gadget)) continue;
+
+                GadgetWeapon gadgetWeapon = gadget.getInstance();
+
+                if(!isMain && gadgetWeapon.isMain()){
                     //サブ武器選択画面 & メイン専用武器
-                    ItemStack original = gunStatusData.getItemStack(lang);
+                    ItemStack original = gadgetWeapon.getItemStack(lang);
                     String name = original.getItemMeta().getDisplayName();
                     List<String> lore = original.getItemMeta().getLore();
 
-                    name += MessageManager.getText(lang, "gui-weapon-main-only");
+                    name += MessageManager.getText(lang, "gui-gadget-main-only");
 
                     ItemStack itemStack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
                     ItemMeta itemMeta = itemStack.getItemMeta();
@@ -60,10 +58,10 @@ public class WeaponSelectGUI {
 
                     menu.addButton(new SGButton(itemStack));
 
-                }else if(shellCasePlayer.getWeaponClass().getWeaponStatusData(gunStatusData.getGunWeapon()) != null){
+                }else if(shellCasePlayer.getWeaponClass().getWeaponStatusData(gadgetWeapon) != null){
 
                     //選択済み
-                    ItemStack original = gunStatusData.getItemStack(lang);
+                    ItemStack original = gadgetWeapon.getItemStack(lang);
                     String name = original.getItemMeta().getDisplayName();
                     List<String> lore = original.getItemMeta().getLore();
 
@@ -79,21 +77,19 @@ public class WeaponSelectGUI {
 
                 }else {
                     //通常
-                    menu.addButton(new SGButton(gunStatusData.getItemStack(lang)).withListener(event -> {
-                        weaponSelectRunnable.run(gunStatusData);
+                    menu.addButton(new SGButton(gadgetWeapon.getItemStack(lang)).withListener(event -> {
+                        gadgetRunnable.run(gadget);
                         shellCasePlayer.playSound(SOUND);
                     }));
 
                 }
             }
-            
-            TaskHandler.runSync(() -> player.openInventory(menu.getInventory()));
+
         });
     }
-    
-    
-    
-    public interface WeaponSelectRunnable{
-        void run(GunStatusData gunStatusData);
+
+
+    public interface GadgetRunnable{
+        void run(Gadget gadget);
     }
 }

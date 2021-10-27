@@ -6,6 +6,8 @@ import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.TaskHandler;
+import be4rjp.shellcase.weapon.gadget.GadgetStatusData;
+import be4rjp.shellcase.weapon.gadget.GadgetWeapon;
 import com.samjakob.spigui.SGMenu;
 import com.samjakob.spigui.buttons.SGButton;
 import org.bukkit.entity.Player;
@@ -37,7 +39,7 @@ public class ClassGUI {
                     shellCasePlayer.getWeaponClass().getMainWeapon().getGunWeapon().getDisplayName(lang))));
             mainWeapon.setItemMeta(mainWeaponMeta);
             menu.setButton(1, new SGButton(mainWeapon).withListener(event -> {
-                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
+                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-main-weapon", true, gunStatusData -> {
                     shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
                     shellCasePlayer.giveItems();
                     shellCasePlayer.sendText("gui-class-main-weapon-changed", gunStatusData.getGunWeapon().getDisplayName(lang));
@@ -53,7 +55,7 @@ public class ClassGUI {
                     shellCasePlayer.getWeaponClass().getSubWeapon().getGunWeapon().getDisplayName(lang))));
             subWeapon.setItemMeta(subWeaponMeta);
             menu.setButton(3, new SGButton(subWeapon).withListener(event -> {
-                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, gunStatusData -> {
+                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-sub-weapon", false, gunStatusData -> {
                     shellCasePlayer.getWeaponClass().setSubWeapon(gunStatusData);
                     shellCasePlayer.giveItems();
                     shellCasePlayer.sendText("gui-class-sub-weapon-changed", gunStatusData.getGunWeapon().getDisplayName(lang));
@@ -69,6 +71,13 @@ public class ClassGUI {
                     shellCasePlayer.getWeaponClass().getMainGadget().getGadgetWeapon().getDisplayName(lang))));
             mainGadget.setItemMeta(mainGadgetMeta);
             menu.setButton(5, new SGButton(mainGadget).withListener(event -> {
+                GadgetSelectGUI.openGadgetSelectGUI(shellCasePlayer, "gui-select-main-gadget", true, gadget -> {
+                    GadgetWeapon gadgetWeapon = gadget.getInstance();
+                    shellCasePlayer.getWeaponClass().setMainGadget(new GadgetStatusData(gadgetWeapon, shellCasePlayer));
+                    shellCasePlayer.giveItems();
+                    shellCasePlayer.sendText("gui-class-main-gadget-changed", gadget.getInstance().getDisplayName(lang));
+                    ClassGUI.openClassGUI(shellCasePlayer);
+                });
                 shellCasePlayer.playGUIClickSound();
             }));
     
@@ -79,6 +88,13 @@ public class ClassGUI {
                     shellCasePlayer.getWeaponClass().getMainGadget().getGadgetWeapon().getDisplayName(lang))));
             subGadget.setItemMeta(subGadgetMeta);
             menu.setButton(7, new SGButton(subGadget).withListener(event -> {
+                GadgetSelectGUI.openGadgetSelectGUI(shellCasePlayer, "gui-select-sub-gadget", false, gadget -> {
+                    GadgetWeapon gadgetWeapon = gadget.getInstance();
+                    shellCasePlayer.getWeaponClass().setSubGadget(new GadgetStatusData(gadgetWeapon, shellCasePlayer));
+                    shellCasePlayer.giveItems();
+                    shellCasePlayer.sendText("gui-class-sub-gadget-changed", gadget.getInstance().getDisplayName(lang));
+                    ClassGUI.openClassGUI(shellCasePlayer);
+                });
                 shellCasePlayer.playGUIClickSound();
             }));
             
