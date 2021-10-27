@@ -43,7 +43,7 @@ public class FlagGrenadeEntity extends WorldSyncDropItem {
     public void remove() {
         super.remove();
 
-        ShellCaseWeapon.createExplosion(shellCasePlayer, shellCaseWeapon, this.getLocation(), explodeRadius);
+        ShellCaseWeapon.createExplosion(shellCasePlayer, shellCaseWeapon, this.getLocation(), explodeRadius, 0.4);
     }
 
     /**

@@ -25,7 +25,7 @@ public class ShellCaseSound {
         return new ShellCaseSound(soundComponents);
     }
     
-    private static final double PLAY_SOUND_DISTANCE = 50.0;
+    private static final double PLAY_SOUND_DISTANCE = 80.0;
     private static final double PLAY_SOUND_DISTANCE_SQUARE = Math.pow(PLAY_SOUND_DISTANCE, 2);
 
     private final Set<SoundComponent> sounds = new HashSet<>();

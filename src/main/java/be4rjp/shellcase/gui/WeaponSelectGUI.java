@@ -28,7 +28,7 @@ public class WeaponSelectGUI {
      * @param isMain メイン武器を表示するかどうか
      * @param weaponSelectRunnable クリックイベント
      */
-    public static void openWeaponSelectGUI(ShellCasePlayer shellCasePlayer, String guiName, boolean isMain, WeaponSelectRunnable weaponSelectRunnable){
+    public static void openWeaponSelectGUI(ShellCasePlayer shellCasePlayer, String guiName, boolean isMain, boolean isCustom, WeaponSelectRunnable weaponSelectRunnable, Runnable backRunnable){
         Player player = shellCasePlayer.getBukkitPlayer();
         if(player == null) return;
     
@@ -36,7 +36,7 @@ public class WeaponSelectGUI {
         String menuName = String.format(MessageManager.getText(shellCasePlayer.getLang(), "gui-page"), MessageManager.getText(lang, guiName));
     
         SGMenu menu = ShellCase.getSpiGUI().create(menuName, 4);
-        menu.setPaginationButtonBuilder(new BackMenuPaginationButtonBuilder(lang, () -> MainMenuGUI.openMainMenuGUI(shellCasePlayer)));
+        menu.setPaginationButtonBuilder(new BackMenuPaginationButtonBuilder(lang, backRunnable));
     
         TaskHandler.runAsync(() -> {
             
@@ -60,7 +60,7 @@ public class WeaponSelectGUI {
 
                     menu.addButton(new SGButton(itemStack));
 
-                }else if(shellCasePlayer.getWeaponClass().getWeaponStatusData(gunStatusData.getGunWeapon()) != null){
+                }else if(shellCasePlayer.getWeaponClass().getWeaponStatusData(gunStatusData.getGunWeapon()) != null && !isCustom){
 
                     //選択済み
                     ItemStack original = gunStatusData.getItemStack(lang);

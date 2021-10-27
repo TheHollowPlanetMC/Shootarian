@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -124,7 +125,7 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
 
 
 
-    private static final ShellCaseSound EXPLOSION_SOUND = new ShellCaseSound(Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 1.0F);
+    private static final ShellCaseSound EXPLOSION_SOUND = new ShellCaseSound(Sound.ENTITY_GENERIC_EXPLODE, 1.2F, 1.0F);
     private static final ShellCaseParticle EXPLOSION_PARTICLE1 = new NormalParticle(Particle.EXPLOSION_NORMAL, 1, 0, 0, 0, 0);
     private static final ShellCaseParticle EXPLOSION_PARTICLE2 = new NormalParticle(Particle.EXPLOSION_HUGE, 1, 0, 0, 0, 0);
     
@@ -135,7 +136,7 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
      * @param center 爆発の中心
      * @param radius 爆発の半径
      */
-    public static void createExplosion(ShellCasePlayer shellCasePlayer, ShellCaseWeapon ShellCaseWeapon, Location center, double radius){
+    public static void createExplosion(ShellCasePlayer shellCasePlayer, ShellCaseWeapon ShellCaseWeapon, Location center, double radius, double velocityRate){
         ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
         if(shellCaseTeam == null) return;
     
@@ -147,16 +148,31 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
         shellCaseTeam.getMatch().playSound(EXPLOSION_SOUND, center);
         
         //ダメージ
-        for(ShellCasePlayer otherTeamPlayer : shellCaseTeam.getOtherTeamPlayers()){
-            if(otherTeamPlayer.isDeath()) continue;
+        for(ShellCasePlayer matchPlayer : shellCaseTeam.getMatch().getPlayers()){
+            if(matchPlayer.isDeath()) continue;
             
-            double distance = Math.sqrt(LocationUtil.distanceSquaredSafeDifferentWorld(center, otherTeamPlayer.getLocation()));
+            double distance = Math.sqrt(LocationUtil.distanceSquaredSafeDifferentWorld(center, matchPlayer.getLocation()));
             if(distance >= radius) continue;
     
-            Location loc = otherTeamPlayer.getLocation();
+            Location loc = matchPlayer.getLocation();
             Vector velocity = new Vector(loc.getX() - center.getX(), loc.getY() - center.getY(), loc.getZ() - center.getZ());
+            double length = velocity.length();
+            double newLength = radius - length;
+            newLength = Math.max(0.1, newLength);
+            newLength = newLength * velocityRate;
+            if(length > 0.0){
+                velocity.normalize().multiply(newLength);
+            }
+            
+            if(matchPlayer.getShellCaseTeam() == shellCaseTeam){
+                
+                matchPlayer.setVelocity(velocity);
+                
+                continue;
+            }
+            
             double damage = ((radius - distance) / radius) * ShellCaseWeapon.getDamage();
-            otherTeamPlayer.giveDamage((float) damage, shellCasePlayer, velocity, ShellCaseWeapon);
+            matchPlayer.giveDamage((float) damage, shellCasePlayer, velocity, ShellCaseWeapon);
         }
         
         //破壊
@@ -176,7 +192,16 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
                 //FallingBlock
                 if(new Random().nextInt(5) == 0) {
                     AsyncFallingBlock asyncFallingBlock = new AsyncFallingBlock(shellCaseTeam.getMatch(), block.getLocation(), block.getBlockData());
-                    asyncFallingBlock.setVelocity(new Vector(block.getX() - center.getX(), block.getY() - center.getY(), block.getZ() - center.getZ()));
+                    
+                    Vector velocity = new Vector(block.getX() - center.getX(), block.getY() - center.getY(), block.getZ() - center.getZ());
+                    double length = velocity.length();
+                    double newLength = radius - length;
+                    newLength = Math.max(0.1, newLength);
+                    if(length > 0.0){
+                        velocity.normalize().multiply(newLength);
+                    }
+                    
+                    asyncFallingBlock.setVelocity(velocity);
                     asyncFallingBlock.spawn();
                 }
 

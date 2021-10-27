@@ -1,6 +1,7 @@
 package be4rjp.shellcase.gui;
 
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.gui.pagination.BackMenuPaginationButtonBuilder;
 import be4rjp.shellcase.gui.pagination.CloseMenuPaginationButtonBuilder;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
@@ -31,7 +32,7 @@ public class GadgetSelectGUI {
         String menuName = String.format(MessageManager.getText(shellCasePlayer.getLang(), "gui-page"), MessageManager.getText(lang, guiName));
 
         SGMenu menu = ShellCase.getSpiGUI().create(menuName, 5);
-        menu.setPaginationButtonBuilder(CloseMenuPaginationButtonBuilder.getPaginationButtonBuilder(lang));
+        menu.setPaginationButtonBuilder(new BackMenuPaginationButtonBuilder(lang, () -> ClassGUI.openClassGUI(shellCasePlayer)));
 
         TaskHandler.runAsync(() -> {
 
@@ -84,6 +85,8 @@ public class GadgetSelectGUI {
 
                 }
             }
+            
+            TaskHandler.runSync(() -> player.openInventory(menu.getInventory()));
 
         });
     }

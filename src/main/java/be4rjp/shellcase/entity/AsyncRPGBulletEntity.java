@@ -11,10 +11,12 @@ import be4rjp.shellcase.util.ShellCaseSound;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
+import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.gadget.GadgetWeapon;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
@@ -24,6 +26,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AsyncRPGBulletEntity implements ShellCaseEntity{
+    
+    private static final ShellCaseSound SOUND1 = new ShellCaseSound(Sound.ENTITY_PIG_STEP, 1.5F, 0.8F);
+    private static final ShellCaseSound SOUND2 = new ShellCaseSound(Sound.ENTITY_PIG_STEP, 1.5F, 1.1F);
+    private static final ShellCaseSound SOUND3 = new ShellCaseSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 0.8F, 0.8F);
+    private static final ShellCaseSound SOUND4 = new ShellCaseSound(Sound.BLOCK_FIRE_EXTINGUISH, 1.1F, 0.9F);
+    private static final ShellCaseSound SOUND5 = new ShellCaseSound(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.8F, 0.55F);
+    
 
     private final Match match;
     private final ShellCaseTeam team;
@@ -44,6 +53,8 @@ public class AsyncRPGBulletEntity implements ShellCaseEntity{
     private boolean remove = false;
     private int removeTick = 0;
     private boolean isDead = false;
+    
+    private double G = -2.5;
 
     private Set<ShellCasePlayer> showPlayer = new HashSet<>();
 
@@ -52,6 +63,13 @@ public class AsyncRPGBulletEntity implements ShellCaseEntity{
         this.match = team.getMatch();
         this.location = location.clone();
         this.gadgetWeapon = gadgetWeapon;
+    }
+    
+    public void shootInitialize(ShellCasePlayer shooter, Vector direction, int fallTick){
+        this.direction = direction.clone();
+        this.originalDirection = direction.clone();
+        this.shooter = shooter;
+        this.fallTick = fallTick;
     }
 
     public ShellCasePlayer getShooter(){return this.shooter;}
@@ -71,7 +89,9 @@ public class AsyncRPGBulletEntity implements ShellCaseEntity{
     public void setBulletSize(double bulletSize) {this.bulletSize = bulletSize;}
 
     public void setParticle(boolean particle) {this.particle = particle;}
-
+    
+    public void setG(double g) {G = g;}
+    
     @Override
     public void tick() {
 
@@ -80,7 +100,21 @@ public class AsyncRPGBulletEntity implements ShellCaseEntity{
             return;
         }
         if(remove) removeTick++;
+        
+        //Sound
+        if(tick == 0){
+            match.playSound(SOUND1, location);
+            match.playSound(SOUND2, location);
+            match.playSound(SOUND3, location);
+    
+            match.spawnParticle(new NormalParticle(Particle.SMOKE_LARGE, 5, 0.5, 0.5, 0.5, 1), location);
+        }
+        if(tick == 1){
+            match.playSound(SOUND4, location);
+            match.playSound(SOUND5, location);
+        }
 
+        
         Location oldLocation = location.clone();
         Vector oldDirection = direction.clone();
 
@@ -105,21 +139,15 @@ public class AsyncRPGBulletEntity implements ShellCaseEntity{
                 playerHitLocation = position.toLocation(location.getWorld());
                 target = shellCasePlayer;
 
-                //プレイヤーへのヒット
-                //shellCasePlayer.giveDamage(gunWeapon.getDamage(), shooter, direction, gunWeapon);
-                //match.spawnParticle(INK_HIT_PARTICLE, shellCasePlayer.getLocation().add(0.0, 1.0, 0.0));
-
                 remove = true;
             }
 
             Location blockHitLocation = null;
-            Block hitBlock = null;
 
             try {
                 RayTraceResult rayTraceResult = oldLocation.getWorld().rayTraceBlocks(oldLocation, oldDirection, oldDirection.length());
                 if (rayTraceResult != null) {
                     blockHitLocation = rayTraceResult.getHitPosition().toLocation(oldLocation.getWorld());
-                    hitBlock = rayTraceResult.getHitBlock();
 
                     remove = true;
                 }
@@ -145,28 +173,30 @@ public class AsyncRPGBulletEntity implements ShellCaseEntity{
             }
 
             if(playerHit){
-                target.giveDamage(gadgetWeapon.getDamage(), shooter, direction, gadgetWeapon);
                 hitLocation = playerHitLocation;
             }
             if(blockHit){
-                //ブロックへのヒット
-                if(hitBlock != null) {
-                    match.spawnParticle(new BlockParticle(Particle.BLOCK_CRACK, 3, 0, 0, 0, 1, hitBlock.getBlockData()), blockHitLocation);
-                    match.playSound(new ShellCaseSound(hitBlock.getSoundGroup().getBreakSound(), 1.0F, 1.0F), blockHitLocation);
-                }
                 hitLocation = blockHitLocation;
             }
         }
 
         if(tick >= fallTick) {
             double t = ((double) tick / 20.0);
-            direction = originalDirection.clone().add(new Vector(0.0, t * t * -4.9, 0.0));
+            direction = originalDirection.clone().add(new Vector(0.0, t * t * G, 0.0));
         }
         location.add(direction);
 
         if(particle){
-            ShellCaseParticle particle;
-            //match.spawnParticle(new NormalParticle(Particle.));
+            match.spawnParticle(new NormalParticle(Particle.FLAME, 0, 0.0, 0.0, 0.0, 1), location);
+            match.spawnParticle(new NormalParticle(Particle.CAMPFIRE_COSY_SMOKE, 0, 0.0, 0.0, 0.0, 1), location);
+            match.spawnParticle(new NormalParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, 0, 0.0, 0.0, 0.0, 1), location);
+        }
+        
+        if(hitLocation != null){
+    
+            ShellCaseWeapon.createExplosion(shooter, gadgetWeapon, hitLocation, 5.0, 0.5);
+            this.remove();
+            
         }
 
         tick++;

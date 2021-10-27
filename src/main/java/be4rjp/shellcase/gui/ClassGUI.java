@@ -39,12 +39,12 @@ public class ClassGUI {
                     shellCasePlayer.getWeaponClass().getMainWeapon().getGunWeapon().getDisplayName(lang))));
             mainWeapon.setItemMeta(mainWeaponMeta);
             menu.setButton(1, new SGButton(mainWeapon).withListener(event -> {
-                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-main-weapon", true, gunStatusData -> {
+                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-main-weapon", true, false, gunStatusData -> {
                     shellCasePlayer.getWeaponClass().setMainWeapon(gunStatusData);
                     shellCasePlayer.giveItems();
                     shellCasePlayer.sendText("gui-class-main-weapon-changed", gunStatusData.getGunWeapon().getDisplayName(lang));
                     ClassGUI.openClassGUI(shellCasePlayer);
-                });
+                }, () -> ClassGUI.openClassGUI(shellCasePlayer));
                 shellCasePlayer.playGUIClickSound();
             }));
     
@@ -55,12 +55,12 @@ public class ClassGUI {
                     shellCasePlayer.getWeaponClass().getSubWeapon().getGunWeapon().getDisplayName(lang))));
             subWeapon.setItemMeta(subWeaponMeta);
             menu.setButton(3, new SGButton(subWeapon).withListener(event -> {
-                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-sub-weapon", false, gunStatusData -> {
+                WeaponSelectGUI.openWeaponSelectGUI(shellCasePlayer, "gui-select-sub-weapon", false, false, gunStatusData -> {
                     shellCasePlayer.getWeaponClass().setSubWeapon(gunStatusData);
                     shellCasePlayer.giveItems();
                     shellCasePlayer.sendText("gui-class-sub-weapon-changed", gunStatusData.getGunWeapon().getDisplayName(lang));
                     ClassGUI.openClassGUI(shellCasePlayer);
-                });
+                }, () -> ClassGUI.openClassGUI(shellCasePlayer));
                 shellCasePlayer.playGUIClickSound();
             }));
     

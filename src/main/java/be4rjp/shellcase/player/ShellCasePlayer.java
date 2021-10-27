@@ -880,6 +880,14 @@ public class ShellCasePlayer {
         });
     }
     
+    /**
+     * Velocityを設定します
+     * @param velocity Vector
+     */
+    public void setVelocity(Vector velocity){
+        if(player == null) return;
+        player.setVelocity(velocity);
+    }
     
     /**
      * メインウエポンのスケジューラーのマップを取得する
@@ -1002,9 +1010,7 @@ public class ShellCasePlayer {
         if(this.shellCaseTeam == null) return;
         
         if(this.getArmor() > 0.0 && velocity != null){
-            Vector XZVec = new Vector(velocity.getX(), 0.0, velocity.getZ());
-            if(XZVec.lengthSquared() > 0.0) XZVec.normalize();
-            player.setVelocity(XZVec);
+            player.setVelocity(velocity);
         }
         
         if(this.getHealth() + this.getArmor() > damage){

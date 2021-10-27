@@ -3,7 +3,8 @@ package be4rjp.shellcase.weapon.gadget;
 public enum Gadget {
     
     FLAG_GRENADE(FlagGrenade.class, 0),
-    GRAPPLE_GUN(GrappleGun.class, 1);
+    GRAPPLE_GUN(GrappleGun.class, 1),
+    RPG_7(RPG.class, 2);
     
     private GadgetWeapon instance;
     

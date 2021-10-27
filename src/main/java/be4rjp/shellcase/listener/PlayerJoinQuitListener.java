@@ -48,7 +48,9 @@ public class PlayerJoinQuitListener implements Listener {
                 gunStatusData.addAttachment(Attachment.getAttachmentBySaveNumber(4));
                 shellCasePlayer.getWeaponPossessionData().setGunStatusData(gunStatusData);
             }
-            shellCasePlayer.getWeaponClass().setSubGadget(new GadgetStatusData(Gadget.GRAPPLE_GUN.getInstance(), shellCasePlayer));
+            shellCasePlayer.getGadgetPossessionData().setGadget(Gadget.FLAG_GRENADE);
+            shellCasePlayer.getGadgetPossessionData().setGadget(Gadget.GRAPPLE_GUN);
+            shellCasePlayer.getGadgetPossessionData().setGadget(Gadget.RPG_7);
             
             shellCasePlayer.giveItems();
             

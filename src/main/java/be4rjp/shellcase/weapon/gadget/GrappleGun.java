@@ -17,7 +17,7 @@ public class GrappleGun extends GadgetWeapon{
     
         super.material = Material.GOLDEN_HOE;
         for(Lang lang : Lang.values()){
-            this.displayName.put(lang, MessageManager.getText(lang, "gadget-flag-grenade"));
+            this.displayName.put(lang, MessageManager.getText(lang, "gadget-grapple-gun"));
         }
     }
     
