@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Map;
 
 public class ChunkEventListener implements Listener {
+    /*
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event){
         
@@ -46,5 +47,5 @@ public class ChunkEventListener implements Listener {
                 asyncWorld.getChunkPositionBlockMap().remove(chunkPosition);
             }
         }.runTaskAsynchronously(ShellCase.getPlugin());
-    }
+    }*/
 }

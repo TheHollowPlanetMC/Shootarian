@@ -81,13 +81,13 @@ public class BlockUpdater extends BukkitRunnable {
             Block block = entry.getKey();
             BlockData blockData = entry.getValue();
     
-            AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, blockData);
+            match.getAsyncWorld().setType(block, blockData);
             Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
             blocks.add(block);
         }
 
         for(Block block : removeBlocks){
-            AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, Material.AIR.createBlockData());
+            match.getAsyncWorld().setType(block, Material.AIR.createBlockData());
             Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
             blocks.add(block);
         }
@@ -97,7 +97,7 @@ public class BlockUpdater extends BukkitRunnable {
                 BlockPosition3i relative = entry.getKey();
         
                 Block block = mapStructureData.getMapStructure().getBaseLocation().getBukkitLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
-                AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, Material.AIR.createBlockData());
+                match.getAsyncWorld().setType(block, Material.AIR.createBlockData());
                 Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
                 blocks.add(block);
             }
@@ -106,7 +106,7 @@ public class BlockUpdater extends BukkitRunnable {
                 BlockData blockData = entry.getValue();
                 
                 Block block = mapStructureData.getMapStructure().getBaseLocation().getBukkitLocation().clone().add(relative.getX(), relative.getY(), relative.getZ()).getBlock();
-                AsyncWorld.getAsyncWorld(block.getWorld()).setType(block, blockData);
+                match.getAsyncWorld().setType(block, blockData);
                 Set<Block> blocks = blockChunkMap.computeIfAbsent(block.getChunk(), k -> new HashSet<>());
                 blocks.add(block);
             }

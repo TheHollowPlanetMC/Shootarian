@@ -77,7 +77,6 @@ public class SCLocation {
     public void createWorldAtMainThread(){
         World world = Bukkit.getWorld(worldName);
         if(world != null) {
-            AsyncWorld.remove(world);
             Bukkit.getServer().unloadWorld(world, false);
         }
         

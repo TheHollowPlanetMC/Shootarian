@@ -2,9 +2,12 @@ package be4rjp.shellcase.match.map;
 
 import be4rjp.parallel.util.ChunkPosition;
 import be4rjp.shellcase.ShellCase;
+import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.util.TaskHandler;
+import be4rjp.shellcase.world.AsyncWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import world.chiyogami.chiyogamilib.scheduler.WorldThreadRunnable;
 
 import java.util.ArrayDeque;
@@ -25,6 +28,8 @@ public class AsyncMapLoader extends WorldThreadRunnable {
     private final CompletableFuture<Void> completableFuture;
 
     private int load;
+    
+    private AsyncWorld asyncWorld;
 
     private AsyncMapLoader(MapRange mapRange, CompletableFuture<Void> completableFuture){
         super(mapRange.getFirstLocation().getBukkitLocation().getWorld());
@@ -55,6 +60,9 @@ public class AsyncMapLoader extends WorldThreadRunnable {
     
             world.getChunkAtAsync(chunkPosition.x, chunkPosition.z).thenAccept(chunk -> {
                 chunk.setForceLoaded(true);
+                
+                asyncWorld.addLoadedChunk(((CraftChunk) chunk).getHandle());
+                
                 AsyncMapLoader.this.load++;
             });
         }
@@ -66,7 +74,7 @@ public class AsyncMapLoader extends WorldThreadRunnable {
 
     public CompletableFuture<Void> getCompletableFuture() {return completableFuture;}
 
-    public static AsyncMapLoader startLoad(MapRange mapRange){
+    public static AsyncMapLoader startLoad(Match match, MapRange mapRange){
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
         AsyncMapLoader asyncMapLoader = new AsyncMapLoader(mapRange, completableFuture);
 
@@ -77,7 +85,13 @@ public class AsyncMapLoader extends WorldThreadRunnable {
 
             TaskHandler.runSync(() -> {
                 mapRange.getFirstLocation().createWorldAtMainThread();
-                asyncMapLoader.setWorld(mapRange.getFirstLocation().getBukkitLocation().getWorld());
+                World world = mapRange.getFirstLocation().getBukkitLocation().getWorld();
+                asyncMapLoader.setWorld(world);
+                
+                AsyncWorld asyncWorld = new AsyncWorld(world);
+                match.setAsyncWorld(asyncWorld);
+                asyncMapLoader.asyncWorld = asyncWorld;
+                
                 asyncMapLoader.runTaskTimer(ShellCase.getPlugin(), 0, 10);
             });
         });

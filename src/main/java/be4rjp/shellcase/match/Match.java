@@ -19,6 +19,7 @@ import be4rjp.shellcase.util.LocationUtil;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import be4rjp.shellcase.util.ShellCaseSound;
+import be4rjp.shellcase.world.AsyncWorld;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_15_R1.Packet;
 import org.bukkit.Location;
@@ -57,6 +58,8 @@ public abstract class Match {
     protected AsyncEntityTickRunnable asyncEntityTickRunnable = new AsyncEntityTickRunnable(this);
     //建造物のデータ
     protected Set<MapStructureData> mapStructureData = new HashSet<>();
+    //AsyncWorld
+    protected AsyncWorld asyncWorld = null;
     
     //試合のスコアボード
     protected final ShellCaseScoreboard scoreboard;
@@ -93,7 +96,7 @@ public abstract class Match {
             this.mapStructureData.add(mapStructureData);
         }
         
-        return AsyncMapLoader.startLoad(getShellCaseMap().getMapRange());
+        return AsyncMapLoader.startLoad(this, getShellCaseMap().getMapRange());
     }
     
     /**
@@ -206,6 +209,10 @@ public abstract class Match {
     public Set<ShellCaseEntity> getShellCaseEntities() {return shellCaseEntities;}
     
     public Set<ShellCaseEntity> getAsyncEntities() {return asyncEntities;}
+    
+    public AsyncWorld getAsyncWorld() {return asyncWorld;}
+    
+    public void setAsyncWorld(AsyncWorld asyncWorld) {this.asyncWorld = asyncWorld;}
     
     /**
      * 試合終了判定

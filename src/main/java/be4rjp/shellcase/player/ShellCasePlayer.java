@@ -12,8 +12,8 @@ import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.data.sql.SQLDriver;
 import be4rjp.shellcase.gui.MainMenuItem;
 import be4rjp.shellcase.language.Lang;
+import be4rjp.shellcase.listener.PlayerTeleportListener;
 import be4rjp.shellcase.map.PlayerGUIRenderer;
-import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.language.MessageManager;
@@ -34,6 +34,7 @@ import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import be4rjp.shellcase.weapon.gun.runnable.GunWeaponRunnable;
+import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.*;
 import org.bukkit.Material;
@@ -101,6 +102,12 @@ public class ShellCasePlayer {
     
     //プレイヤーのUUID
     private final String uuid;
+    //AIかどうか
+    private boolean isAI = false;
+    //NPC
+    private NPC npc;
+    //AI
+    private ShellCasePlayer aiTarget = null;
     //プレイヤーの言語設定
     private Lang lang = Lang.ja_JP;
     //プレイヤー
@@ -198,7 +205,7 @@ public class ShellCasePlayer {
      * ShellCasePlayerを新しく作成
      * @param uuid プレイヤーのUUID
      */
-    private ShellCasePlayer(String uuid){this.uuid = uuid;}
+    protected ShellCasePlayer(String uuid){this.uuid = uuid;}
     
     
     public String getUUID() {return uuid;}
@@ -326,6 +333,14 @@ public class ShellCasePlayer {
     
     public void setViewingMap(boolean viewingMap) {isViewingMap = viewingMap;}
     
+    public NPC getCitizensNPC() {return npc;}
+    
+    public void setCitizensNPC(NPC npc) {this.npc = npc;}
+    
+    public ShellCasePlayer getAiTarget() {return aiTarget;}
+    
+    public void setAiTarget(ShellCasePlayer aiTarget) {this.aiTarget = aiTarget;}
+    
     /**
      * 情報をリセットする
      */
@@ -376,6 +391,7 @@ public class ShellCasePlayer {
      * プレイヤーの実績データをSQLからロードする
      */
     public void loadAchievementFromSQL(){
+        if(isAI) return;
         try {
             SQLDriver.loadAchievementData(this.achievementData);
             this.setLoadedSaveData(true);
@@ -398,6 +414,7 @@ public class ShellCasePlayer {
      * プレイヤーの実績データをSQLに保存する
      */
     public void saveAchievementToSQL(){
+        if(isAI) return;
         try {
             SQLDriver.saveAchievementData(this.achievementData);
         }catch (Exception e){e.printStackTrace();}
@@ -424,7 +441,16 @@ public class ShellCasePlayer {
     /**
      * BukkitのPlayerをアップデートする（参加時用）
      */
-    public void updateBukkitPlayer(Player bukkitPlayer){if(bukkitPlayer != null) this.player = bukkitPlayer;}
+    public void updateBukkitPlayer(Player bukkitPlayer, boolean isAI){
+        if(bukkitPlayer != null) this.player = bukkitPlayer;
+        this.isAI = isAI;
+    }
+    
+    /**
+     * AIであるかどうか
+     * @return
+     */
+    public boolean isAI() {return isAI;}
     
     /**
      * Mojangのセッションサーバーへスキンデータのリクエストを送信して取得する
@@ -820,6 +846,7 @@ public class ShellCasePlayer {
         TaskHandler.runWorldSync(player.getWorld(), () -> {
             if (player == null) return;
             if (time != teleportTime) return;
+            PlayerTeleportListener.scheduledTeleport.add(player);
             player.teleport(location);
         });
     }
@@ -832,6 +859,7 @@ public class ShellCasePlayer {
         long time = System.currentTimeMillis();
         this.teleportTime = time;
         if(player == null) return;
+        PlayerTeleportListener.scheduledTeleport.add(player);
         player.teleport(location);
     }
     
@@ -845,8 +873,9 @@ public class ShellCasePlayer {
         this.setHealth(20.0F);
         if(player == null) return;
         
-        TaskHandler.runWorldSync(player.getWorld(), () -> {
+        TaskHandler.runSync(() -> {
             if (player == null) return;
+            PlayerTeleportListener.scheduledTeleport.add(player);
             player.teleport(location);
             player.setGameMode(GameMode.ADVENTURE);
             setDeath(false);
