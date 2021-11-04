@@ -12,7 +12,7 @@ import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.data.sql.SQLDriver;
 import be4rjp.shellcase.gui.MainMenuItem;
 import be4rjp.shellcase.language.Lang;
-import be4rjp.shellcase.listener.PlayerTeleportListener;
+import be4rjp.shellcase.listener.NPCTeleportListener;
 import be4rjp.shellcase.map.PlayerGUIRenderer;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
@@ -192,7 +192,7 @@ public class ShellCasePlayer {
     //フライ系の動作の同期用インスタンス
     private final Object FLY_LOCK = new Object();
     //死亡系の動作の同期用インスタンス
-    private final Object DEATH_LOCK = new Object();
+    private final Object HEALTH_LOCK = new Object();
     //ランク系の動作の同期用インスタンス
     private final Object RANK_LOCK = new Object();
     //ADS系の動作の同期用インスタンス
@@ -257,9 +257,9 @@ public class ShellCasePlayer {
     
     public void addKills(int kills) {synchronized (KILL_COUNT_LOCK){this.kills += kills;}}
 
-    public boolean isDeath() {synchronized (DEATH_LOCK){return isDeath;}}
+    public boolean isDeath() {synchronized (HEALTH_LOCK){return isDeath;}}
 
-    public void setDeath(boolean death) {synchronized (DEATH_LOCK){isDeath = death;}}
+    public void setDeath(boolean death) {synchronized (HEALTH_LOCK){isDeath = death;}}
 
     public ShellCaseScoreboard getScoreBoard() {return scoreBoard;}
     
@@ -843,10 +843,12 @@ public class ShellCasePlayer {
         this.teleportTime = time;
         if(player == null) return;
         
-        TaskHandler.runWorldSync(player.getWorld(), () -> {
+        TaskHandler.runSync(() -> {
             if (player == null) return;
             if (time != teleportTime) return;
-            PlayerTeleportListener.scheduledTeleport.add(player);
+            if(isAI){
+                NPCTeleportListener.scheduledTeleport.add(npc);
+            }
             player.teleport(location);
         });
     }
@@ -859,7 +861,9 @@ public class ShellCasePlayer {
         long time = System.currentTimeMillis();
         this.teleportTime = time;
         if(player == null) return;
-        PlayerTeleportListener.scheduledTeleport.add(player);
+        if(isAI){
+            NPCTeleportListener.scheduledTeleport.add(npc);
+        }
         player.teleport(location);
     }
     
@@ -875,7 +879,9 @@ public class ShellCasePlayer {
         
         TaskHandler.runSync(() -> {
             if (player == null) return;
-            PlayerTeleportListener.scheduledTeleport.add(player);
+            if(isAI){
+                NPCTeleportListener.scheduledTeleport.add(npc);
+            }
             player.teleport(location);
             player.setGameMode(GameMode.ADVENTURE);
             setDeath(false);
@@ -995,17 +1001,19 @@ public class ShellCasePlayer {
      * @param plus
      */
     public synchronized void heal(float plus){
-        if(player == null) return;
-        if(this.shellCaseTeam == null) return;
-        
-        if(this.health + plus < 20.0F){
-            this.health += plus;
-            PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
-            this.sendPacket(updateHealth);
-        }else if(this.health != 20.0F){
-            this.health = 20.0F;
-            PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
-            this.sendPacket(updateHealth);
+        synchronized (HEALTH_LOCK) {
+            if (player == null) return;
+            if (this.shellCaseTeam == null) return;
+    
+            if (this.health + plus < 20.0F) {
+                this.health += plus;
+                PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
+                this.sendPacket(updateHealth);
+            } else if (this.health != 20.0F) {
+                this.health = 20.0F;
+                PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
+                this.sendPacket(updateHealth);
+            }
         }
     }
     
@@ -1014,16 +1022,18 @@ public class ShellCasePlayer {
      * @param damage
      */
     public synchronized void givePoisonDamage(float damage){
-        if(player == null) return;
-        if(this.shellCaseTeam == null) return;
-        
-        if(this.health > damage){
-            this.health -= damage;
-            PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
-            PacketPlayOutAnimation animation = new PacketPlayOutAnimation(((CraftPlayer)player).getHandle(), 1);
-            this.sendPacket(updateHealth);
-            this.shellCaseTeam.getMatch().sendPacket(animation);
-            this.shellCaseTeam.getMatch().playSound(HIT_SOUND, player.getLocation());
+        synchronized (HEALTH_LOCK) {
+            if (player == null) return;
+            if (this.shellCaseTeam == null) return;
+    
+            if (this.health > damage) {
+                this.health -= damage;
+                PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
+                PacketPlayOutAnimation animation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 1);
+                this.sendPacket(updateHealth);
+                this.shellCaseTeam.getMatch().sendPacket(animation);
+                this.shellCaseTeam.getMatch().playSound(HIT_SOUND, player.getLocation());
+            }
         }
     }
     
@@ -1034,35 +1044,37 @@ public class ShellCasePlayer {
      * @param ShellCaseWeapon 攻撃に使用した武器
      */
     public synchronized void giveDamage(float damage, ShellCasePlayer attacker, Vector velocity, ShellCaseWeapon ShellCaseWeapon){
-        if(player == null) return;
-        if(attacker.getBukkitPlayer() == null) return;
-        if(this.shellCaseTeam == null) return;
-        
-        if(this.getArmor() > 0.0 && velocity != null){
-            player.setVelocity(velocity);
-        }
-        
-        if(this.getHealth() + this.getArmor() > damage){
-            if(this.getArmor() > damage){
-                this.setArmor(this.getArmor() - damage);
-            }else{
-                //give damage
-                float d = damage - this.getArmor();
-                this.setHealth(this.getHealth() - d);
-                this.setArmor(0.0F);
+        synchronized (HEALTH_LOCK) {
+            if (player == null) return;
+            if (attacker.getBukkitPlayer() == null) return;
+            if (this.shellCaseTeam == null) return;
     
-                PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
-                PacketPlayOutAnimation animation = new PacketPlayOutAnimation(((CraftPlayer)player).getHandle(), 1);
-                this.sendPacket(updateHealth);
-                this.shellCaseTeam.getMatch().sendPacket(animation);
-    
-                attacker.playSound(HIT_SOUND_FOR_ATTACKER);
-                this.shellCaseTeam.getMatch().playSound(HIT_SOUND, player.getLocation());
+            if (this.getArmor() > 0.0 && velocity != null) {
+                player.setVelocity(velocity);
             }
-        }else{
-            //死亡処理
-            this.setHealth(20.0F);
-            PlayerDeathManager.death(this, attacker, ShellCaseWeapon, DeathType.KILLED_BY_PLAYER);
+    
+            if (this.getHealth() + this.getArmor() > damage) {
+                if (this.getArmor() > damage) {
+                    this.setArmor(this.getArmor() - damage);
+                } else {
+                    //give damage
+                    float d = damage - this.getArmor();
+                    this.setHealth(this.getHealth() - d);
+                    this.setArmor(0.0F);
+            
+                    PacketPlayOutUpdateHealth updateHealth = new PacketPlayOutUpdateHealth(this.health, this.foodLevel, 0.0F);
+                    PacketPlayOutAnimation animation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 1);
+                    this.sendPacket(updateHealth);
+                    this.shellCaseTeam.getMatch().sendPacket(animation);
+            
+                    attacker.playSound(HIT_SOUND_FOR_ATTACKER);
+                    this.shellCaseTeam.getMatch().playSound(HIT_SOUND, player.getLocation());
+                }
+            } else {
+                //死亡処理
+                this.setHealth(20.0F);
+                PlayerDeathManager.death(this, attacker, ShellCaseWeapon, DeathType.KILLED_BY_PLAYER);
+            }
         }
     }
     

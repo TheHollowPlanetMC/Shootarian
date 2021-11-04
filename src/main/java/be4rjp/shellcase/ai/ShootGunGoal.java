@@ -63,8 +63,11 @@ public class ShootGunGoal<T extends Match> extends AIGoal<T>{
         } else {
             navigationHelper.navigationCanceled = true;
             npc.getNavigator().cancelNavigation();
-            npc.faceLocation(target.getLocation());
-            if(!aiShellCasePlayer.isDeath()) gunStatusData.getGunWeapon().onRightClick(aiShellCasePlayer);
+            try{
+                npc.getEntity().getLocation().add(target.getLocation()).checkFinite();
+                npc.faceLocation(target.getLocation());
+                if(!aiShellCasePlayer.isDeath()) gunStatusData.getGunWeapon().onRightClick(aiShellCasePlayer);
+            }catch (Exception e){/**/}
         }
     }
     

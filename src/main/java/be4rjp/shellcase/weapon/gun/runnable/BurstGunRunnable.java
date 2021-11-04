@@ -1,10 +1,9 @@
 package be4rjp.shellcase.weapon.gun.runnable;
 
-import be4rjp.shellcase.entity.AsyncBulletEntity;
+import be4rjp.shellcase.entity.WorldSyncBulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.scheduler.MultiThreadRunnable;
-import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import be4rjp.shellcase.weapon.gun.SemiAutoGun;
@@ -73,9 +72,9 @@ public class BurstGunRunnable extends MultiThreadRunnable{
                 direction.add(randomVector);
             }
 
-            AsyncBulletEntity asyncBulletEntity = new AsyncBulletEntity(shellCasePlayer.getShellCaseTeam(), shellCasePlayer.getEyeLocation(), burstGun);
-            asyncBulletEntity.shootInitialize(shellCasePlayer, direction.multiply(burstGun.getShootSpeed()), burstGun.getFallTick());
-            TaskHandler.runAsyncImmediately(asyncBulletEntity::spawn);
+            WorldSyncBulletEntity worldSyncBulletEntity = new WorldSyncBulletEntity(shellCasePlayer.getShellCaseTeam(), shellCasePlayer.getEyeLocation(), burstGun);
+            worldSyncBulletEntity.shootInitialize(shellCasePlayer, direction.multiply(burstGun.getShootSpeed()), burstGun.getFallTick());
+            worldSyncBulletEntity.spawn();
             
             for(ShellCasePlayer matchPlayer : shellCaseTeam.getMatch().getPlayers()) {
                 if(matchPlayer == shellCasePlayer){

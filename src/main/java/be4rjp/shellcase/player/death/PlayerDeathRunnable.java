@@ -135,6 +135,7 @@ public class PlayerDeathRunnable extends BukkitRunnable {
         target.resetTitle();
         target.respawn(respawnLocation);
         target.getWeaponClass().reset();
+        PlayerDeathManager.deathPlayer.remove(target.getBukkitPlayer());
         super.cancel();
     }
     

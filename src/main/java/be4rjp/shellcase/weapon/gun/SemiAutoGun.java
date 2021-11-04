@@ -1,6 +1,6 @@
 package be4rjp.shellcase.weapon.gun;
 
-import be4rjp.shellcase.entity.AsyncBulletEntity;
+import be4rjp.shellcase.entity.WorldSyncBulletEntity;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.WeaponStatusData;
@@ -62,9 +62,9 @@ public class SemiAutoGun extends GunWeapon{
             
                     for (int i = 0; i < pellet; i++) {
                         Vector randomVector = new Vector(Math.random() * range - range / 2, Math.random() * range - range / 2, Math.random() * range - range / 2);
-                        AsyncBulletEntity asyncBulletEntity = new AsyncBulletEntity(shellCaseTeam, shellCasePlayer.getEyeLocation(), this);
-                        asyncBulletEntity.shootInitialize(shellCasePlayer, direction.clone().add(randomVector).multiply(shootSpeed), fallTick);
-                        asyncBulletEntity.spawn();
+                        WorldSyncBulletEntity worldSyncBulletEntity = new WorldSyncBulletEntity(shellCaseTeam, shellCasePlayer.getEyeLocation(), this);
+                        worldSyncBulletEntity.shootInitialize(shellCasePlayer, direction.clone().add(randomVector).multiply(shootSpeed), fallTick);
+                        worldSyncBulletEntity.spawn();
                     }
             
                     if (shellCasePlayer.isADS()) {
@@ -73,7 +73,7 @@ public class SemiAutoGun extends GunWeapon{
                         gunStatusData.getNormalRecoil().sendRecoil(shellCasePlayer, gunStatusData.getMaxBullets() - gunStatusData.getBullets());
                     }
                 } else {
-                    AsyncBulletEntity asyncBulletEntity = new AsyncBulletEntity(shellCaseTeam, shellCasePlayer.getEyeLocation(), this);
+                    WorldSyncBulletEntity worldSyncBulletEntity = new WorldSyncBulletEntity(shellCaseTeam, shellCasePlayer.getEyeLocation(), this);
                     if (shellCasePlayer.isADS()) {
                         gunStatusData.getAdsRecoil().sendRecoil(shellCasePlayer, gunStatusData.getMaxBullets() - gunStatusData.getBullets());
                     } else {
@@ -83,9 +83,9 @@ public class SemiAutoGun extends GunWeapon{
                         gunStatusData.getNormalRecoil().sendRecoil(shellCasePlayer, gunStatusData.getMaxBullets() - gunStatusData.getBullets());
                     }
             
-                    asyncBulletEntity.shootInitialize(shellCasePlayer, direction.multiply(shootSpeed), fallTick);
-                    asyncBulletEntity.setSniperBullet(isSniper);
-                    asyncBulletEntity.spawn();
+                    worldSyncBulletEntity.shootInitialize(shellCasePlayer, direction.multiply(shootSpeed), fallTick);
+                    worldSyncBulletEntity.setSniperBullet(isSniper);
+                    worldSyncBulletEntity.spawn();
                 }
                 
                 for(ShellCasePlayer matchPlayer : shellCaseTeam.getMatch().getPlayers()) {

@@ -2,7 +2,6 @@ package be4rjp.shellcase.listener;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.ShellCaseConfig;
-import be4rjp.shellcase.ai.AIManager;
 import be4rjp.shellcase.match.Match;
 import be4rjp.shellcase.match.MatchManager;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
@@ -11,17 +10,11 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.weapon.attachment.Attachment;
 import be4rjp.shellcase.weapon.gadget.Gadget;
-import be4rjp.shellcase.weapon.gadget.GadgetStatusData;
 import be4rjp.shellcase.weapon.gun.GunStatusData;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.util.PlayerAnimation;
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -120,7 +113,7 @@ public class PlayerJoinQuitListener implements Listener {
     @EventHandler
     public void onleave(PlayerQuitEvent event){
         Player player = event.getPlayer();
-        PlayerTeleportListener.scheduledTeleport.remove(player);
+        NPCTeleportListener.scheduledTeleport.remove(player);
     
         TaskHandler.runAsync(() -> {
             ShellCasePlayer shellCasePlayer = ShellCasePlayer.getShellCasePlayer(player);

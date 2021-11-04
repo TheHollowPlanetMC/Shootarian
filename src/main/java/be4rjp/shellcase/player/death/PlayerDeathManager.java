@@ -6,8 +6,14 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.weapon.ShellCaseWeapon;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerDeathManager {
+    
+    public static Set<Player> deathPlayer = ConcurrentHashMap.newKeySet();
 
     /**
      * プレイヤーの死亡演出
@@ -18,6 +24,8 @@ public class PlayerDeathManager {
      */
     public static void death(ShellCasePlayer target, ShellCasePlayer killer, ShellCaseWeapon ShellCaseWeapon, DeathType deathType){
         if(killer == null) killer = target;
+        
+        deathPlayer.add(target.getBukkitPlayer());
 
         ShellCaseTeam ShellCaseTeam = target.getShellCaseTeam();
         if(ShellCaseTeam == null) return;

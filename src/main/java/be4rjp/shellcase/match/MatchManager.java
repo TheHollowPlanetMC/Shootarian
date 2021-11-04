@@ -143,18 +143,13 @@ public class MatchManager {
         //shellCasePlayer.teleport(match.getShellCaseMap().getWaitLocation());
         joinedPlayers.add(shellCasePlayer);
         shellCasePlayer.setMatchManager(this);
-    
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-            
-            }
-        }.runTaskLater(ShellCase.getPlugin(), 600);
+        
+        /*
         AIManager.createConquestAIPlayer(shellCasePlayer.getLocation(), match, AIType.CONQUEST, AILevel.EASY).thenAccept(aiPlayer -> {
             joinedPlayers.add(aiPlayer);
             aiPlayer.setMatchManager(MatchManager.this);
             //aiPlayer.getCitizensNPC().getNavigator().setTarget(shellCasePlayer.getBukkitPlayer(), true);
-        });
+        });*/
     
         shellCasePlayer.sendText("match-join");
     }

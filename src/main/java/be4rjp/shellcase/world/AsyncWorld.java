@@ -19,6 +19,8 @@ public class AsyncWorld {
         this.loadedChunks.put(MCUtil.getCoordinateKey(chunk.getPos().x, chunk.getPos().z), chunk);
     }
     
+    public boolean isLoaded(int x, int z){return this.loadedChunks.containsKey(MCUtil.getCoordinateKey(x, z));}
+    
     public AsyncWorld(World world){
         this.world = world;
     }
