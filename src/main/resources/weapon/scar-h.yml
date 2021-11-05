@@ -8,6 +8,8 @@ damage: 2.0
 default-bullets: 20
 default-sight: 'rds'
 ads-walk-speed: 0.15
+g-variable: -4.9
+bullet-decay: ' 1, 1.0  >  2, 0.9  >  4, 0.8 '
 
 shoot-tick: 3
 fall-tick: 2

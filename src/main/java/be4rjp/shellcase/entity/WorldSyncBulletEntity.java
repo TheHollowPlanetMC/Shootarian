@@ -10,6 +10,7 @@ import be4rjp.shellcase.util.RayTrace;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
+import be4rjp.shellcase.weapon.gun.BulletDecay;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import net.minecraft.server.v1_15_R1.EntityLiving;
 import net.minecraft.server.v1_15_R1.MCUtil;
@@ -42,6 +43,8 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
     private boolean hitParticle = false;
     private double bulletSize = 0.2;
     private boolean particle = true;
+    private final double G_Var;
+    private final BulletDecay bulletDecay;
     
     private boolean isSniperBullet = false;
     
@@ -59,7 +62,8 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
         this.location = location.clone();
         this.gunWeapon = gunWeapon;
         
-        //this.ORBIT_PARTICLE = new NormalParticle(Particle.)
+        this.G_Var = gunWeapon.getGVariable();
+        this.bulletDecay = gunWeapon.getBulletDecay();
     }
     
     
@@ -131,18 +135,20 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
                 hitLocation = rayTraceResult.getHitPosition().toLocation(location.getWorld());
             
                 if(rayTraceResult.getHitEntity() != null){
+                    
+                    float damage = gunWeapon.getDamage() * bulletDecay.getRate(tick);
                 
                     //エンティティへのヒット
                     Entity hitEntity = rayTraceResult.getHitEntity();
                     if(hitEntity instanceof Player){
                         TaskHandler.runAsync(() -> {
                             ShellCasePlayer target = ShellCasePlayer.getShellCasePlayer((Player) hitEntity);
-                            target.giveDamage(gunWeapon.getDamage(), shooter, direction, gunWeapon);
+                            target.giveDamage(damage, shooter, direction, gunWeapon);
                         });
                     }else if(hitEntity instanceof LivingEntity){
                         Player player = shooter.getBukkitPlayer();
                         if(player != null){
-                            ((LivingEntity) hitEntity).damage(gunWeapon.getDamage(), player);
+                            ((LivingEntity) hitEntity).damage(damage, player);
                             TaskHandler.runSync(() -> ((LivingEntity) hitEntity).setNoDamageTicks(0));
                         }
                     }
@@ -161,7 +167,7 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
     
         if(tick >= fallTick) {
             double t = ((double) tick / 20.0);
-            direction = originalDirection.clone().add(new Vector(0.0, t * t * -4.9, 0.0));
+            direction = originalDirection.clone().add(new Vector(0.0, t * t * G_Var, 0.0));
         }
         location.add(direction);
     

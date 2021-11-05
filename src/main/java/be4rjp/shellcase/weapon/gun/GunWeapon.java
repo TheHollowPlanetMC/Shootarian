@@ -86,6 +86,10 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     protected final HipShootingRecoil hipShootingRecoil = new HipShootingRecoil();
     //装着可能なアタッチメント
     protected final Set<Attachment> attachments = new HashSet<>();
+    //重力係数
+    protected double GVariable = -4.9;
+    //弾丸の威力減衰
+    protected BulletDecay bulletDecay = new BulletDecay("");
     
     public GunWeapon(String id){
         super(id);
@@ -153,6 +157,10 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public Set<Attachment> getAttachments() {return attachments;}
     
+    public double getGVariable() {return GVariable;}
+    
+    public BulletDecay getBulletDecay() {return bulletDecay;}
+    
     /**
      * ymlファイルからロードする
      * @param yml
@@ -194,6 +202,9 @@ public abstract class GunWeapon extends ShellCaseWeapon {
                 if(attachment != null) this.attachments.add(attachment);
             }
         }
+        
+        if(yml.contains("g-variable")) this.GVariable = yml.getDouble("g-variable");
+        if(yml.contains("bullet-decay")) this.bulletDecay = new BulletDecay(Objects.requireNonNull(yml.getString("bullet-decay")));
         
         loadDetailsData();
     }
