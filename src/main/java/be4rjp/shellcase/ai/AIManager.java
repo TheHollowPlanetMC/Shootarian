@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class AIManager {
     
-    public static CompletableFuture<ShellCasePlayer> createConquestAIPlayer(Location location, Match match, AIType aiType, AILevel aiLevel){
+    public static CompletableFuture<ShellCasePlayer> createAIPlayer(Location location, Match match, AIType aiType, AILevel aiLevel){
         CompletableFuture<ShellCasePlayer> completableFuture = new CompletableFuture<>();
         
         TaskHandler.supplySync(() -> {

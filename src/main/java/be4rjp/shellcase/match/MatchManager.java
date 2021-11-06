@@ -6,7 +6,6 @@ import be4rjp.shellcase.ai.AIManager;
 import be4rjp.shellcase.ai.AIType;
 import be4rjp.shellcase.map.ConquestPlayerClickableGUIRenderer;
 import be4rjp.shellcase.match.map.ConquestMap;
-import be4rjp.shellcase.match.map.ShellCaseMap;
 import be4rjp.shellcase.match.runnable.MatchWaitRunnable;
 import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
@@ -14,7 +13,6 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
 import io.netty.util.internal.ConcurrentSet;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.*;
@@ -144,12 +142,11 @@ public class MatchManager {
         joinedPlayers.add(shellCasePlayer);
         shellCasePlayer.setMatchManager(this);
         
-        /*
-        AIManager.createConquestAIPlayer(shellCasePlayer.getLocation(), match, AIType.CONQUEST, AILevel.EASY).thenAccept(aiPlayer -> {
+        AIManager.createAIPlayer(shellCasePlayer.getLocation(), match, AIType.CONQUEST, AILevel.EASY).thenAccept(aiPlayer -> {
             joinedPlayers.add(aiPlayer);
             aiPlayer.setMatchManager(MatchManager.this);
             //aiPlayer.getCitizensNPC().getNavigator().setTarget(shellCasePlayer.getBukkitPlayer(), true);
-        });*/
+        });
     
         shellCasePlayer.sendText("match-join");
     }
