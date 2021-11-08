@@ -58,7 +58,7 @@ public class ConquestMatch extends Match{
     
     @Override
     public void initialize() {
-        this.matchRunnable = new ConquestMatchRunnable(this, 180);
+        this.matchRunnable = new ConquestMatchRunnable(this, 360);
         
         CanvasBuffer canvasBuffer = new CanvasBuffer(this.conquestMap.getCanvasData().getBytes());
         this.conquestStatusRenderer = new ConquestStatusRenderer(canvasBuffer);

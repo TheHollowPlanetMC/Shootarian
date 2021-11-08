@@ -9,6 +9,7 @@ import be4rjp.shellcase.util.ConfigUtil;
 import be4rjp.shellcase.util.SCLocation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -97,6 +98,8 @@ public abstract class ShellCaseMap {
     protected Set<MapStructure> mapStructures = new HashSet<>();
     //マップの範囲
     protected MapRange mapRange = null;
+    //破壊可能ブロック
+    protected Set<Material> breakableBlockTypes = new HashSet<>();
     
     
     /**
@@ -201,6 +204,10 @@ public abstract class ShellCaseMap {
             this.mapRange = new MapRange(worldName, firstPosition, secondPosition);
         }
         
+        if(yml.contains("breakable-types")){
+            this.breakableBlockTypes = BreakableTypeManager.toMaterialSet(yml.getStringList("breakable-types"));
+        }
+        
         loadDetailsData();
     }
     
@@ -223,6 +230,8 @@ public abstract class ShellCaseMap {
     public MovieData getResultMovie() {return resultMovie;}
     
     public Set<MapStructure> getMapStructures() {return mapStructures;}
+    
+    public Set<Material> getBreakableBlockTypes() {return breakableBlockTypes;}
     
     public enum MapType{
         NORMAL_PVP(ConquestMap.class);

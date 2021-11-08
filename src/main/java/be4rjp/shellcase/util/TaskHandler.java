@@ -94,7 +94,7 @@ public class TaskHandler{
         @Override
         public void run() {
             T result = supplier.get();
-            completableFuture.complete(result);
+            TaskHandler.runAsync(() -> completableFuture.complete(result));
         }
     }
     

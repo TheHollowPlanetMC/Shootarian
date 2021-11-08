@@ -90,6 +90,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     protected double GVariable = -4.9;
     //弾丸の威力減衰
     protected BulletDecay bulletDecay = new BulletDecay("");
+    //ヘッドショット倍率
+    protected float headShotRate = 1.2F;
     
     public GunWeapon(String id){
         super(id);
@@ -161,6 +163,8 @@ public abstract class GunWeapon extends ShellCaseWeapon {
     
     public BulletDecay getBulletDecay() {return bulletDecay;}
     
+    public float getHeadShotRate() {return headShotRate;}
+    
     /**
      * ymlファイルからロードする
      * @param yml
@@ -205,6 +209,7 @@ public abstract class GunWeapon extends ShellCaseWeapon {
         
         if(yml.contains("g-variable")) this.GVariable = yml.getDouble("g-variable");
         if(yml.contains("bullet-decay")) this.bulletDecay = new BulletDecay(Objects.requireNonNull(yml.getString("bullet-decay")));
+        if(yml.contains("head-shot-rate")) this.headShotRate = (float) yml.getDouble("head-shot-rate");
         
         loadDetailsData();
     }

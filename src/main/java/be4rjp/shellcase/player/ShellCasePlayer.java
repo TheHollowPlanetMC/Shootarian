@@ -1048,6 +1048,8 @@ public class ShellCasePlayer {
             if (player == null) return;
             if (attacker.getBukkitPlayer() == null) return;
             if (this.shellCaseTeam == null) return;
+            if (attacker.getShellCaseTeam() == null) return;
+            if (attacker.getShellCaseTeam() == this.shellCaseTeam) return;
     
             if (this.getArmor() > 0.0 && velocity != null) {
                 player.setVelocity(velocity);

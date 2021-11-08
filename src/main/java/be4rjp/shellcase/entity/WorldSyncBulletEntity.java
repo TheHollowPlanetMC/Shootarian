@@ -14,10 +14,7 @@ import be4rjp.shellcase.weapon.gun.BulletDecay;
 import be4rjp.shellcase.weapon.gun.GunWeapon;
 import net.minecraft.server.v1_15_R1.EntityLiving;
 import net.minecraft.server.v1_15_R1.MCUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -141,9 +138,14 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
                     //エンティティへのヒット
                     Entity hitEntity = rayTraceResult.getHitEntity();
                     if(hitEntity instanceof Player){
+                        
+                        //ヘッドショット
+                        if(hitEntity.getLocation().getY() + 1.3 < hitLocation.getY()) damage = damage * gunWeapon.getHeadShotRate();
+    
+                        float finalDamage = damage;
                         TaskHandler.runAsync(() -> {
                             ShellCasePlayer target = ShellCasePlayer.getShellCasePlayer((Player) hitEntity);
-                            target.giveDamage(damage, shooter, direction, gunWeapon);
+                            target.giveDamage(finalDamage, shooter, direction, gunWeapon);
                         });
                     }else if(hitEntity instanceof LivingEntity){
                         Player player = shooter.getBukkitPlayer();
@@ -156,7 +158,14 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
                 } else {
                     //ブロックへのヒット
                     Block hitBlock = rayTraceResult.getHitBlock();
-                
+                    Material material = hitBlock.getType();
+                    
+                    TaskHandler.runAsync(() -> {
+                        if(material.toString().contains("GLASS")){
+                            match.getBlockUpdater().remove(hitBlock);
+                        }
+                    });
+                    
                     match.spawnParticle(new BlockParticle(Particle.BLOCK_CRACK, 3, 0, 0, 0, 1, hitBlock.getBlockData()), hitLocation);
                     match.playSound(new ShellCaseSound(hitBlock.getSoundGroup().getBreakSound(), 1.0F, 1.0F), hitLocation);
                 }
@@ -200,14 +209,16 @@ public class WorldSyncBulletEntity implements ShellCaseEntity {
     
     @Override
     public void spawn() {
-        for(ShellCasePlayer ShellCasePlayer : match.getPlayers()) {
-            Player player = ShellCasePlayer.getBukkitPlayer();
+        if(shooter.isDeath()) return;
+        
+        for(ShellCasePlayer shellCasePlayer : match.getPlayers()) {
+            Player player = shellCasePlayer.getBukkitPlayer();
             if (player == null) continue;
     
-            Location playerLoc = ShellCasePlayer.getLocation();
+            Location playerLoc = shellCasePlayer.getLocation();
             if (LocationUtil.distanceSquaredSafeDifferentWorld(playerLoc, location) > ENTITY_DRAW_DISTANCE_SQUARE) continue;
             
-            showPlayer.add(ShellCasePlayer);
+            showPlayer.add(shellCasePlayer);
         }
         this.tick();
         match.getShellCaseEntities().add(this);

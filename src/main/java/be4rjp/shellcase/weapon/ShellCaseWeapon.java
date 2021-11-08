@@ -9,6 +9,7 @@ import be4rjp.shellcase.player.ShellCasePlayer;
 import be4rjp.shellcase.util.LocationUtil;
 import be4rjp.shellcase.util.ShellCaseSound;
 import be4rjp.shellcase.util.SphereBlocks;
+import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.util.math.Sphere;
 import be4rjp.shellcase.util.particle.BlockParticle;
 import be4rjp.shellcase.util.particle.NormalParticle;
@@ -177,36 +178,68 @@ public abstract class ShellCaseWeapon extends ShellCaseItem {
         
         //破壊
         SphereBlocks sphereBlocks = new SphereBlocks(radius, center);
-        for(Block block : sphereBlocks.getBlocks()){
-            double distance = Math.sqrt(LocationUtil.distanceSquaredSafeDifferentWorld(center, block.getLocation()));
-            if(distance * Math.random() > radius / 1.5) continue;
-            
-            for(MapStructureData mapStructureData : shellCaseTeam.getMatch().getMapStructureData()){
-                
-                if(!mapStructureData.getBoundingBox().isInBox(block.getLocation().toVector())) continue;
-                if(block.getType().toString().endsWith("AIR")) continue;
-                mapStructureData.giveDamage(1);
-                
-                if(mapStructureData.isDead()) continue;
-
-                //FallingBlock
-                if(new Random().nextInt(5) == 0) {
-                    AsyncFallingBlock asyncFallingBlock = new AsyncFallingBlock(shellCaseTeam.getMatch(), block.getLocation(), block.getBlockData());
-                    
-                    Vector velocity = new Vector(block.getX() - center.getX(), block.getY() - center.getY(), block.getZ() - center.getZ());
-                    double length = velocity.length();
-                    double newLength = radius - length;
-                    newLength = Math.max(0.1, newLength);
-                    if(length > 0.0){
-                        velocity.normalize().multiply(newLength);
-                    }
-                    
-                    asyncFallingBlock.setVelocity(velocity);
-                    asyncFallingBlock.spawn();
-                }
-
-                shellCaseTeam.getMatch().getBlockUpdater().remove(block);
+        Set<Block> blocks = sphereBlocks.getBlocks();
+        
+        TaskHandler.supplyWorldSync(center.getWorld(), () -> {
+            //ワールドスレッドでブロックのMaterialを取得
+            Map<Block, Material> materialMap = new HashMap<>();
+            for(Block block : blocks){
+                materialMap.put(block, block.getType());
             }
-        }
+            return materialMap;
+            
+        }).thenAccept(blockMaterialMap -> {
+            
+            for(Block block : blockMaterialMap.keySet()){
+                double distance = Math.sqrt(LocationUtil.distanceSquaredSafeDifferentWorld(center, block.getLocation()));
+                if(distance * Math.random() > radius / 1.5) continue;
+        
+                boolean isInStructure = false;
+                boolean isBreak = false;
+                for(MapStructureData mapStructureData : shellCaseTeam.getMatch().getMapStructureData()){
+            
+                    if(!mapStructureData.getBoundingBox().isInBox(block.getLocation().toVector())) continue;
+                    if(blockMaterialMap.get(block).toString().endsWith("AIR")) continue;
+                    mapStructureData.giveDamage(1);
+            
+                    if(mapStructureData.isDead()) continue;
+            
+                    shellCaseTeam.getMatch().getBlockUpdater().remove(block);
+            
+                    isInStructure = true;
+                    isBreak = true;
+                    break;
+                }
+        
+        
+                if(!isInStructure){
+                    Set<Material> breakableMaterials = shellCaseTeam.getMatch().getShellCaseMap().getBreakableBlockTypes();
+                    if(breakableMaterials.contains(blockMaterialMap.get(block))){
+                        shellCaseTeam.getMatch().getBlockUpdater().remove(block);
+                        isBreak = true;
+                    }
+                }
+                
+                
+                if(isBreak){
+                    //FallingBlock
+                    if(new Random().nextInt(4) == 0) {
+                        AsyncFallingBlock asyncFallingBlock = new AsyncFallingBlock(shellCaseTeam.getMatch(), block.getLocation(), block.getBlockData());
+        
+                        Vector velocity = new Vector(block.getX() - center.getX(), block.getY() - center.getY(), block.getZ() - center.getZ());
+                        double length = velocity.length();
+                        double newLength = radius - length;
+                        newLength = Math.max(0.1, newLength);
+                        if(length > 0.0){
+                            velocity.normalize().multiply(newLength);
+                        }
+        
+                        asyncFallingBlock.setVelocity(velocity);
+                        asyncFallingBlock.spawn();
+                    }
+                }
+            }
+            
+        });
     }
 }

@@ -63,10 +63,10 @@ public class ConquestMatchRunnable extends MatchRunnable{
                 if(Math.abs(beforeTerritory) < 100){
                     shellCaseTeam.getTeamMembers().forEach(shellCasePlayer ->
                             shellCasePlayer.sendText("match-conquest-get-area", shellCaseTeam.getShellCaseColor().getDisplayName(), flagAreaData.getFlagArea().getDisplayName()));
-                }else{
+    
                     for(ShellCaseTeam otherTeam : shellCaseTeam.getOtherTeam()){
                         otherTeam.getTeamMembers().forEach(shellCasePlayer ->
-                                shellCasePlayer.sendText("match-conquest-get-area-e", otherTeam.getShellCaseColor().getDisplayName(), flagAreaData.getFlagArea().getDisplayName()));
+                                shellCasePlayer.sendText("match-conquest-get-area-e", shellCaseTeam.getShellCaseColor().getDisplayName(), flagAreaData.getFlagArea().getDisplayName()));
                     }
                 }
             }
@@ -88,7 +88,7 @@ public class ConquestMatchRunnable extends MatchRunnable{
         for(ShellCasePlayer ShellCasePlayer : match.getPlayers()) {
             Lang lang = ShellCasePlayer.getLang();
             List<String> lines = new ArrayList<>();
-            lines.add("");
+            //lines.add("");
             lines.add("§a" + MessageManager.getText(lang, "match-map") + " » §r§l" + match.getShellCaseMap().getDisplayName(lang));
             lines.add(" ");
             lines.add("§a" + MessageManager.getText(lang, "match-mode") + " » §6§l " + match.getType().getDisplayName(lang));

@@ -31,9 +31,9 @@ public class BlockUpdater extends BukkitRunnable {
     //更新するブロックと適用するデータのマップ
     private final Map<Block, BlockData> blockMap = new ConcurrentHashMap<>();
     //削除するブロック
-    private final Set<Block> removeBlocks = new ConcurrentSet<>();
+    private final Set<Block> removeBlocks = ConcurrentHashMap.newKeySet();
     //崩壊状態にする建造物のデータ
-    private final Set<MapStructureData> mapStructureData = new ConcurrentSet<>();
+    private final Set<MapStructureData> mapStructureData = ConcurrentHashMap.newKeySet();
     
     public BlockUpdater(Match match){
         this.match = match;
