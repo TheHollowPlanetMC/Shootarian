@@ -22,6 +22,7 @@ public class FlagGrenade extends GadgetWeapon{
     public void onRightClick(ShellCasePlayer shellCasePlayer) {
         GadgetStatusData gadgetStatusData = (GadgetStatusData) shellCasePlayer.getWeaponStatusData(this);
         if(gadgetStatusData == null) return;
+        if(gadgetStatusData.isCoolTime()) return;
 
         ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
         if(shellCaseTeam == null) return;
@@ -34,6 +35,8 @@ public class FlagGrenade extends GadgetWeapon{
         FlagGrenadeEntity flagGrenadeEntity = new FlagGrenadeEntity(shellCaseTeam.getMatch(), shellCasePlayer.getEyeLocation(), shellCasePlayer, this);
         flagGrenadeEntity.setVelocity(shellCasePlayer.getEyeLocation().getDirection());
         flagGrenadeEntity.spawn();
+        
+        gadgetStatusData.setCoolTime(20);
     }
 
     @Override

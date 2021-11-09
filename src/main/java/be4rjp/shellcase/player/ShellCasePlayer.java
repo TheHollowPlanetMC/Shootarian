@@ -527,6 +527,7 @@ public class ShellCasePlayer {
     public void setObservableOption(ObservableOption option){
         this.observableOption = option;
         
+        /*
         switch (observableOption){
             case ALONE:{
                 if(this.player == null) break;
@@ -578,7 +579,7 @@ public class ShellCasePlayer {
                 });
                 break;
             }
-        }
+        }*/
     }
     
     /**

@@ -23,6 +23,7 @@ public class RPG extends GadgetWeapon{
     public void onRightClick(ShellCasePlayer shellCasePlayer) {
         GadgetStatusData gadgetStatusData = (GadgetStatusData) shellCasePlayer.getWeaponStatusData(this);
         if(gadgetStatusData == null) return;
+        if(gadgetStatusData.isCoolTime()) return;
     
         ShellCaseTeam shellCaseTeam = shellCasePlayer.getShellCaseTeam();
         if(shellCaseTeam == null) return;
@@ -37,6 +38,8 @@ public class RPG extends GadgetWeapon{
         WorldSyncRPGBulletEntity worldSyncRPGBulletEntity = new WorldSyncRPGBulletEntity(shellCaseTeam, shellCasePlayer.getEyeLocation(), gadgetStatusData.getGadgetWeapon());
         worldSyncRPGBulletEntity.shootInitialize(shellCasePlayer, shellCasePlayer.getEyeLocation().getDirection().multiply(1.9), 3);
         worldSyncRPGBulletEntity.spawn();
+        
+        gadgetStatusData.setCoolTime(40);
     }
     
     @Override

@@ -71,6 +71,9 @@ public class GrappleRunnable extends BukkitRunnable {
         Vector flyVector = player.getVelocity().multiply(1.3).add(toVector).add(direction).multiply(Math.min(speedRate, 1.2));
         
         if(flyVector.lengthSquared() > 30.0) stop();
+        if(flyVector.lengthSquared() > 2.25){
+            flyVector.normalize().multiply(1.5);
+        }
         
         player.setVelocity(flyVector);
         player.getWorld().playSound(playerLoc, Sound.BLOCK_NOTE_BLOCK_HAT, 0.8F, 1F);
