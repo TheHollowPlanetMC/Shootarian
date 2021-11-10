@@ -31,7 +31,7 @@ public class AIManager {
             npc.spawn(location);
             npc.getNavigator().getLocalParameters().useNewPathfinder(true);
             //npc.getNavigator().getLocalParameters().range(10.0F);
-            npc.getNavigator().getLocalParameters().speedModifier(1.4F);
+            npc.getNavigator().getLocalParameters().speedModifier(1.0F);
             return npc;
         }).thenAccept(npc -> {
             Player npcPlayer = (Player) npc.getEntity();
@@ -82,7 +82,7 @@ public class AIManager {
         Location targetLocation = target.getEyeLocation();
         Vector direction = new Vector(targetLocation.getX() - aiLocation.getX(), targetLocation.getY() - aiLocation.getY(), targetLocation.getZ() - aiLocation.getZ());
     
-        RayTrace rayTrace = new RayTrace(aiLocation.toVector(), direction);
+        RayTrace rayTrace = new RayTrace(aiLocation.toVector(), direction.normalize());
         if(targetLocation.getWorld() == aiLocation.getWorld()) {
             List<Vector> positions = rayTrace.traverse(targetLocation.distance(aiLocation), 1);
             for (Vector position : positions){

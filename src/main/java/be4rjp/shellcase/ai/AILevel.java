@@ -2,7 +2,7 @@ package be4rjp.shellcase.ai;
 
 public enum AILevel {
     
-    EASY(20),
+    EASY(30),
     NORMAL(50),
     HARD(80),
     VERY_HARD(120),
