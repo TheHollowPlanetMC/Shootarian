@@ -142,13 +142,14 @@ public class MatchManager {
         joinedPlayers.add(shellCasePlayer);
         shellCasePlayer.setMatchManager(this);
         
+        /*
         for(int i = 0; i < 20; i++){
             AIManager.createAIPlayer(shellCasePlayer.getLocation(), match, AIType.CONQUEST, AILevel.EASY).thenAccept(aiPlayer -> {
                 joinedPlayers.add(aiPlayer);
                 aiPlayer.setMatchManager(MatchManager.this);
                 //aiPlayer.getCitizensNPC().getNavigator().setTarget(shellCasePlayer.getBukkitPlayer(), true);
             });
-        }
+        }*/
     
         shellCasePlayer.sendText("match-join");
     }

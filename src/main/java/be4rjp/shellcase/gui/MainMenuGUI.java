@@ -2,6 +2,7 @@ package be4rjp.shellcase.gui;
 
 import be4rjp.shellcase.ShellCase;
 import be4rjp.shellcase.gui.pagination.CloseMenuPaginationButtonBuilder;
+import be4rjp.shellcase.gui.setting.SettingGUI;
 import be4rjp.shellcase.language.Lang;
 import be4rjp.shellcase.language.MessageManager;
 import be4rjp.shellcase.match.Match;
@@ -15,6 +16,8 @@ import com.samjakob.spigui.buttons.SGButton;
 import com.samjakob.spigui.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class MainMenuGUI {
     
@@ -45,7 +48,7 @@ public class MainMenuGUI {
                         MatchManager.getMatchManager("conquest").join(shellCasePlayer);
         
                     }));
-                }else {
+                } else {
                     menu.setButton(10, new SGButton(new ItemBuilder(Material.GRAY_STAINED_GLASS)
                             .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-leave"))
                             .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-leave-des")).build()).withListener(event -> {
@@ -82,6 +85,16 @@ public class MainMenuGUI {
                         .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-gear-des")).build()).withListener(event -> {
         
                     HeadGearGUI.openHeadGearGUI(shellCasePlayer);
+                    shellCasePlayer.playGUIClickSound();
+        
+                }));
+    
+    
+                menu.setButton(28, new SGButton(new ItemBuilder(Material.REPEATER)
+                        .name(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-setting"))
+                        .lore(MessageManager.getText(shellCasePlayer.getLang(), "gui-main-menu-setting-des")).build()).withListener(event -> {
+    
+                    SettingGUI.openSettingGUI(shellCasePlayer);
                     shellCasePlayer.playGUIClickSound();
         
                 }));
