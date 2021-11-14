@@ -158,5 +158,10 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.Be4rJP</groupId>
+            <artifactId>Kuroko</artifactId>
+            <version>37fada47f5</version>
+        </dependency>
     </dependencies>
 </project>

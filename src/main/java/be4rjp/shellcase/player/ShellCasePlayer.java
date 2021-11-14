@@ -1,12 +1,10 @@
 package be4rjp.shellcase.player;
 
 import be4rjp.cinema4c.util.SkinManager;
+import be4rjp.kuroko.player.KurokoPlayer;
 import be4rjp.parallel.ParallelWorld;
 import be4rjp.shellcase.ShellCase;
-import be4rjp.shellcase.data.AchievementData;
-import be4rjp.shellcase.data.GadgetPossessionData;
-import be4rjp.shellcase.data.HeadGearPossessionData;
-import be4rjp.shellcase.data.GunWeaponPossessionData;
+import be4rjp.shellcase.data.*;
 import be4rjp.shellcase.data.settings.PlayerSettings;
 import be4rjp.shellcase.data.settings.Settings;
 import be4rjp.shellcase.data.sql.SQLDriver;
@@ -23,6 +21,7 @@ import be4rjp.shellcase.player.death.PlayerDeathManager;
 import be4rjp.shellcase.player.passive.Gear;
 import be4rjp.shellcase.player.passive.Passive;
 import be4rjp.shellcase.player.passive.PlayerPassiveInfluence;
+import be4rjp.shellcase.script.ScriptManager;
 import be4rjp.shellcase.util.TaskHandler;
 import be4rjp.shellcase.util.particle.ShellCaseParticle;
 import be4rjp.shellcase.util.ShellCaseScoreboard;
@@ -172,10 +171,12 @@ public class ShellCasePlayer {
     private final HeadGearPossessionData headGearPossessionData = new HeadGearPossessionData();
     //ガジェットの所持データ
     private final GadgetPossessionData gadgetPossessionData = new GadgetPossessionData();
-    //実績データ
-    private final AchievementData achievementData = new AchievementData(this);
     //プレイヤーの設定
     private final PlayerSettings playerSettings = new PlayerSettings();
+    //クエストの進捗
+    private final QuestProgress questProgress = new QuestProgress();
+    //実績データ
+    private final AchievementData achievementData = new AchievementData(this);
     //マップのレンダラー
     private PlayerGUIRenderer playerGUIRenderer = null;
     //SetSlotPacket
@@ -303,6 +304,8 @@ public class ShellCasePlayer {
     
     public GadgetPossessionData getGadgetPossessionData() {return gadgetPossessionData;}
     
+    public QuestProgress getQuestProgress() {return questProgress;}
+    
     public WeaponClass getWeaponClass() {return weaponClass;}
     
     public PlayerGUIRenderer getPlayerGUIRenderer() {return playerGUIRenderer;}
@@ -395,6 +398,12 @@ public class ShellCasePlayer {
         try {
             SQLDriver.loadAchievementData(this.achievementData);
             this.setLoadedSaveData(true);
+            
+            TaskHandler.supplySync(() -> KurokoPlayer.getKurokoPlayer(player)).thenAccept(kurokoPlayer -> {
+                if(kurokoPlayer == null) return;
+                ScriptManager.getPlayerJoinScriptRunner().runFunction("onPlayerJoin", this, player, kurokoPlayer);
+            });
+            
         }catch (Exception e){
             player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.flat(0, Note.Tone.G));
             Date dateObj = new Date();
@@ -1001,7 +1010,7 @@ public class ShellCasePlayer {
      * プレイヤーを回復させる
      * @param plus
      */
-    public synchronized void heal(float plus){
+    public void heal(float plus){
         synchronized (HEALTH_LOCK) {
             if (player == null) return;
             if (this.shellCaseTeam == null) return;
@@ -1022,7 +1031,7 @@ public class ShellCasePlayer {
      * プレイヤーに毒ダメージを与えます
      * @param damage
      */
-    public synchronized void givePoisonDamage(float damage){
+    public void givePoisonDamage(float damage){
         synchronized (HEALTH_LOCK) {
             if (player == null) return;
             if (this.shellCaseTeam == null) return;
@@ -1044,7 +1053,7 @@ public class ShellCasePlayer {
      * @param attacker 攻撃者
      * @param ShellCaseWeapon 攻撃に使用した武器
      */
-    public synchronized void giveDamage(float damage, ShellCasePlayer attacker, Vector velocity, ShellCaseWeapon ShellCaseWeapon){
+    public void giveDamage(float damage, ShellCasePlayer attacker, Vector velocity, ShellCaseWeapon ShellCaseWeapon){
         synchronized (HEALTH_LOCK) {
             if (player == null) return;
             if (attacker.getBukkitPlayer() == null) return;

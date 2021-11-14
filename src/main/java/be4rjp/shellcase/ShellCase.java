@@ -12,6 +12,7 @@ import be4rjp.shellcase.match.team.ShellCaseColor;
 import be4rjp.shellcase.match.team.ShellCaseTeam;
 import be4rjp.shellcase.player.costume.HeadGear;
 import be4rjp.shellcase.scheduler.MultiThreadRunnable;
+import be4rjp.shellcase.script.ScriptManager;
 import be4rjp.shellcase.weapon.WeaponManager;
 import be4rjp.shellcase.weapon.actions.Actions;
 import com.grinderwolf.swm.api.SlimePlugin;
@@ -75,6 +76,7 @@ public final class ShellCase extends JavaPlugin {
         WeaponManager.loadAllWeapon();
         HeadGear.loadAllHeadGear();
         MatchManager.load();
+        ScriptManager.loadScript();
         
         new MainMenuItem();
     

@@ -16,6 +16,7 @@ public class AchievementData {
     private final HeadGearPossessionData headGearPossessionData;
     private final GadgetPossessionData gadgetPossessionData;
     private final ProgressData progressData = new ProgressData();
+    private final QuestProgress questProgress;
     
     public AchievementData(ShellCasePlayer shellCasePlayer){
         this.shellCasePlayer = shellCasePlayer;
@@ -23,6 +24,7 @@ public class AchievementData {
         this.gunWeaponPossessionData = shellCasePlayer.getWeaponPossessionData();
         this.headGearPossessionData = shellCasePlayer.getHeadGearPossessionData();
         this.gadgetPossessionData = shellCasePlayer.getGadgetPossessionData();
+        this.questProgress = shellCasePlayer.getQuestProgress();
     }
     
     public int getKill() {return kill;}
@@ -56,6 +58,8 @@ public class AchievementData {
     public GadgetPossessionData getGadgetPossessionData() {return gadgetPossessionData;}
     
     public ProgressData getProgressData() {return progressData;}
-
+    
+    public QuestProgress getQuestProgress() {return questProgress;}
+    
     public ShellCasePlayer getShellCasePlayer() {return shellCasePlayer;}
 }

@@ -12,13 +12,13 @@ import be4rjp.shellcase.weapon.gun.GunWeapon;
 public class SQLDriver {
     
     public static void createTable(SQLConnection sqlConnection) throws Exception{
-        sqlConnection.execute("CREATE TABLE IF NOT EXISTS " + ShellCaseConfig.getMySQLConfig().table + " (uuid VARCHAR(36), lang TINYINT, kills INT, points INT, ranks INT, coin INT, weapon VARBINARY(38912), gear VARBINARY(256), gadget VARBINARY(64), equip BIGINT UNSIGNED, head SMALLINT, progress VARBINARY(512), settings INT);");
+        sqlConnection.execute("CREATE TABLE IF NOT EXISTS " + ShellCaseConfig.getMySQLConfig().table + " (uuid VARCHAR(36), lang TINYINT, kills INT, points INT, ranks INT, coin INT, weapon VARBINARY(38912), gear VARBINARY(256), gadget VARBINARY(64), equip BIGINT UNSIGNED, head SMALLINT, progress VARBINARY(512), quest VARBINARY(2048), settings INT);");
     }
     
     public static void loadAchievementData(AchievementData achievementData) throws Exception{
         ShellCaseConfig.MySQLConfig mySQLConfig = ShellCaseConfig.getMySQLConfig();
         String uuid = achievementData.getShellCasePlayer().getUUID();
-        String notExistExecute = "INSERT INTO " + mySQLConfig.table + "(uuid, lang, kills, points, ranks, coin, weapon, gear, gadget, equip, head, progress, settings) VALUES('" + uuid + "', 0, 0, 0, 0, 0, '" + new String(new byte[38912]) + "', '" + new String(new byte[256]) + "', '" + new String(new byte[64]) + "', 0, 0, '" + new String(new byte[512]) + "', 2147483647);";
+        String notExistExecute = "INSERT INTO " + mySQLConfig.table + "(uuid, lang, kills, points, ranks, coin, weapon, gear, gadget, equip, head, progress, quest, settings) VALUES('" + uuid + "', 0, 0, 0, 0, 0, '" + new String(new byte[38912]) + "', '" + new String(new byte[256]) + "', '" + new String(new byte[64]) + "', 0, 0, '" + new String(new byte[512]) + "', '" + new String(new byte[2048]) + "', 2147483647);";
         
         SQLConnection sqlConnection = new SQLConnection(mySQLConfig.ip, mySQLConfig.port, mySQLConfig.database, mySQLConfig.username, mySQLConfig.password);
         createTable(sqlConnection);
@@ -33,6 +33,7 @@ public class SQLDriver {
         long equip = sqlConnection.getLong(mySQLConfig.table, "equip", "uuid", uuid, notExistExecute);
         int head = sqlConnection.getInt(mySQLConfig.table, "head", "uuid", uuid, notExistExecute);
         byte[] progress = sqlConnection.getByteArray(mySQLConfig.table, "progress", "uuid", uuid, notExistExecute);
+        byte[] quest = sqlConnection.getByteArray(mySQLConfig.table, "quest", "uuid", uuid, notExistExecute);
         int settings = sqlConnection.getInt(mySQLConfig.table, "settings", "uuid", uuid, notExistExecute);
         achievementData.getShellCasePlayer().setLang(lang);
         achievementData.setKill(kill);
@@ -43,6 +44,7 @@ public class SQLDriver {
         achievementData.getHeadGearPossessionData().load_from_byte_array(gear);
         achievementData.getGadgetPossessionData().load_from_byte_array(gadget);
         achievementData.getProgressData().load_from_byte_array(progress);
+        achievementData.getQuestProgress().load_from_byte_array(quest);
         achievementData.getShellCasePlayer().getPlayerSettings().setByCombinedID(settings);
     
         GunWeaponPossessionData weaponPossessionData = achievementData.getWeaponPossessionData();
@@ -85,6 +87,7 @@ public class SQLDriver {
         sqlConnection.updateValue(mySQLConfig.table, "equip = " + achievementData.getShellCasePlayer().getWeaponClass().getCombinedID(), "uuid = '" + uuid + "'");
         sqlConnection.updateValue(mySQLConfig.table, "head = " + achievementData.getShellCasePlayer().getHeadGearNumber(), "uuid = '" + uuid + "'");
         sqlConnection.updateByteValue(mySQLConfig.table, "progress", achievementData.getProgressData().write_to_byte_array(), "uuid = '" + uuid + "'");
+        sqlConnection.updateByteValue(mySQLConfig.table, "quest", achievementData.getQuestProgress().write_to_byte_array(), "uuid = '" + uuid + "'");
         sqlConnection.updateValue(mySQLConfig.table, "settings = " + achievementData.getShellCasePlayer().getPlayerSettings().getCombinedID(), "uuid = '" + uuid + "'");
         
         sqlConnection.close();
