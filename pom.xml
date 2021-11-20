@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>be4rjp</groupId>
-    <artifactId>shellcase</artifactId>
+    <artifactId>shootarian</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>ShellCase</name>
+    <name>Shootarian</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -36,7 +36,7 @@
                     <relocations>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>be4rjp.sclat2.paperlib</shadedPattern> <!-- Replace this -->
+                            <shadedPattern>be4rjp.shootarian.paperlib</shadedPattern> <!-- Replace this -->
                         </relocation>
                     </relocations>
                     <filters>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.github.Be4rJP</groupId>
             <artifactId>Parallel</artifactId>
-            <version>926c61e8e1</version>
+            <version>bec1c58d8f</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>com.github.Be4rJP</groupId>
             <artifactId>Kuroko</artifactId>
-            <version>37fada47f5</version>
+            <version>6228459948</version>
         </dependency>
     </dependencies>
 </project>
