@@ -1,5 +1,6 @@
 package be4rjp.shootarian.entity;
 
+import be4rjp.shootarian.Shootarian;
 import be4rjp.shootarian.data.settings.Settings;
 import be4rjp.shootarian.match.Match;
 import be4rjp.shootarian.match.team.ShootarianTeam;
@@ -101,6 +102,7 @@ public class WorldSyncBulletEntity implements ShootarianEntity {
         if(Bukkit.isPrimaryThread()){
             baseTick();
         }else{
+            Shootarian.getPlugin().getLogger().warning("DO NOT CALL WorldSyncBulletEntity tick(); FROM ASYNC THREAD!");
             TaskHandler.runWorldSync(location.getWorld(), this::baseTick);
         }
         

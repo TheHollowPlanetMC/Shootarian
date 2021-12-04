@@ -26,14 +26,14 @@ public class PlayerSpawnPacketManager {
 
             UUID uuid = (UUID) b.get(spawnPacket);
             if(uuid == null) return true;
-            if(!ShootarianPlayer.isCreated(uuid.toString())) return true;
+            if(!ShootarianPlayer.isCreated(uuid)) return true;
 
             ShootarianTeam shootarianTeam = shootarianPlayer.getShootarianTeam();
             if(shootarianTeam == null){
                 return shootarianPlayer.getObservableOption() != ObservableOption.ALONE;
             }
 
-            ShootarianPlayer op = ShootarianPlayer.getShootarianPlayer(uuid.toString());
+            ShootarianPlayer op = ShootarianPlayer.getShootarianPlayer(uuid);
             ShootarianTeam otherTeam = op.getShootarianTeam();
             if(otherTeam == null) return false;
             

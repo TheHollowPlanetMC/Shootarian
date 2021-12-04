@@ -28,9 +28,9 @@ public class PlayerItemClickListener implements Listener {
             ShootarianPlayer shootarianPlayer = ShootarianPlayer.getShootarianPlayer(player);
             if(shootarianWeapon == null) return;
     
-            ShootarianTeam ShootarianTeam = shootarianPlayer.getShootarianTeam();
-            if(ShootarianTeam == null) return;
-            Match.MatchStatus matchStatus = ShootarianTeam.getMatch().getMatchStatus();
+            ShootarianTeam shootarianTeam = shootarianPlayer.getShootarianTeam();
+            if(shootarianTeam == null) return;
+            Match.MatchStatus matchStatus = shootarianTeam.getMatch().getMatchStatus();
             //if((matchStatus == Match.MatchStatus.FINISHED || matchStatus == Match.MatchStatus.WAITING) && !shootarianWeapon.getId().endsWith("nw")) return;
     
             Action action = event.getAction();

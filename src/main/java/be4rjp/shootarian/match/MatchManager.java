@@ -1,6 +1,9 @@
 package be4rjp.shootarian.match;
 
 import be4rjp.shootarian.Shootarian;
+import be4rjp.shootarian.ai.AILevel;
+import be4rjp.shootarian.ai.AIManager;
+import be4rjp.shootarian.ai.AIType;
 import be4rjp.shootarian.map.ConquestPlayerClickableGUIRenderer;
 import be4rjp.shootarian.match.map.ConquestMap;
 import be4rjp.shootarian.match.runnable.MatchWaitRunnable;
@@ -138,7 +141,12 @@ public class MatchManager {
         //shootarianPlayer.teleport(match.getShootarianMap().getWaitLocation());
         joinedPlayers.add(shootarianPlayer);
         shootarianPlayer.setMatchManager(this);
-        
+    
+        /*
+        AIManager.createAIPlayer(shootarianPlayer.getLocation(), match, AIType.CONQUEST, AILevel.EASY).thenAccept(aiPlayer -> {
+            joinedPlayers.add(aiPlayer);
+            aiPlayer.setMatchManager(MatchManager.this);
+        });*/
         /*
         for(int i = 0; i < 20; i++){
             AIManager.createAIPlayer(shootarianPlayer.getLocation(), match, AIType.CONQUEST, AILevel.EASY).thenAccept(aiPlayer -> {

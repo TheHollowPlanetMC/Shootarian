@@ -17,7 +17,7 @@ public class SQLDriver {
     
     public static void loadAchievementData(AchievementData achievementData) throws Exception{
         ShootarianConfig.MySQLConfig mySQLConfig = ShootarianConfig.getMySQLConfig();
-        String uuid = achievementData.getShootarianPlayer().getUUID();
+        String uuid = achievementData.getShootarianPlayer().getUUID().toString();
         String notExistExecute = "INSERT INTO " + mySQLConfig.table + "(uuid, lang, kills, points, ranks, coin, weapon, gear, gadget, equip, head, progress, quest, settings) VALUES('" + uuid + "', 0, 0, 0, 0, 0, '" + new String(new byte[38912]) + "', '" + new String(new byte[256]) + "', '" + new String(new byte[64]) + "', 0, 0, '" + new String(new byte[512]) + "', '" + new String(new byte[2048]) + "', 2147483647);";
         
         SQLConnection sqlConnection = new SQLConnection(mySQLConfig.ip, mySQLConfig.port, mySQLConfig.database, mySQLConfig.username, mySQLConfig.password);
@@ -71,7 +71,7 @@ public class SQLDriver {
     
     public static void saveAchievementData(AchievementData achievementData) throws Exception{
         ShootarianConfig.MySQLConfig mySQLConfig = ShootarianConfig.getMySQLConfig();
-        String uuid = achievementData.getShootarianPlayer().getUUID();
+        String uuid = achievementData.getShootarianPlayer().getUUID().toString();
     
         SQLConnection sqlConnection = new SQLConnection(mySQLConfig.ip, mySQLConfig.port, mySQLConfig.database, mySQLConfig.username, mySQLConfig.password);
         createTable(sqlConnection);

@@ -3,6 +3,7 @@ package be4rjp.shootarian.weapon.gun.runnable;
 import be4rjp.shootarian.entity.WorldSyncBulletEntity;
 import be4rjp.shootarian.match.team.ShootarianTeam;
 import be4rjp.shootarian.player.ShootarianPlayer;
+import be4rjp.shootarian.scheduler.MultiThreadRunnable;
 import be4rjp.shootarian.weapon.gun.GunStatusData;
 import be4rjp.shootarian.weapon.gun.FullAutoGun;
 import org.bukkit.Location;
@@ -56,7 +57,7 @@ public class FullAutoGunRunnable extends GunWeaponRunnable {
                     Vector randomVector = new Vector(Math.random() * range - range / 2, Math.random() * range - range / 2, Math.random() * range - range / 2);
                     if(shootarianPlayer.isADS()) randomVector = new Vector(0.0, 0.0, 0.0);
                     worldSyncBulletEntity.shootInitialize(shootarianPlayer, direction.clone().add(randomVector).multiply(fullAutoGun.getShootSpeed()), fullAutoGun.getFallTick());
-                    worldSyncBulletEntity.spawn();
+                    MultiThreadRunnable.addMainThreadTask(worldSyncBulletEntity::spawn);
                     
                     //反動
                     if(shootarianPlayer.isADS()){

@@ -55,7 +55,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ShootarianPlayer {
     
-    private static final Map<String, ShootarianPlayer> playerMap = new ConcurrentHashMap<>();
+    private static final Map<UUID, ShootarianPlayer> playerMap = new ConcurrentHashMap<>();
     
     /**
      * 指定されたUUIDのShootarianPlayerを返します。
@@ -63,7 +63,7 @@ public class ShootarianPlayer {
      * @param uuid プレイヤーのUUID
      * @return ShootarianPlayer
      */
-    public synchronized static ShootarianPlayer getShootarianPlayer(String uuid){
+    public synchronized static ShootarianPlayer getShootarianPlayer(UUID uuid){
         if(playerMap.containsKey(uuid)){
             return playerMap.get(uuid);
         }else{
@@ -80,7 +80,7 @@ public class ShootarianPlayer {
      * @return ShootarianPlayer
      */
     public synchronized static ShootarianPlayer getShootarianPlayer(Player player) {
-        return getShootarianPlayer(player.getUniqueId().toString());
+        return getShootarianPlayer(player.getUniqueId());
     }
     
     /**
@@ -88,7 +88,7 @@ public class ShootarianPlayer {
      * @param uuid プレイヤーのUUID
      * @return 既に作成されている場合は true されていない場合は false
      */
-    public synchronized static boolean isCreated(String uuid){
+    public synchronized static boolean isCreated(UUID uuid){
         return playerMap.containsKey(uuid);
     }
 
@@ -100,7 +100,7 @@ public class ShootarianPlayer {
     
     
     //プレイヤーのUUID
-    private final String uuid;
+    private final UUID uuid;
     //AIかどうか
     private boolean isAI = false;
     //NPC
@@ -206,10 +206,10 @@ public class ShootarianPlayer {
      * ShootarianPlayerを新しく作成
      * @param uuid プレイヤーのUUID
      */
-    protected ShootarianPlayer(String uuid){this.uuid = uuid;}
+    protected ShootarianPlayer(UUID uuid){this.uuid = uuid;}
     
     
-    public String getUUID() {return uuid;}
+    public UUID getUUID() {return uuid;}
     
     public Lang getLang() {return lang;}
     
@@ -464,7 +464,7 @@ public class ShootarianPlayer {
     /**
      * Mojangのセッションサーバーへスキンデータのリクエストを送信して取得する
      */
-    public void sendSkinRequest(){TaskHandler.runAsync(() -> skin = SkinManager.getSkin(uuid));}
+    public void sendSkinRequest(){TaskHandler.runAsync(() -> skin = SkinManager.getSkin(uuid.toString()));}
     
     /**
      * メインメニューを渡す

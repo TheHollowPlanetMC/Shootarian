@@ -16,6 +16,8 @@ public class ShootarianConfig {
     
     private static int runnerThreads;
     
+    private static boolean isRPGMode = false;
+    
     public static MySQLConfig getMySQLConfig(){return mySQLConfig;}
     
     public static Location getJoinLocation() {return joinLocation;}
@@ -23,6 +25,8 @@ public class ShootarianConfig {
     public static Location getLobbyLocation() {return lobbyLocation;}
     
     public static int getRunnerThreads() {return runnerThreads;}
+    
+    public static boolean isRPGMode(){return isRPGMode;}
     
     public static void load(){
         File file = new File("plugins/Shootarian", "config.yml");
@@ -46,6 +50,7 @@ public class ShootarianConfig {
         joinLocation = ConfigUtil.getLocationByString(yml.getString("join-location"));
         lobbyLocation = ConfigUtil.getLocationByString(yml.getString("lobby-location"));
         runnerThreads = yml.getInt("runner-threads");
+        if(yml.contains("rpg-mode")) isRPGMode = yml.getBoolean("rpg-mode");
     }
     
     

@@ -74,7 +74,7 @@ public class BurstGunRunnable extends MultiThreadRunnable{
 
             WorldSyncBulletEntity worldSyncBulletEntity = new WorldSyncBulletEntity(shootarianPlayer.getShootarianTeam(), shootarianPlayer.getEyeLocation(), burstGun);
             worldSyncBulletEntity.shootInitialize(shootarianPlayer, direction.multiply(burstGun.getShootSpeed()), burstGun.getFallTick());
-            worldSyncBulletEntity.spawn();
+            MultiThreadRunnable.addMainThreadTask(worldSyncBulletEntity::spawn);
             
             for(ShootarianPlayer matchPlayer : shootarianTeam.getMatch().getPlayers()) {
                 if(matchPlayer == shootarianPlayer){

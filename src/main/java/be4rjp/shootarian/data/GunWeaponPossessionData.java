@@ -26,9 +26,9 @@ public class GunWeaponPossessionData extends SavableByteData{
         bytes[saveIndex + 1] |= 0x00;
         //3 - つけているサイト
         bytes[saveIndex + 2] = (byte) (gunStatusData.getSight() == null ? 0 : gunStatusData.getSight().getSaveNumber() & 0xFF);
-        //4 - つけているバレル
+        //4 - つけているグリップ
         bytes[saveIndex + 3] = (byte) (gunStatusData.getGrip() == null ? 0 : gunStatusData.getGrip().getSaveNumber() & 0xFF);
-        //5 - つけているグリップ
+        //5 - つけているバレル
         bytes[saveIndex + 4] = 0x00;
         //6 - つけているアクセサリー
         bytes[saveIndex + 5] = 0x00;
@@ -53,9 +53,9 @@ public class GunWeaponPossessionData extends SavableByteData{
     
         //3 - つけているサイト
         gunStatusData.setSight((Sight) Attachment.getAttachmentBySaveNumber(bytes[saveIndex + 2] & 0xFF));
-        //4 - つけているバレル
+        //4 - つけているグリップ
         gunStatusData.setGrip((Grip) Attachment.getAttachmentBySaveNumber(bytes[saveIndex + 3] & 0xFF));
-        //5 - つけているグリップ
+        //5 - つけているバレル
         //6 - つけているアクセサリー
         //7 ~ 39 - どのアタッチメントを所持しているかどうか
         byte[] temp = new byte[32];
