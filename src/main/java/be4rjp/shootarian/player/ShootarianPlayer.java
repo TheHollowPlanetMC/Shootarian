@@ -398,12 +398,6 @@ public class ShootarianPlayer {
         try {
             SQLDriver.loadAchievementData(this.achievementData);
             this.setLoadedSaveData(true);
-            
-            TaskHandler.supplySync(() -> KurokoPlayer.getKurokoPlayer(player)).thenAccept(kurokoPlayer -> {
-                if(kurokoPlayer == null) return;
-                ScriptManager.getPlayerJoinScriptRunner().runFunction("onPlayerJoin", this, player, kurokoPlayer);
-            });
-            
         }catch (Exception e){
             player.playNote(player.getLocation(), Instrument.BASS_GUITAR, Note.flat(0, Note.Tone.G));
             Date dateObj = new Date();

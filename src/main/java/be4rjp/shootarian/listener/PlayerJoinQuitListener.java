@@ -1,5 +1,6 @@
 package be4rjp.shootarian.listener;
 
+import be4rjp.kuroko.player.KurokoPlayer;
 import be4rjp.shootarian.Shootarian;
 import be4rjp.shootarian.ShootarianConfig;
 import be4rjp.shootarian.match.Match;
@@ -7,6 +8,7 @@ import be4rjp.shootarian.match.MatchManager;
 import be4rjp.shootarian.match.team.ShootarianTeam;
 import be4rjp.shootarian.packet.PacketHandler;
 import be4rjp.shootarian.player.ShootarianPlayer;
+import be4rjp.shootarian.script.ScriptManager;
 import be4rjp.shootarian.util.TaskHandler;
 import be4rjp.shootarian.weapon.attachment.Attachment;
 import be4rjp.shootarian.weapon.gadget.Gadget;
@@ -37,8 +39,16 @@ public class PlayerJoinQuitListener implements Listener {
             shootarianPlayer.updateBukkitPlayer(player, false);
             shootarianPlayer.sendSkinRequest();
 
+            //セーブデータのロード
             shootarianPlayer.loadAchievementFromSQL();
+    
+            //プレイヤー参加時のスクリプト実行
+            TaskHandler.supplySync(() -> KurokoPlayer.getKurokoPlayer(player)).thenAccept(kurokoPlayer -> {
+                if(kurokoPlayer == null) return;
+                ScriptManager.getPlayerJoinScriptRunner().runFunction("onPlayerJoin", shootarianPlayer, player, kurokoPlayer);
+            });
             
+            //デバッグ用武器配布
             for(int i = 0; i < 4; i++) {
                 GunStatusData gunStatusData = new GunStatusData(GunWeapon.getGunWeaponBySaveNumber(i), shootarianPlayer);
                 gunStatusData.addAttachment(Attachment.getAttachmentBySaveNumber(1));
@@ -51,9 +61,11 @@ public class PlayerJoinQuitListener implements Listener {
             shootarianPlayer.getGadgetPossessionData().setGadget(Gadget.GRAPPLE_GUN);
             shootarianPlayer.getGadgetPossessionData().setGadget(Gadget.RPG_7);
             
+            //アイテムセット
             shootarianPlayer.giveItems();
             
             
+            /*
             ShootarianTeam ShootarianTeam = shootarianPlayer.getShootarianTeam();
             
             if(ShootarianTeam != null) {
@@ -89,7 +101,7 @@ public class PlayerJoinQuitListener implements Listener {
                         }
                     }
                 }
-            }
+            }*/
         });
     }
     
@@ -117,6 +129,7 @@ public class PlayerJoinQuitListener implements Listener {
     
         TaskHandler.runAsync(() -> {
             ShootarianPlayer shootarianPlayer = ShootarianPlayer.getShootarianPlayer(player);
+            shootarianPlayer.reset();
             try {
                 if(shootarianPlayer.isLoadedSaveData()) shootarianPlayer.saveAchievementToSQL();
             }catch (Exception e){
